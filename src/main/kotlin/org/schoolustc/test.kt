@@ -4,7 +4,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.core.registries.Registries
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.RandomSource
@@ -21,7 +20,6 @@ import net.minecraft.world.level.levelgen.structure.StructureType
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType
 import org.schoolustc.SchoolUSTC.id
-import org.schoolustc.SchoolUSTC.logger
 import java.util.*
 
 
@@ -48,14 +46,13 @@ class DiamondStructure(settings:StructureSettings): Structure(settings) {
         val chunkPos = context.chunkPos
         val x = chunkPos.middleBlockX
         val z = chunkPos.middleBlockZ
-        val y = context.chunkGenerator.getFirstOccupiedHeight(
+        val y = context.chunkGenerator.getFirstFreeHeight(
             x,z,
             Heightmap.Types.WORLD_SURFACE_WG,
             context.heightAccessor,
             context.randomState
         )
         val pos = BlockPos(x,y,z)
-        logger.info("found generation point $x $y $z")
         return Optional.of(
             GenerationStub(BlockPos(x,y,z)){
                 it.addPiece(DiamondStructurePiece(pos))
@@ -94,11 +91,10 @@ class DiamondStructurePiece(val pos: BlockPos) : StructurePiece(
         chunkPos: ChunkPos,
         blockPos: BlockPos
     ) {
-        logger.info("post processssssssssssssssssssssssssssssssssss")
         for (x in -2..2) {
             for (y in -2..2) {
                 for (z in -2..2) {
-                    worldGenLevel.setBlock(blockPos.offset(x,y,z),Blocks.DIAMOND_BLOCK.defaultBlockState(),3)
+                    worldGenLevel.setBlock(pos.offset(x,y,z),Blocks.DIAMOND_BLOCK.defaultBlockState(),3)
                 }
             }
         }
