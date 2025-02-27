@@ -3,12 +3,13 @@ package org.schoolustc.tools
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.WorldGenLevel
 import net.minecraft.world.level.block.Block
+import org.schoolustc.SchoolUSTC.logger
 
 class MyStructure(
     val xSize: Int,
     val ySize: Int,
     val zSize: Int,
-    val generator: StructureGenerator.()->Unit
+    private val generator: StructureGenerator.()->Unit
 ){
     fun generate(
         worldGenLevel: WorldGenLevel,
@@ -30,7 +31,11 @@ data class Point(
     val x:Int,
     val y:Int,
     val z:Int
-)
+){
+    override fun toString():String{
+        return "$x $y $z"
+    }
+}
 
 class StructureGenerator(
     private val worldGenLevel: WorldGenLevel,
@@ -54,5 +59,23 @@ class StructureGenerator(
             defaultBlockState(),
             3
         )
+    }
+    infix fun Block.fill(area:Pair<Point,Point>) {
+        val (p1,p2) = area
+        for(i in p1.x..p2.x){
+            for(j in p1.y..p2.y){
+                for(k in p1.z..p2.z){
+                    at(Point(i,j,k))
+                }
+            }
+        }
+    }
+    //立方建筑的四面墙
+    infix fun Block.fillWall(area: Pair<Point, Point>) {
+        val (p1,p2) = area
+        fill(Point(p1.x,p1.y,p1.z) to Point(p2.x,p2.y,p1.z))
+        fill(Point(p1.x,p1.y,p2.z) to Point(p2.x,p2.y,p2.z))
+        fill(Point(p1.x,p1.y,p1.z+1) to Point(p1.x,p2.y,p2.z-1))
+        fill(Point(p2.x,p1.y,p1.z+1) to Point(p2.x,p2.y,p2.z-1))
     }
 }

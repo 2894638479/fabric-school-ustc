@@ -37,7 +37,7 @@ class SchoolStructure(settings: StructureSettings): Structure(settings) {
         val pos = BlockPos(x,y,z)
         return Optional.of(
             GenerationStub(BlockPos(x,y,z)){
-                it.addPiece(ClassroomPiece(pos))
+                it.addPiece(ClassroomPiece(pos,context.random.nextInt()))
             }
         )
     }

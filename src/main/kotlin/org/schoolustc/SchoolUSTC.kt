@@ -13,6 +13,5 @@ object SchoolUSTC : ModInitializer {
 	override fun onInitialize() {
 		SchoolStructure.register()
 		ClassroomPiece.register()
-		logger.info("Hello Fabric world!")
 	}
 }

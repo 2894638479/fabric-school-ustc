@@ -3,11 +3,10 @@ package org.schoolustc.structure
 import net.minecraft.world.level.block.Blocks.*
 import org.schoolustc.tools.MyStructure
 import org.schoolustc.tools.Point
-import org.schoolustc.tools.StructureGenerator
 
-val classroom = MyStructure(2,3,3){
-    DIAMOND_BLOCK at Point(0,0,0)
-    REDSTONE_BLOCK at Point(1,0,1)
-    IRON_BLOCK at Point(0,2,0)
-    GOLD_BLOCK at Point(1,0,2)
+fun classroom(xSize:Int,ySize:Int,zSize:Int) = MyStructure(xSize,ySize,zSize){
+    RED_TERRACOTTA fillWall (Point(0,1,0) to Point(xSize - 1,ySize - 1,zSize - 1))
+    SMOOTH_STONE fill (Point(0,0,0) to Point(xSize - 1,0,zSize - 1))
+    AIR fill (Point(1,1,1) to Point(xSize - 2,ySize - 1,zSize - 2))
+
 }
