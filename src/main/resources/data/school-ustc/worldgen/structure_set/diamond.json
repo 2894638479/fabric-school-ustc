@@ -1,0 +1,14 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 14357618,
+    "separation": 1,
+    "spacing": 3
+  },
+  "structures": [
+    {
+      "structure": "school-ustc:diamond_structure",
+      "weight": 1
+    }
+  ]
+}

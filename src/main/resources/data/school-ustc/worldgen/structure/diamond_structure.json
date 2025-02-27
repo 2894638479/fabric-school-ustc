@@ -1,0 +1,8 @@
+{
+  "type": "school-ustc:diamond_structure",
+  "biomes": [
+    "minecraft:plains"
+  ],
+  "spawn_overrides": {},
+  "step": "surface_structures"
+}
