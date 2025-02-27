@@ -1,7 +1,8 @@
 package org.schoolustc
 
 import net.fabricmc.api.ModInitializer
-import org.schoolustc.SchoolUSTC.id
+import org.schoolustc.structurePieces.ClassroomPiece
+import org.schoolustc.structures.SchoolStructure
 import org.slf4j.LoggerFactory
 
 
@@ -10,11 +11,8 @@ object SchoolUSTC : ModInitializer {
     val logger = LoggerFactory.getLogger(id)
 
 	override fun onInitialize() {
-		// This code runs as soon as Minecraft is in a mod-load-ready state.
-		// However, some things (like resources) may still be uninitialized.
-		// Proceed with mild caution.
-		DiamondStructure.register()
-		DiamondStructurePiece.register()
+		SchoolStructure.register()
+		ClassroomPiece.register()
 		logger.info("Hello Fabric world!")
 	}
 }
