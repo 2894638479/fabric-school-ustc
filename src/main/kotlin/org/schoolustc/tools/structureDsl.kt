@@ -11,6 +11,8 @@ import net.minecraft.world.level.StructureManager
 import net.minecraft.world.level.WorldGenLevel
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
+import net.minecraft.world.level.block.state.properties.BooleanProperty
 import net.minecraft.world.level.chunk.ChunkGenerator
 import net.minecraft.world.level.levelgen.structure.BoundingBox
 import net.minecraft.world.level.levelgen.structure.StructurePiece
@@ -30,9 +32,11 @@ class Area(
             block(Point(i,j,k))
         }}}
     }
+    fun getP1() = Point(x.first,y.first,z.first)
+    fun getP2() = Point(x.last,y.last,z.last)
     fun boundingBox(config: StructGenConfig):BoundingBox{
-        val p1 = Point(x.first,y.first,z.first).finalPos(config)
-        val p2 = Point(x.last,y.last,z.last).finalPos(config)
+        val p1 = getP1().finalPos(config)
+        val p2 = getP2().finalPos(config)
         return BoundingBox(
             min(p1.x,p2.x),
             min(p1.y,p2.y),
@@ -68,13 +72,33 @@ class StructBuilder(
     val config:StructGenConfig,
     val rand:RandomSource
 ) {
-    private inline val Point.finalPos: Point get() = finalPos(config)
-    infix fun BlockSelector.fill(pos: Point) = world.setBlock(pos.finalPos.blockPos,select(),3)
+    infix fun BlockSelector.fill(pos: Point) = world.setBlock(pos.finalPos(config).blockPos,select(),3)
     infix fun BlockSelector.fill(area: Area) = area.iterate { fill(it) }
-    infix fun Block.fill(pos: Point) = world.setBlock(pos.finalPos.blockPos,this.defaultBlockState(),3)
+    infix fun Block.fill(pos: Point) = world.setBlock(pos.finalPos(config).blockPos,defaultBlockState(),3)
     infix fun Block.fill(area: Area) = area.iterate { fill(it) }
-    infix fun BlockState.fill(pos: Point) = world.setBlock(pos.finalPos.blockPos,this,3)
-    infix fun BlockState.fill(area: Area) = area.iterate { fill(it) }
+    infix fun BlockSelector.fillWall(area: Area){
+        val p1 = area.getP1()
+        val p2 = area.getP2()
+        this fill Area(p1.x..p1.x,p1.y..p2.y,p1.z..p2.z)
+        this fill Area(p2.x..p2.x,p1.y..p2.y,p1.z..p2.z)
+        this fill Area(p1.x+1 ..p2.x-1,p1.y..p2.y,p1.z..p1.z)
+        this fill Area(p1.x+1 ..p2.x-1,p1.y..p2.y,p2.z..p2.z)
+    }
+    infix fun Block.fillWall(area: Area) = BlockSelector { defaultBlockState() } fillWall area
+    infix fun Block.fillConnectable(area: Area) = area.iterate {
+        var state = defaultBlockState().setValue(BlockStateProperties.NORTH,true)
+        fun connect(pos: BlockPos,prop:BooleanProperty){
+            if(!world.getBlockState(pos).isAir){
+                state = state.setValue(prop,true)
+            }
+        }
+        val pos = it.finalPos(config).blockPos
+        connect(pos.west(),BlockStateProperties.WEST)
+        connect(pos.east(),BlockStateProperties.EAST)
+        connect(pos.south(),BlockStateProperties.SOUTH)
+        connect(pos.north(),BlockStateProperties.NORTH)
+        world.setBlock(pos,state,3)
+    }
 
     fun selector(map:Map<Block,Float>): BlockSelector{
         val sum = map.values.sum()
