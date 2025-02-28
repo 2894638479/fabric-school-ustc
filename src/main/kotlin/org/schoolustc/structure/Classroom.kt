@@ -1,12 +1,26 @@
 package org.schoolustc.structure
 
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.block.Blocks.*
-import org.schoolustc.tools.MyStructure
-import org.schoolustc.tools.Point
+import org.schoolustc.structurePieces.ClassroomPiece
+import org.schoolustc.tools.*
 
-fun classroom(xSize:Int,ySize:Int,zSize:Int) = MyStructure(xSize,ySize,zSize){
-    RED_TERRACOTTA fillWall (Point(0,1,0) to Point(xSize - 1,ySize - 1,zSize - 1))
-    SMOOTH_STONE fill (Point(0,0,0) to Point(xSize - 1,0,zSize - 1))
-    AIR fill (Point(1,1,1) to Point(xSize - 2,ySize - 1,zSize - 2))
-
+object Classroom: MyStructInfo<ClassroomPiece>(
+    "classroom",
+    Area(0..7,0..11,0..5)
+) {
+    override fun loadTag(tag: CompoundTag): ClassroomPiece {
+        return ClassroomPiece(tag.getConfig())
+    }
+    override fun ClassroomPiece.saveTag(tag: CompoundTag) {
+        tag.putConfig(config)
+    }
+    override fun StructBuilder.build() {
+        val sel = selector(mapOf(
+            DIAMOND_BLOCK to 0.5f,
+            GOLD_BLOCK to 1f,
+            REDSTONE_BLOCK to 0.1f
+        ))
+        sel fill area
+    }
 }

@@ -10,6 +10,8 @@ import net.minecraft.world.level.levelgen.structure.Structure
 import net.minecraft.world.level.levelgen.structure.StructureType
 import org.schoolustc.SchoolUSTC.id
 import org.schoolustc.structurePieces.ClassroomPiece
+import org.schoolustc.tools.point
+import org.schoolustc.tools.StructGenConfig
 import java.util.*
 
 class SchoolStructure(settings: StructureSettings): Structure(settings) {
@@ -37,7 +39,8 @@ class SchoolStructure(settings: StructureSettings): Structure(settings) {
         val pos = BlockPos(x,y,z)
         return Optional.of(
             GenerationStub(BlockPos(x,y,z)){
-                it.addPiece(ClassroomPiece(pos,context.random.nextInt()))
+                fun r() = context.random.nextFloat() > 0.5f
+                it.addPiece(ClassroomPiece(StructGenConfig(pos.point,r(),r(),r())))
             }
         )
     }

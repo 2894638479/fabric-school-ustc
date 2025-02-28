@@ -1,81 +1,140 @@
 package org.schoolustc.tools
 
+import net.fabricmc.fabric.api.networking.v1.S2CPlayChannelEvents.Register
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Registry
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.util.RandomSource
+import net.minecraft.world.level.ChunkPos
+import net.minecraft.world.level.StructureManager
 import net.minecraft.world.level.WorldGenLevel
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.chunk.ChunkGenerator
+import net.minecraft.world.level.levelgen.structure.BoundingBox
+import net.minecraft.world.level.levelgen.structure.StructurePiece
+import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext
+import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType
 import org.schoolustc.SchoolUSTC.logger
+import kotlin.math.max
+import kotlin.math.min
 
-class MyStructure(
-    val xSize: Int,
-    val ySize: Int,
-    val zSize: Int,
-    private val generator: StructureGenerator.()->Unit
-){
-    fun generate(
-        worldGenLevel: WorldGenLevel,
-        x:Int,y:Int,z:Int,
-        revX:Boolean,revZ:Boolean,rotate:Boolean
-    ){
-        StructureGenerator(worldGenLevel, x, y, z, xSize, zSize, revX, revZ, rotate).generator()
+class Area(
+    val x:IntRange,
+    val y:IntRange,
+    val z:IntRange
+) {
+    inline fun iterate(block:(Point) -> Unit){
+        for(i in x){for (j in y){for (k in z){
+            block(Point(i,j,k))
+        }}}
     }
-    fun generate(
-        worldGenLevel: WorldGenLevel,
-        pos: BlockPos,
-        revX:Boolean,revZ:Boolean,rotate:Boolean
-    ){
-        StructureGenerator(worldGenLevel, pos.x, pos.y, pos.z, xSize, zSize, revX, revZ, rotate).generator()
+    fun boundingBox(config: StructGenConfig):BoundingBox{
+        val p1 = Point(x.first,y.first,z.first).finalPos(config)
+        val p2 = Point(x.last,y.last,z.last).finalPos(config)
+        return BoundingBox(
+            min(p1.x,p2.x),
+            min(p1.y,p2.y),
+            min(p1.z,p2.z),
+            max(p1.x,p2.x),
+            max(p1.y,p2.y),
+            max(p1.z,p2.z),
+        )
     }
 }
-
 data class Point(
     val x:Int,
     val y:Int,
     val z:Int
 ){
-    override fun toString():String{
-        return "$x $y $z"
-    }
-}
-
-class StructureGenerator(
-    private val worldGenLevel: WorldGenLevel,
-    private val x:Int,
-    private val y:Int,
-    private val z:Int,
-    private val xSize:Int,
-    private val zSize:Int,
-    private val revX:Boolean,
-    private val revZ:Boolean,
-    private val rotate:Boolean
-) {
-    infix fun Block.at(pos: Point) {
-        val xAdd = if(revX) xSize - pos.x else pos.x
-        val zAdd = if(revZ) zSize - pos.z else pos.z
-        val xx = x + if(rotate) zAdd else xAdd
-        val zz = z + if(rotate) xAdd else zAdd
-        val yy = y + pos.y
-        worldGenLevel.setBlock(
-            BlockPos(xx,yy,zz),
-            defaultBlockState(),
-            3
+    val blockPos get() = BlockPos(x,y,z)
+    fun finalPos(config: StructGenConfig):Point{
+        val xAdd = if (config.revX) - x else x
+        val zAdd = if (config.revZ) - z else z
+        return Point(
+            config.pos.x + if (config.rotate) zAdd else xAdd,
+            config.pos.y + y,
+            config.pos.z + if (config.rotate) xAdd else zAdd
         )
     }
-    infix fun Block.fill(area:Pair<Point,Point>) {
-        val (p1,p2) = area
-        for(i in p1.x..p2.x){
-            for(j in p1.y..p2.y){
-                for(k in p1.z..p2.z){
-                    at(Point(i,j,k))
-                }
+}
+val BlockPos.point get() = Point(x,y,z)
+fun interface BlockSelector{
+    fun select():BlockState
+}
+class StructBuilder(
+    val world:WorldGenLevel,
+    val config:StructGenConfig,
+    val rand:RandomSource
+) {
+    private inline val Point.finalPos: Point get() = finalPos(config)
+    infix fun BlockSelector.fill(pos: Point) = world.setBlock(pos.finalPos.blockPos,select(),3)
+    infix fun BlockSelector.fill(area: Area) = area.iterate { fill(it) }
+    infix fun Block.fill(pos: Point) = world.setBlock(pos.finalPos.blockPos,this.defaultBlockState(),3)
+    infix fun Block.fill(area: Area) = area.iterate { fill(it) }
+    infix fun BlockState.fill(pos: Point) = world.setBlock(pos.finalPos.blockPos,this,3)
+    infix fun BlockState.fill(area: Area) = area.iterate { fill(it) }
+
+    fun selector(map:Map<Block,Float>): BlockSelector{
+        val sum = map.values.sum()
+        return BlockSelector {
+            val r = rand.nextFloat() * sum
+            var f = 0f
+            for((block,weight) in map){
+                f += weight
+                if(r < f) return@BlockSelector block.defaultBlockState()
             }
+            return@BlockSelector map.keys.last().defaultBlockState()
         }
     }
-    //立方建筑的四面墙
-    infix fun Block.fillWall(area: Pair<Point, Point>) {
-        val (p1,p2) = area
-        fill(Point(p1.x,p1.y,p1.z) to Point(p2.x,p2.y,p1.z))
-        fill(Point(p1.x,p1.y,p2.z) to Point(p2.x,p2.y,p2.z))
-        fill(Point(p1.x,p1.y,p1.z+1) to Point(p1.x,p2.y,p2.z-1))
-        fill(Point(p2.x,p1.y,p1.z+1) to Point(p2.x,p2.y,p2.z-1))
+}
+class StructGenConfig(
+    val pos: Point,
+    val revX: Boolean,
+    val revZ: Boolean,
+    val rotate: Boolean
+)
+abstract class MyStructInfo <T:MyStruct>(
+    val id:String,
+    val area:Area
+){
+    abstract fun StructBuilder.build()
+    abstract fun loadTag(tag: CompoundTag):T
+    abstract fun T.saveTag(tag: CompoundTag)
+    val type = StructurePieceType { _, tag -> loadTag(tag) }
+    fun saveStructTag(s:MyStruct,tag : CompoundTag){
+        val struct = s as? T
+        struct?.saveTag(tag) ?: logger.error("type convert error:${s.javaClass.name}")
     }
+    fun register() = Registry.register(BuiltInRegistries.STRUCTURE_PIECE,id,type)
+}
+abstract class MyStruct (
+    val info:MyStructInfo<*>,
+    val config:StructGenConfig
+): StructurePiece(info.type,0,info.area.boundingBox(config)) {
+    final override fun postProcess(
+        worldGenLevel: WorldGenLevel,
+        structureManager: StructureManager,
+        chunkGenerator: ChunkGenerator,
+        randomSource: RandomSource,
+        boundingBox: BoundingBox,
+        chunkPos: ChunkPos,
+        blockPos: BlockPos
+    ) {
+        info.run {
+            StructBuilder(
+                worldGenLevel,
+                config,
+                randomSource
+            ).build()
+        }
+    }
+
+    final override fun addAdditionalSaveData(
+        structurePieceSerializationContext: StructurePieceSerializationContext,
+        compoundTag: CompoundTag
+    ) { info.saveStructTag(this,compoundTag) }
+
+    final override fun getType(): StructurePieceType = info.type
 }
