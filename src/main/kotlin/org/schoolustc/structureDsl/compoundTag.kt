@@ -1,6 +1,5 @@
-package org.schoolustc.tools
+package org.schoolustc.structureDsl
 
-import net.minecraft.core.BlockPos
 import net.minecraft.nbt.CompoundTag
 
 fun CompoundTag.putConfig(config:StructGenConfig){

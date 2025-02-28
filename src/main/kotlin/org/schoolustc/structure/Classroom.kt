@@ -2,9 +2,8 @@ package org.schoolustc.structure
 
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.block.Blocks.*
-import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import org.schoolustc.structurePieces.ClassroomPiece
-import org.schoolustc.tools.*
+import org.schoolustc.structureDsl.*
 
 object Classroom: MyStructInfo<ClassroomPiece>(
     "classroom",
@@ -27,6 +26,11 @@ object Classroom: MyStructInfo<ClassroomPiece>(
         light fill Area(3..4,0..0,5..6)
         AIR fill Area(7..7,1..3,2..4)
         val windowY = 2..4
-        GLASS_PANE fillConnectable Area(3..4,windowY,0..0)
+        val windowBlock = GLASS_PANE
+        windowBlock fillConnectable Area(3..4,windowY,0..0)
+        windowBlock fillConnectable Area(3..4,windowY,11..11)
+        windowBlock fillConnectable Area(0..0,windowY,2..4)
+        windowBlock fillConnectable Area(0..0,windowY,7..9)
+        windowBlock fillConnectable Area(7..7,windowY,7..9)
     }
 }

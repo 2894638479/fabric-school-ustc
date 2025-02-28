@@ -10,8 +10,8 @@ import net.minecraft.world.level.levelgen.structure.Structure
 import net.minecraft.world.level.levelgen.structure.StructureType
 import org.schoolustc.SchoolUSTC.id
 import org.schoolustc.structurePieces.ClassroomPiece
-import org.schoolustc.tools.point
-import org.schoolustc.tools.StructGenConfig
+import org.schoolustc.structureDsl.point
+import org.schoolustc.structureDsl.StructGenConfig
 import java.util.*
 
 class SchoolStructure(settings: StructureSettings): Structure(settings) {
