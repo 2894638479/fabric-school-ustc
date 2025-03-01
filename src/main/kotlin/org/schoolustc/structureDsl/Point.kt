@@ -17,5 +17,10 @@ data class Point(
             config.pos.z + if (config.rotate) xAdd else zAdd
         )
     }
+    operator fun plus(other:Point) = Point(
+        x + other.x,
+        y + other.y,
+        z + other.z
+    )
 }
 val BlockPos.point get() = Point(x,y,z)

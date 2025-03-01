@@ -1,11 +1,14 @@
 {
-	"required": true,
-	"package": "org.schoolustc.mixin",
-	"compatibilityLevel": "JAVA_17",
-	"mixins": [
-		"ExampleMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	}
+  "required": true,
+  "package": "org.schoolustc.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "GetStructureTemplatePaletteMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "accessors": [
+    "GetStructureTemplatePaletteMixin"
+  ]
 }
