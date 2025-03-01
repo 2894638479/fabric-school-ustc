@@ -32,5 +32,6 @@ object Classroom: MyStructInfo<ClassroomPiece>(
         windowBlock fillConnectable Area(0..0,windowY,2..4)
         windowBlock fillConnectable Area(0..0,windowY,7..9)
         windowBlock fillConnectable Area(7..7,windowY,7..9)
+        putNbtStruct("test",Point(1,1,1))
     }
 }

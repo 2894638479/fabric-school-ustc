@@ -4,8 +4,13 @@ import net.minecraft.core.BlockPos
 import net.minecraft.util.RandomSource
 import net.minecraft.world.level.WorldGenLevel
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.Mirror
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.block.state.properties.BooleanProperty
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate
+import org.schoolustc.fullId
+import org.schoolustc.logger
 
 class StructBuilder(
     val world:WorldGenLevel,
@@ -51,6 +56,22 @@ class StructBuilder(
             }
             return@BlockSelector map.keys.last().defaultBlockState()
         }
+    }
+
+    private fun getNbtStruct(name:String):StructureTemplate?{
+        return (world.server ?: return null)
+            .structureManager
+            .get(fullId(name))
+            .orElse(null)
+    }
+    fun putNbtStruct(name:String,pos:Point){
+        val struct = getNbtStruct(name) ?: return logger.warn("not found structure nbt $name")
+        val blockPos = pos.finalPos(config).blockPos
+        val settings = StructurePlaceSettings().apply {
+            if(config.revX) mirror = Mirror.FRONT_BACK
+            if(config.revZ) mirror = Mirror.LEFT_RIGHT
+        }
+        struct.placeInWorld(world,blockPos,blockPos,settings ,rand,2)
     }
 }
 

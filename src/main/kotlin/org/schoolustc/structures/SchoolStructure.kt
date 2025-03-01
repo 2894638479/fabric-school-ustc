@@ -8,10 +8,10 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.levelgen.Heightmap
 import net.minecraft.world.level.levelgen.structure.Structure
 import net.minecraft.world.level.levelgen.structure.StructureType
-import org.schoolustc.SchoolUSTC.id
-import org.schoolustc.structurePieces.ClassroomPiece
-import org.schoolustc.structureDsl.point
+import org.schoolustc.fullId
 import org.schoolustc.structureDsl.StructGenConfig
+import org.schoolustc.structureDsl.point
+import org.schoolustc.structurePieces.ClassroomPiece
 import java.util.*
 
 class SchoolStructure(settings: StructureSettings): Structure(settings) {
@@ -22,7 +22,7 @@ class SchoolStructure(settings: StructureSettings): Structure(settings) {
             ).apply(it,::SchoolStructure)
         }
         fun register(){
-            Registry.register(BuiltInRegistries.STRUCTURE_TYPE, ResourceLocation(id,"school"), type)
+            Registry.register(BuiltInRegistries.STRUCTURE_TYPE, fullId("school"), type)
         }
         val type = StructureType { CODEC }
     }

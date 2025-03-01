@@ -4,7 +4,8 @@ import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType
-import org.schoolustc.SchoolUSTC.logger
+import org.schoolustc.fullId
+import org.schoolustc.logger
 
 abstract class MyStructInfo <T:MyStruct>(
     val id:String,
@@ -19,6 +20,6 @@ abstract class MyStructInfo <T:MyStruct>(
         struct?.saveTag(tag) ?: logger.error("type convert error:${s.javaClass.name}")
     }
     fun register() {
-        Registry.register(BuiltInRegistries.STRUCTURE_PIECE, id, type)
+        Registry.register(BuiltInRegistries.STRUCTURE_PIECE, fullId(id), type)
     }
 }
