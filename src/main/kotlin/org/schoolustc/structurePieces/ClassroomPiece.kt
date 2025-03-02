@@ -15,7 +15,7 @@ class ClassroomPiece(config: StructGenConfig):MyStruct(Companion,config){
         override fun ClassroomPiece.saveTag(tag: CompoundTag) {
             tag.putConfig(config)
         }
-        override fun StructBuilder.build() {
+        override fun StructBuilder.build(struct:ClassroomPiece) {
             RED_TERRACOTTA fillWall Area(0..7,1..4,0..11)
             SMOOTH_STONE fill Area(0..7,0..0,0..11)
             val light = SEA_LANTERN

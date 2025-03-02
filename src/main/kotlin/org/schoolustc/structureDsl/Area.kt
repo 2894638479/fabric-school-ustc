@@ -6,15 +6,10 @@ import kotlin.math.min
 
 
 class Area(
-    val x:IntRange,
-    val y:IntRange,
-    val z:IntRange
-) {
-    inline fun iterate(block:(Point) -> Unit){
-        for(i in x){for (j in y){for (k in z){
-            block(Point(i,j,k))
-        }}}
-    }
+    x:IntRange,
+    y:IntRange,
+    z:IntRange
+): AreaProg(x,y,z) {
     fun getP1() = Point(x.first,y.first,z.first)
     fun getP2() = Point(x.last,y.last,z.last)
     fun boundingBox(config: StructGenConfig): BoundingBox {

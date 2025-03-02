@@ -9,16 +9,15 @@ import org.schoolustc.logger
 
 abstract class MyStructInfo <T:MyStruct>(
     val id:String,
-    val area:Area
+    val area:Area? = null
 ){
-    abstract fun StructBuilder.build()
     abstract fun loadTag(tag: CompoundTag):T
     abstract fun T.saveTag(tag: CompoundTag)
+    abstract fun StructBuilder.build(struct:T)
     val type = StructurePieceType { _, tag -> loadTag(tag) }
-    fun saveStructTag(s:MyStruct,tag : CompoundTag){
-        val struct = s as? T
-        struct?.saveTag(tag) ?: logger.error("type convert error:${s.javaClass.name}")
-    }
+    private val MyStruct.asT get() = this as T
+    fun saveAsT(s:MyStruct, tag : CompoundTag) = s.asT.saveTag(tag)
+    fun buildAsT(s:MyStruct,builder: StructBuilder) = builder.build(s.asT)
     fun register() {
         Registry.register(BuiltInRegistries.STRUCTURE_PIECE, fullId(id), type)
     }

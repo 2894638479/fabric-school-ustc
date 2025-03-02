@@ -14,8 +14,11 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType
 
 abstract class MyStruct (
     val info:MyStructInfo<*>,
-    val config:StructGenConfig
-): StructurePiece(info.type,0,info.area.boundingBox(config)) {
+    val config:StructGenConfig,
+    area: Area? = null
+): StructurePiece(info.type,0,(
+        info.area ?: area ?: error("unknown struct area")
+    ).boundingBox(config)) {
     final override fun postProcess(
         worldGenLevel: WorldGenLevel,
         structureManager: StructureManager,
@@ -25,19 +28,19 @@ abstract class MyStruct (
         chunkPos: ChunkPos,
         blockPos: BlockPos
     ) {
-        info.run {
+        info.buildAsT(this,
             StructBuilder(
                 worldGenLevel,
                 config,
                 randomSource
-            ).build()
-        }
+            )
+        )
     }
 
     final override fun addAdditionalSaveData(
         structurePieceSerializationContext: StructurePieceSerializationContext,
         compoundTag: CompoundTag
-    ) { info.saveStructTag(this,compoundTag) }
+    ) { info.saveAsT(this,compoundTag) }
 
     final override fun getType(): StructurePieceType = info.type
 }

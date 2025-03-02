@@ -19,9 +19,9 @@ class StructBuilder(
     inline val Point.finalPos get() = finalPos(config)
 
     infix fun Selector<Block>.fill(pos: Point) = world.setBlock(pos.finalPos.blockPos,select().defaultBlockState(),3)
-    infix fun Selector<Block>.fill(area: Area) = area.iterate { fill(it) }
+    infix fun Selector<Block>.fill(area: AreaProg) = area.iterate { fill(it) }
     infix fun Block.fill(pos: Point) = world.setBlock(pos.finalPos.blockPos,defaultBlockState(),3)
-    infix fun Block.fill(area: Area) = area.iterate { fill(it) }
+    infix fun Block.fill(area: AreaProg) = area.iterate { fill(it) }
     infix fun Selector<Block>.fillWall(area: Area){
         val p1 = area.getP1()
         val p2 = area.getP2()
@@ -32,7 +32,7 @@ class StructBuilder(
     }
     infix fun Block.fillWall(area: Area) = Selector { this } fillWall area
     //填充并处理玻璃板等连接
-    infix fun Block.fillC(area: Area) = area.iterate {
+    infix fun Block.fillC(area: AreaProg) = area.iterate {
         var state = defaultBlockState()
         fun connect(pos: BlockPos,prop:BooleanProperty){
             if(!world.getBlockState(pos).isAir){
