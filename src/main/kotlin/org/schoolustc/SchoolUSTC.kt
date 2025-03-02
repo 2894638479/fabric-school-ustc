@@ -2,7 +2,7 @@ package org.schoolustc
 
 import net.fabricmc.api.ModInitializer
 import net.minecraft.resources.ResourceLocation
-import org.schoolustc.structurePieces.ClassroomPiece
+import org.schoolustc.structurePieces.*
 import org.schoolustc.structures.SchoolStructure
 import org.slf4j.LoggerFactory
 
@@ -15,5 +15,9 @@ object SchoolUSTC : ModInitializer {
 	override fun onInitialize() {
 		SchoolStructure.register()
 		ClassroomPiece.register()
+		BlocksPiece.register()
+		StreetPiece.register()
+		OuterWallPiece.register()
+		OuterWallCornerPiece.register()
 	}
 }

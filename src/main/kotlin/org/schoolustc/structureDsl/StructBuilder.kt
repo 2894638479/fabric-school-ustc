@@ -4,8 +4,10 @@ import net.minecraft.core.BlockPos
 import net.minecraft.util.RandomSource
 import net.minecraft.world.level.WorldGenLevel
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties.*
 import net.minecraft.world.level.block.state.properties.BooleanProperty
+import net.minecraft.world.level.levelgen.Heightmap
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate
 import org.schoolustc.fullId
 import org.schoolustc.interfaces.palettes
@@ -16,11 +18,18 @@ class StructBuilder(
     val config:StructGenConfig,
     val rand:RandomSource
 ) {
-    inline val Point.finalPos get() = finalPos(config)
+    private inline val Point.finalPos get() = finalPos(config)
+    private inline val Point.finalSurfacePos get() = finalSurfacePos(config) { x,z ->
+        world.getHeight(Heightmap.Types.WORLD_SURFACE_WG,x,z) - 1
+    }
+    private fun setBlock(finalPos:Point, state:BlockState) = world.setBlock(finalPos.blockPos,state,3)
+    private infix fun BlockState.setTo(finalPos:Point) = setBlock(finalPos,this)
+    private inline val Block.state get() = defaultBlockState()
 
-    infix fun Selector<Block>.fill(pos: Point) = world.setBlock(pos.finalPos.blockPos,select().defaultBlockState(),3)
+
+    infix fun Selector<Block>.fill(pos: Point) = select().state setTo pos
     infix fun Selector<Block>.fill(area: AreaProg) = area.iterate { fill(it) }
-    infix fun Block.fill(pos: Point) = world.setBlock(pos.finalPos.blockPos,defaultBlockState(),3)
+    infix fun Block.fill(pos: Point) = state setTo pos
     infix fun Block.fill(area: AreaProg) = area.iterate { fill(it) }
     infix fun Selector<Block>.fillWall(area: Area){
         val p1 = area.getP1()
@@ -32,20 +41,31 @@ class StructBuilder(
     }
     infix fun Block.fillWall(area: Area) = Selector { this } fillWall area
     //填充并处理玻璃板等连接
-    infix fun Block.fillC(area: AreaProg) = area.iterate {
-        var state = defaultBlockState()
+    infix fun Block.fillC(area: Area) = area.iterate { this fillC it }
+    infix fun Block.fillC(pos:Point) = setConnectedTo(pos.finalPos)
+    private infix fun Block.setConnectedTo(finalPos:Point){
+        connectedState(finalPos) setTo finalPos
+    }
+    private fun Block.connectedState(finalPos: Point):BlockState{
+        var state = state
         fun connect(pos: BlockPos,prop:BooleanProperty){
             if(!world.getBlockState(pos).isAir){
                 state = state.setValue(prop,true)
             }
         }
-        val pos = it.finalPos.blockPos
-        connect(pos.west(),WEST)
-        connect(pos.east(), EAST)
-        connect(pos.south(), SOUTH)
-        connect(pos.north(), NORTH)
-        world.setBlock(pos,state,3)
+        val p = finalPos.blockPos
+        connect(p.west(),WEST)
+        connect(p.east(), EAST)
+        connect(p.south(), SOUTH)
+        connect(p.north(), NORTH)
+        return state
     }
+    //将y轴转化为相对于世界表面的坐标
+    infix fun Block.fillS(area:AreaProg) = area.iterate { state setTo it.finalSurfacePos }
+    infix fun Block.fillS(pos:Point) = state setTo pos.finalSurfacePos
+
+    infix fun Block.fillSC(pos:Point) = this setConnectedTo pos.finalSurfacePos
+    infix fun Block.fillSC(area:AreaProg) = area.iterate { this setConnectedTo it.finalSurfacePos }
 
     fun <T> selector(map:Map<T,Float>): Selector<T>{
         val sum = map.values.sum()
@@ -79,6 +99,9 @@ class StructBuilder(
     infix fun String.put(startPos:Point) = putNbtStruct(this,startPos,false)
     //过滤空气
     infix fun String.putF(startPos: Point) = putNbtStruct(this,startPos,true)
+
+    fun randBool(trueChance:Float) = rand.nextFloat() < trueChance
+    inline val randBool get() = randBool(0.5f)
 }
 
 

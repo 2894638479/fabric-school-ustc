@@ -12,6 +12,8 @@ import org.schoolustc.fullId
 import org.schoolustc.structureDsl.StructGenConfig
 import org.schoolustc.structureDsl.point
 import org.schoolustc.structurePieces.ClassroomPiece
+import org.schoolustc.structurePieces.OuterWallPiece
+import org.schoolustc.structurePieces.StreetPiece
 import java.util.*
 
 class SchoolStructure(settings: StructureSettings): Structure(settings) {
@@ -27,20 +29,22 @@ class SchoolStructure(settings: StructureSettings): Structure(settings) {
         val type = StructureType { CODEC }
     }
     override fun findGenerationPoint(context: GenerationContext): Optional<GenerationStub> {
-        val chunkPos = context.chunkPos
-        val x = chunkPos.middleBlockX
-        val z = chunkPos.middleBlockZ
-        val y = context.chunkGenerator.getFirstFreeHeight(
+        fun y(x:Int,z:Int) = context.chunkGenerator.getBaseHeight(
             x,z,
             Heightmap.Types.WORLD_SURFACE_WG,
             context.heightAccessor,
             context.randomState
         )
+        val chunkPos = context.chunkPos
+        val x = chunkPos.middleBlockX
+        val z = chunkPos.middleBlockZ
+        val y = y(x,z)
         val pos = BlockPos(x,y,z)
         return Optional.of(
             GenerationStub(BlockPos(x,y,z)){
                 fun r() = context.random.nextFloat() > 0.5f
-                it.addPiece(ClassroomPiece(StructGenConfig(pos.point,r(),r(),r())))
+//                it.addPiece(ClassroomPiece(StructGenConfig(pos.point,r(),r(),r())))
+                it.addPiece(OuterWallPiece(StructGenConfig(pos.point,r(),r(),r()),12))
             }
         )
     }
