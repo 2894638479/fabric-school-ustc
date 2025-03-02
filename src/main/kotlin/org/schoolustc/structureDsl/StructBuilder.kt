@@ -8,7 +8,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties.*
 import net.minecraft.world.level.block.state.properties.BooleanProperty
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate
 import org.schoolustc.fullId
-import org.schoolustc.interfaces.PaletteGetter
 import org.schoolustc.interfaces.palettes
 import org.schoolustc.logger
 
@@ -19,11 +18,11 @@ class StructBuilder(
 ) {
     inline val Point.finalPos get() = finalPos(config)
 
-    infix fun BlockSelector.fill(pos: Point) = world.setBlock(pos.finalPos.blockPos,select(),3)
-    infix fun BlockSelector.fill(area: Area) = area.iterate { fill(it) }
+    infix fun Selector<Block>.fill(pos: Point) = world.setBlock(pos.finalPos.blockPos,select().defaultBlockState(),3)
+    infix fun Selector<Block>.fill(area: Area) = area.iterate { fill(it) }
     infix fun Block.fill(pos: Point) = world.setBlock(pos.finalPos.blockPos,defaultBlockState(),3)
     infix fun Block.fill(area: Area) = area.iterate { fill(it) }
-    infix fun BlockSelector.fillWall(area: Area){
+    infix fun Selector<Block>.fillWall(area: Area){
         val p1 = area.getP1()
         val p2 = area.getP2()
         this fill Area(p1.x..p1.x,p1.y..p2.y,p1.z..p2.z)
@@ -31,8 +30,9 @@ class StructBuilder(
         this fill Area(p1.x+1 ..p2.x-1,p1.y..p2.y,p1.z..p1.z)
         this fill Area(p1.x+1 ..p2.x-1,p1.y..p2.y,p2.z..p2.z)
     }
-    infix fun Block.fillWall(area: Area) = BlockSelector { defaultBlockState() } fillWall area
-    infix fun Block.fillConnectable(area: Area) = area.iterate {
+    infix fun Block.fillWall(area: Area) = Selector { this } fillWall area
+    //填充并处理玻璃板等连接
+    infix fun Block.fillC(area: Area) = area.iterate {
         var state = defaultBlockState()
         fun connect(pos: BlockPos,prop:BooleanProperty){
             if(!world.getBlockState(pos).isAir){
@@ -47,16 +47,16 @@ class StructBuilder(
         world.setBlock(pos,state,3)
     }
 
-    fun selector(map:Map<Block,Float>): BlockSelector{
+    fun <T> selector(map:Map<T,Float>): Selector<T>{
         val sum = map.values.sum()
-        return BlockSelector {
+        return Selector {
             val r = rand.nextFloat() * sum
             var f = 0f
             for((block,weight) in map){
                 f += weight
-                if(r < f) return@BlockSelector block.defaultBlockState()
+                if(r < f) return@Selector block
             }
-            return@BlockSelector map.keys.last().defaultBlockState()
+            return@Selector map.keys.last()
         }
     }
 
@@ -66,15 +66,19 @@ class StructBuilder(
             .get(fullId(name))
             .orElse(null)
     }
-    private fun putNbtStruct(name:String, startPos:Point){
+    private fun putNbtStruct(name:String, startPos:Point,filterAir:Boolean){
         val struct = getNbtStruct(name) ?: return logger.warn("not found structure nbt $name")
         struct.palettes.run {
             getOrNull(rand.nextInt(size)) ?: return logger.warn("empty palette")
         }.blocks().forEach {
-            world.setBlock(it.pos.point.plus(startPos).finalPos.blockPos,it.state,3)
+            if(!(filterAir && it.state.isAir))
+                world.setBlock(it.pos.point.plus(startPos).finalPos.blockPos,it.state,3)
         }
     }
-    infix fun String.put(startPos:Point) = putNbtStruct(this,startPos)
+    //放置nbt
+    infix fun String.put(startPos:Point) = putNbtStruct(this,startPos,false)
+    //过滤空气
+    infix fun String.putF(startPos: Point) = putNbtStruct(this,startPos,true)
 }
 
 

@@ -1,4 +1,4 @@
-package org.schoolustc.interfaces;
+package org.schoolustc.interfaces
 
 
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate
