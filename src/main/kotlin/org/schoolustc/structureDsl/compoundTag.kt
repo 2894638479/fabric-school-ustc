@@ -1,11 +1,10 @@
 package org.schoolustc.structureDsl
 
-import net.fabricmc.fabric.api.networking.v1.S2CPlayChannelEvents.Register
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.block.Block
-import java.rmi.registry.Registry
+import org.schoolustc.structureDsl.struct.StructGenConfig
 
 /*
 used key:
@@ -15,7 +14,7 @@ O
 id
  */
 
-fun CompoundTag.putConfig(config:StructGenConfig){
+fun CompoundTag.putConfig(config: StructGenConfig){
     putInt("X",config.pos.x)
     putInt("Y",config.pos.y)
     putInt("Z",config.pos.z)

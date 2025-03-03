@@ -1,6 +1,7 @@
 package org.schoolustc.structureDsl
 
 import net.minecraft.core.BlockPos
+import org.schoolustc.structureDsl.struct.StructGenConfig
 
 data class Point(
     val x:Int,
@@ -17,7 +18,7 @@ data class Point(
             config.pos.z + if (config.rotate) xAdd else zAdd
         )
     }
-    fun finalSurfacePos(config: StructGenConfig,getH:(Int,Int)->Int):Point{
+    fun finalSurfacePos(config: StructGenConfig, getH:(Int, Int)->Int):Point{
         val finalPos = finalPos(config)
         return Point(
             finalPos.x,

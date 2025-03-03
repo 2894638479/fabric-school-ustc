@@ -1,6 +1,7 @@
 package org.schoolustc.structureDsl
 
 import net.minecraft.world.level.levelgen.structure.BoundingBox
+import org.schoolustc.structureDsl.struct.StructGenConfig
 import kotlin.math.max
 import kotlin.math.min
 

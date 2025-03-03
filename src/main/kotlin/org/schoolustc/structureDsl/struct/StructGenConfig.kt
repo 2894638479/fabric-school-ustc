@@ -1,4 +1,6 @@
-package org.schoolustc.structureDsl
+package org.schoolustc.structureDsl.struct
+
+import org.schoolustc.structureDsl.Point
 
 class StructGenConfig(
     val pos: Point,

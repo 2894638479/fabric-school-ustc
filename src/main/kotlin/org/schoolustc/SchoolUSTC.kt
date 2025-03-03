@@ -3,7 +3,7 @@ package org.schoolustc
 import net.fabricmc.api.ModInitializer
 import net.minecraft.resources.ResourceLocation
 import org.schoolustc.structurePieces.*
-import org.schoolustc.structures.SchoolStructure
+import org.schoolustc.structures.School
 import org.slf4j.LoggerFactory
 
 
@@ -13,7 +13,7 @@ val logger = LoggerFactory.getLogger(id)
 
 object SchoolUSTC : ModInitializer {
 	override fun onInitialize() {
-		SchoolStructure.register()
+		School.register()
 		ClassroomPiece.register()
 		BlocksPiece.register()
 		StreetPiece.register()

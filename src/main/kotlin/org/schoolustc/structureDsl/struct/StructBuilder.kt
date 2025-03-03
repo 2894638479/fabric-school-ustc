@@ -1,4 +1,4 @@
-package org.schoolustc.structureDsl
+package org.schoolustc.structureDsl.struct
 
 import net.minecraft.core.BlockPos
 import net.minecraft.util.RandomSource
@@ -12,18 +12,19 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import org.schoolustc.fullId
 import org.schoolustc.interfaces.palettes
 import org.schoolustc.logger
+import org.schoolustc.structureDsl.*
 
 class StructBuilder(
     val world:WorldGenLevel,
-    val config:StructGenConfig,
+    val config: StructGenConfig,
     val rand:RandomSource
 ) {
-    private inline val Point.finalPos get() = finalPos(config)
-    private inline val Point.finalSurfacePos get() = finalSurfacePos(config) { x,z ->
+    inline val Point.finalPos get() = finalPos(config)
+    inline val Point.finalSurfacePos get() = finalSurfacePos(config) { x, z ->
         world.getHeight(Heightmap.Types.WORLD_SURFACE_WG,x,z) - 1
     }
-    private fun setBlock(finalPos:Point, state:BlockState) = world.setBlock(finalPos.blockPos,state,3)
-    private infix fun BlockState.setTo(finalPos:Point) = setBlock(finalPos,this)
+    private fun setBlock(finalPos: Point, state:BlockState) = world.setBlock(finalPos.blockPos,state,3)
+    private infix fun BlockState.setTo(finalPos: Point) = setBlock(finalPos,this)
     private inline val Block.state get() = defaultBlockState()
 
 
@@ -42,8 +43,8 @@ class StructBuilder(
     infix fun Block.fillWall(area: Area) = Selector { this } fillWall area
     //填充并处理玻璃板等连接
     infix fun Block.fillC(area: Area) = area.iterate { this fillC it }
-    infix fun Block.fillC(pos:Point) = setConnectedTo(pos.finalPos)
-    private infix fun Block.setConnectedTo(finalPos:Point){
+    infix fun Block.fillC(pos: Point) = setConnectedTo(pos.finalPos)
+    private infix fun Block.setConnectedTo(finalPos: Point){
         connectedState(finalPos) setTo finalPos
     }
     private fun Block.connectedState(finalPos: Point):BlockState{
@@ -61,13 +62,13 @@ class StructBuilder(
         return state
     }
     //将y轴转化为相对于世界表面的坐标
-    infix fun Block.fillS(area:AreaProg) = area.iterate { state setTo it.finalSurfacePos }
-    infix fun Block.fillS(pos:Point) = state setTo pos.finalSurfacePos
+    infix fun Block.fillS(area: AreaProg) = area.iterate { state setTo it.finalSurfacePos }
+    infix fun Block.fillS(pos: Point) = state setTo pos.finalSurfacePos
 
-    infix fun Block.fillSC(pos:Point) = this setConnectedTo pos.finalSurfacePos
-    infix fun Block.fillSC(area:AreaProg) = area.iterate { this setConnectedTo it.finalSurfacePos }
+    infix fun Block.fillSC(pos: Point) = this setConnectedTo pos.finalSurfacePos
+    infix fun Block.fillSC(area: AreaProg) = area.iterate { this setConnectedTo it.finalSurfacePos }
 
-    fun <T> selector(map:Map<T,Float>): Selector<T>{
+    fun <T> selector(map:Map<T,Float>): Selector<T> {
         val sum = map.values.sum()
         return Selector {
             val r = rand.nextFloat() * sum
@@ -86,7 +87,7 @@ class StructBuilder(
             .get(fullId(name))
             .orElse(null)
     }
-    private fun putNbtStruct(name:String, startPos:Point,filterAir:Boolean){
+    private fun putNbtStruct(name:String, startPos: Point, filterAir:Boolean){
         val struct = getNbtStruct(name) ?: return logger.warn("not found structure nbt $name")
         struct.palettes.run {
             getOrNull(rand.nextInt(size)) ?: return logger.warn("empty palette")
@@ -96,7 +97,7 @@ class StructBuilder(
         }
     }
     //放置nbt
-    infix fun String.put(startPos:Point) = putNbtStruct(this,startPos,false)
+    infix fun String.put(startPos: Point) = putNbtStruct(this,startPos,false)
     //过滤空气
     infix fun String.putF(startPos: Point) = putNbtStruct(this,startPos,true)
 

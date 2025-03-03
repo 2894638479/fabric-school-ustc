@@ -1,4 +1,4 @@
-package org.schoolustc.structureDsl
+package org.schoolustc.structureDsl.struct
 
 import net.minecraft.core.BlockPos
 import net.minecraft.nbt.CompoundTag
@@ -11,10 +11,11 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox
 import net.minecraft.world.level.levelgen.structure.StructurePiece
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType
+import org.schoolustc.structureDsl.Area
 
 abstract class MyStruct (
-    val info:MyStructInfo<*>,
-    val config:StructGenConfig,
+    val info: MyStructInfo<*>,
+    val config: StructGenConfig,
     area: Area? = null
 ): StructurePiece(info.type,0,(
         info.area ?: area ?: error("unknown struct area")
@@ -28,14 +29,13 @@ abstract class MyStruct (
         chunkPos: ChunkPos,
         blockPos: BlockPos
     ) {
-        info.buildAsT(this,
-            StructBuilder(
-                worldGenLevel,
-                config,
-                randomSource
-            )
-        )
+        StructBuilder(
+            worldGenLevel,
+            config,
+            randomSource
+        ).build()
     }
+    abstract fun StructBuilder.build()
 
     final override fun addAdditionalSaveData(
         structurePieceSerializationContext: StructurePieceSerializationContext,
