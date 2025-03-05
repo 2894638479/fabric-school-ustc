@@ -54,6 +54,8 @@ class StructureBuilder(
         val roadWidth = 3
         val splitterWidth = 1
         val blockMinSize = 15
+        val gateWidth = 11
+        val gateThick = 2
 
 
         val wall = mutableListOf<Area2D>()
@@ -80,24 +82,16 @@ class StructureBuilder(
         fun addWall(area:Area2D){
             if (area.w == 1) {
                 val l = splitWall(area.z)
-                l.zipWithNext { a, b -> wall.add(Area2D(area.x,a+1..b-1)) }
-                l.dropLast(1).drop(1).forEach { wallCor.add(Area2D(area.x,it..it)) }
+                l.zipWithNext { a, b -> wall += Area2D(area.x,a+1..b-1) }
+                l.dropLast(1).drop(1).forEach { wallCor += Area2D(area.x,it..it) }
             } else if(area.h == 1) {
                 val l = splitWall(area.x)
-                l.zipWithNext { a, b -> wall.add(Area2D(a+1..b-1,area.z)) }
-                l.dropLast(1).drop(1).forEach { wallCor.add(Area2D(it..it,area.z)) }
+                l.zipWithNext { a, b -> wall += Area2D(a+1..b-1,area.z) }
+                l.dropLast(1).drop(1).forEach { wallCor += Area2D(it..it,area.z) }
             } else error("w or h != 1")
         }
-        addWall(Area2D(area.x,area.z1..area.z1))
-        addWall(Area2D(area.x,area.z2..area.z2))
-        addWall(Area2D(area.x1..area.x1,area.z))
-        addWall(Area2D(area.x2..area.x2,area.z))
-        wallCor.add(Area2D(area.x1..area.x1,area.z1..area.z1))
-        wallCor.add(Area2D(area.x2..area.x2,area.z2..area.z2))
-        wallCor.add(Area2D(area.x1..area.x1,area.z2..area.z2))
-        wallCor.add(Area2D(area.x2..area.x2,area.z1..area.z1))
-        block.add(area.padding(1))
-        val splitTime = (log2(area.size.toFloat()) - 8f).toInt()
+        block += area.padding(1)
+        val splitTime = (log2(area.size.toFloat())).toInt()
         if(splitTime <= 0) error("split time <= 0")
 
         fun getRoadWidth(fullWidth:IntRange):IntRange?{
@@ -117,31 +111,80 @@ class StructureBuilder(
                 if(rand.nextBool(w.toFloat() / (w + h).toFloat())){
                     getRoadWidth(x)?.run {
                         block.removeAt(r)
-                        block.add(Area2D(x1..<first,z))
-                        block.add(Area2D(last + 1..x2,z))
+                        block += Area2D(x1..<first,z)
+                        block += Area2D(last + 1..x2,z)
                         val width = last - first + 1
                         when(width){
                             streetWidth -> street
                             roadWidth -> road
                             splitterWidth -> splitter
                             else -> error("unknown road width $width")
-                        }.add(Area2D(this,z))
+                        } += Area2D(this,z)
                     }
                 } else {
                     getRoadWidth(z)?.run {
                         block.removeAt(r)
-                        block.add(Area2D(x,z1..<first))
-                        block.add(Area2D(x,last + 1..z2))
+                        block += Area2D(x,z1..<first)
+                        block += Area2D(x,last + 1..z2)
                         val width = last - first + 1
                         when(width){
                             streetWidth -> street
                             roadWidth -> road
                             splitterWidth -> splitter
                             else -> error("unknown road width $width")
-                        }.add(Area2D(x,this))
+                        } += Area2D(x,this)
                     }
                 }
             }
+        }
+        run {
+            val wallAreaList = mutableListOf(
+                Area2D(area.x, area.z1..area.z1),
+                Area2D(area.x, area.z2..area.z2),
+                Area2D(area.x1..area.x1, area.z),
+                Area2D(area.x2..area.x2, area.z)
+            )
+            val gateThickList = listOf(
+                area.z1 - gateThick + 1..area.z1,
+                area.z1..area.z1 + gateThick - 1,
+                area.x1 - gateThick + 1..area.x1,
+                area.x2..area.x2 + gateThick - 1
+            )
+            street.getOrNull(0)?.let {
+                val rotate = it.w > it.h
+                val r = rand.nextBoolean()
+                val index = if(rotate) if(r) 2 else 3 else if(r) 0 else 1
+                val wallArea = wallAreaList[index]
+                val gateThick = gateThickList[index]
+                wallAreaList.removeAt(index)
+                fun split(streetRange:IntRange):IntRange{
+                    val streetWidth = streetRange.last - streetRange.first + 1
+                    val offset = (streetWidth - gateWidth) / 2
+                    return streetRange.first + offset..<streetRange.first + offset + gateWidth
+                }
+                if(rotate){
+                    val range = split(it.z)
+                    val z1 = range.first
+                    val z2 = range.last
+                    wallAreaList += Area2D(wallArea.x,wallArea.z.first..z1)
+                    wallAreaList += Area2D(wallArea.x,z2..wallArea.z.last)
+                    gate += Area2D(gateThick,range)
+                } else {
+                    val range = split(it.x)
+                    val x1 = range.first
+                    val x2 = range.last
+                    wallAreaList += Area2D(wallArea.x.first..x1,wallArea.z)
+                    wallAreaList += Area2D(x2..wallArea.x.last,wallArea.z)
+                    gate += Area2D(range,gateThick)
+                }
+            }
+
+
+            wallAreaList.forEach { addWall(it) }
+            wallCor += Area2D(area.x1..area.x1,area.z1..area.z1)
+            wallCor += Area2D(area.x2..area.x2,area.z2..area.z2)
+            wallCor += Area2D(area.x1..area.x1,area.z2..area.z2)
+            wallCor += Area2D(area.x2..area.x2,area.z1..area.z1)
         }
         return SplitResult(
             wall,wallCor,block,street,road,splitter,gate
@@ -160,4 +203,6 @@ class StructureBuilder(
     fun Area2D.toStreet() = split(5).map { StreetPiece(it,w > h) }
     fun Area2D.toRoad() = split(8).map { RoadPiece(it,w > h) }
     fun Area2D.toSplitter() = split(8).map { SplitterPiece(it,w > h) }
+    fun Area2D.toGate() = GatePiece(this,minY)
+    val Area2D.minY get() = listOf(y(x1,z1),y(x2,z2),y(x1,z2),y(x2,z1)).min()
 }

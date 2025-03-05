@@ -28,9 +28,9 @@ class StructBuilder(
     private inline val Block.state get() = defaultBlockState()
 
 
-    infix fun Selector<Block>.fill(pos: Point) = select().state setTo pos
+    infix fun Selector<Block>.fill(pos: Point) = select().state setTo pos.finalPos
     infix fun Selector<Block>.fill(area: AreaProg) = area.iterate { fill(it) }
-    infix fun Block.fill(pos: Point) = state setTo pos
+    infix fun Block.fill(pos: Point) = state setTo pos.finalPos
     infix fun Block.fill(area: AreaProg) = area.iterate { fill(it) }
     infix fun Selector<Block>.fillWall(area: Area){
         val p1 = area.getP1()

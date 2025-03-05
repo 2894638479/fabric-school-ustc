@@ -15,6 +15,7 @@ class School(settings:StructureSettings): MyStructure(Companion,settings) {
             streetArea.forEach { it.toStreet().add() }
             roadArea.forEach { it.toRoad().add() }
             splitterArea.forEach { it.toSplitter().add() }
+            gateArea.forEach { it.toGate().add() }
         }
     }
 
