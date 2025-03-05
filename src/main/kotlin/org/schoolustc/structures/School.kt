@@ -12,6 +12,9 @@ class School(settings:StructureSettings): MyStructure(Companion,settings) {
         splitArea(randArea(pos.x,pos.z,50..80)).run {
             wallArea.forEach { it.toWall().add() }
             wallCorArea.forEach { it.toWallCor().add() }
+            streetArea.forEach { it.toStreet().add() }
+            roadArea.forEach { it.toRoad().add() }
+            splitterArea.forEach { it.toSplitter().add() }
         }
     }
 

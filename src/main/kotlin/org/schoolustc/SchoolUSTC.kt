@@ -19,5 +19,7 @@ object SchoolUSTC : ModInitializer {
 		StreetPiece.register()
 		OuterWallPiece.register()
 		OuterWallCornerPiece.register()
+		RoadPiece.register()
+		SplitterPiece.register()
 	}
 }

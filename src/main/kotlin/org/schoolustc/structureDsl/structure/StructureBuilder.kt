@@ -5,11 +5,13 @@ import net.minecraft.world.level.levelgen.structure.Structure.GenerationContext
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder
 import org.schoolustc.structureDsl.Area2D
 import org.schoolustc.structureDsl.Point
+import org.schoolustc.structureDsl.nextBool
 import org.schoolustc.structureDsl.nextInt
 import org.schoolustc.structureDsl.struct.MyStruct
 import org.schoolustc.structureDsl.struct.StructGenConfig
-import org.schoolustc.structurePieces.OuterWallCornerPiece
-import org.schoolustc.structurePieces.OuterWallPiece
+import org.schoolustc.structurePieces.*
+import kotlin.math.ln
+import kotlin.math.log2
 
 class StructureBuilder(
     private val context:GenerationContext,
@@ -17,6 +19,7 @@ class StructureBuilder(
 ) {
     private inline val rand get() = context.random
     fun MyStruct.add() = builder.addPiece(this)
+    fun List<MyStruct>.add() = forEach { builder.addPiece(it) }
     fun y(x:Int,z:Int) = context.chunkGenerator.getBaseHeight(
         x,z,
         Heightmap.Types.WORLD_SURFACE_WG,
@@ -50,7 +53,7 @@ class StructureBuilder(
         val streetWidth = 7
         val roadWidth = 3
         val splitterWidth = 1
-        val blockMinSize = 10
+        val blockMinSize = 15
 
 
         val wall = mutableListOf<Area2D>()
@@ -94,6 +97,52 @@ class StructureBuilder(
         wallCor.add(Area2D(area.x1..area.x1,area.z2..area.z2))
         wallCor.add(Area2D(area.x2..area.x2,area.z1..area.z1))
         block.add(area.padding(1))
+        val splitTime = (log2(area.size.toFloat()) - 8f).toInt()
+        if(splitTime <= 0) error("split time <= 0")
+
+        fun getRoadWidth(fullWidth:IntRange):IntRange?{
+            val remain = fullWidth.last - fullWidth.first + 1 - blockMinSize*2
+            if(remain <= 0) return null
+            val r = rand.nextFloat()
+            val width = if(remain >= streetWidth && r*40f < remain) streetWidth
+                else if(remain >= roadWidth && r*10f < remain) roadWidth
+                else splitterWidth
+            val offset = rand.nextInt(0..remain - width) + blockMinSize
+            return fullWidth.first + offset..< fullWidth.first + offset + width
+        }
+        for(i in 0..splitTime){
+            val r = rand.nextInt(block.indices)
+            val area = block[r]
+            area.run {
+                if(rand.nextBool(w.toFloat() / (w + h).toFloat())){
+                    getRoadWidth(x)?.run {
+                        block.removeAt(r)
+                        block.add(Area2D(x1..<first,z))
+                        block.add(Area2D(last + 1..x2,z))
+                        val width = last - first + 1
+                        when(width){
+                            streetWidth -> street
+                            roadWidth -> road
+                            splitterWidth -> splitter
+                            else -> error("unknown road width $width")
+                        }.add(Area2D(this,z))
+                    }
+                } else {
+                    getRoadWidth(z)?.run {
+                        block.removeAt(r)
+                        block.add(Area2D(x,z1..<first))
+                        block.add(Area2D(x,last + 1..z2))
+                        val width = last - first + 1
+                        when(width){
+                            streetWidth -> street
+                            roadWidth -> road
+                            splitterWidth -> splitter
+                            else -> error("unknown road width $width")
+                        }.add(Area2D(x,this))
+                    }
+                }
+            }
+        }
         return SplitResult(
             wall,wallCor,block,street,road,splitter,gate
         )
@@ -108,4 +157,7 @@ class StructureBuilder(
         error("w or h != 1")
     }
     fun Area2D.toWallCor() = OuterWallCornerPiece(StructGenConfig(Point(x1,0,z1),false,false,false))
+    fun Area2D.toStreet() = split(5).map { StreetPiece(it,w > h) }
+    fun Area2D.toRoad() = split(8).map { RoadPiece(it,w > h) }
+    fun Area2D.toSplitter() = split(8).map { SplitterPiece(it,w > h) }
 }
