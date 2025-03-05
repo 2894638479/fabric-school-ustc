@@ -42,11 +42,14 @@ class StructBuilder(
     }
     infix fun Block.fillWall(area: Area) = Selector { this } fillWall area
     //填充并处理玻璃板等连接
-    infix fun Block.fillC(area: Area) = area.iterate { this fillC it }
-    infix fun Block.fillC(pos: Point) = setConnectedTo(pos.finalPos)
-    private infix fun Block.setConnectedTo(finalPos: Point){
-        connectedState(finalPos) setTo finalPos
-    }
+    infix fun Block.fillX(area: Area) = area.iterate { this fillX it }
+    infix fun Block.fillX(pos: Point) = connectedState(config.rotate) setTo pos.finalPos
+    infix fun Block.fillZ(area: Area) = area.iterate { this fillZ it }
+    infix fun Block.fillZ(pos: Point) = connectedState(!config.rotate) setTo pos.finalPos
+    infix fun Block.fillXS(area: Area) = area.iterate { this fillXS it }
+    infix fun Block.fillXS(pos: Point) = connectedState(config.rotate) setTo pos.finalSurfacePos
+    infix fun Block.fillZS(area: Area) = area.iterate { this fillZS it }
+    infix fun Block.fillZS(pos: Point) = connectedState(!config.rotate) setTo pos.finalSurfacePos
     private fun Block.connectedState(finalPos: Point):BlockState{
         var state = state
         fun connect(pos: BlockPos,prop:BooleanProperty){
@@ -61,12 +64,13 @@ class StructBuilder(
         connect(p.north(), NORTH)
         return state
     }
+    //true为x轴方向连接，false为z轴方向连接
+    private fun Block.connectedState(rotate:Boolean) = state
+        .setValue(if(rotate) NORTH else WEST,true)
+        .setValue(if(rotate) SOUTH else EAST,true)
     //将y轴转化为相对于世界表面的坐标
     infix fun Block.fillS(area: AreaProg) = area.iterate { state setTo it.finalSurfacePos }
     infix fun Block.fillS(pos: Point) = state setTo pos.finalSurfacePos
-
-    infix fun Block.fillSC(pos: Point) = this setConnectedTo pos.finalSurfacePos
-    infix fun Block.fillSC(area: AreaProg) = area.iterate { this setConnectedTo it.finalSurfacePos }
 
     fun <T> selector(map:Map<T,Float>): Selector<T> {
         val sum = map.values.sum()

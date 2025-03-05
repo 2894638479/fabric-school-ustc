@@ -63,13 +63,14 @@ class StructureBuilder(
 
         fun splitWall(range:IntRange):List<Int>{
             val full = range.last - range.first
-            val count = full / (wallMaxLength)
-            val rest = full % (wallMaxLength)
-            val length = List(count){ if(it < rest) wallMaxLength + 1 else wallMaxLength }
+            val count = full / (wallMaxLength + 1) + 1
+            val each = full / count
+            val rest = full % count
+            val length = List(count){ if(it < rest) each + 1 else each }
             val result = mutableListOf<Int>()
             length.forEachIndexed { i, it ->
-                result += if(i == 0) range.first + length[i]
-                else result[i-1] + length[i]
+                result += if(i == 0) range.first + it
+                else result[i-1] + it
             }
             return listOf(range.first) + result
         }
@@ -93,7 +94,6 @@ class StructureBuilder(
         wallCor.add(Area2D(area.x1..area.x1,area.z2..area.z2))
         wallCor.add(Area2D(area.x2..area.x2,area.z1..area.z1))
         block.add(area.padding(1))
-
         return SplitResult(
             wall,wallCor,block,street,road,splitter,gate
         )
