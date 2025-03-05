@@ -33,6 +33,6 @@ class SplitterPiece(
         }
     }
     override fun StructBuilder.build() {
-        SMOOTH_STONE_SLAB fillS Area(0..0,0..0,0..<length)
+        SMOOTH_STONE_SLAB fillS Area(0..0,1..1,0..<length)
     }
 }

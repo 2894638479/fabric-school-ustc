@@ -10,7 +10,6 @@ import org.schoolustc.structureDsl.nextInt
 import org.schoolustc.structureDsl.struct.MyStruct
 import org.schoolustc.structureDsl.struct.StructGenConfig
 import org.schoolustc.structurePieces.*
-import kotlin.math.ln
 import kotlin.math.log2
 
 class StructureBuilder(
@@ -146,7 +145,7 @@ class StructureBuilder(
             )
             val gateThickList = listOf(
                 area.z1 - gateThick + 1..area.z1,
-                area.z1..area.z1 + gateThick - 1,
+                area.z2..area.z2 + gateThick - 1,
                 area.x1 - gateThick + 1..area.x1,
                 area.x2..area.x2 + gateThick - 1
             )

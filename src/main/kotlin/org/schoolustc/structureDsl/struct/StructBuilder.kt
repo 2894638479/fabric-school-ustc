@@ -30,6 +30,8 @@ class StructBuilder(
 
     infix fun Selector<Block>.fill(pos: Point) = select().state setTo pos.finalPos
     infix fun Selector<Block>.fill(area: AreaProg) = area.iterate { fill(it) }
+    infix fun BlockState.fill(pos:Point) = this setTo pos.finalPos
+    infix fun BlockState.fill(area:AreaProg) = area.iterate { this fill it }
     infix fun Block.fill(pos: Point) = state setTo pos.finalPos
     infix fun Block.fill(area: AreaProg) = area.iterate { fill(it) }
     infix fun Selector<Block>.fillWall(area: Area){
