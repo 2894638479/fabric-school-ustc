@@ -6,11 +6,12 @@ class Area2D(
     val x:IntRange,
     val z:IntRange
 ){
+    constructor(x1:Int,z1:Int,w:Int,h:Int):this(x1..<x1+w,z1..<z1+h)
     val w get() = x.last - x.first + 1
     val h get() = z.last - z.first + 1
     fun padding(i:Int) = Area2D(
-        x.first + 1 .. x.last - 1,
-        z.first + 1 .. z.last - 1
+        x.first + i .. x.last - i,
+        z.first + i .. z.last - i
     )
     val x1 get() = x.first
     val x2 get() = x.last
