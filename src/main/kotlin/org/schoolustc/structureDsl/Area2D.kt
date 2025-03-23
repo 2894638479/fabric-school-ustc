@@ -30,6 +30,10 @@ class Area2D(
         else area2D(l.last(length),w)
     }
     fun sliceEnd(direction: Direction2D,length: Int) = sliceStart(direction.reverse,length)
+    fun slice(direction:Direction2D,index:IntRange) = direction.run {
+        if(is1) area2D(l.first + index.first..l.first + index.last,w)
+        else area2D(l.last - index.last..l.last - index.first,w)
+    }
     fun expand(count:Int) = Area2D(x.expand(count),z.expand(count))
     fun expand(direction:Direction2D,count:Int) = direction.run {
         if(is1) area2D(l.expand(0,count),w)

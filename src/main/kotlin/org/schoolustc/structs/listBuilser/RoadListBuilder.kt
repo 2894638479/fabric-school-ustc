@@ -2,7 +2,6 @@ package org.schoolustc.structs.listBuilser
 
 import org.schoolustc.structs.builder.RoadBuilder
 import org.schoolustc.structureDsl.Area2D
-import org.schoolustc.structureDsl.Area2D.Companion.area2D
 import org.schoolustc.structureDsl.Direction2D
 import org.schoolustc.structureDsl.match
 import org.schoolustc.structureDsl.struct.IsRoad
@@ -21,11 +20,12 @@ class RoadListBuilder <T:MyStruct,V>  (
         mutableListOf<T>().apply {
             var left = area.length
             while(left > type.period){
-                val a = area2D(area.l.last - left + 1..area.l.last - left + type.period, area.w)
+                val current = area.length - left
+                val a = area.slice(direction,current..<current + type.period)
                 add(RoadBuilder(a,direction,type).build())
                 left -= type.period
             }
-            val a = area2D(area.l.last - left + 1..area.l.last, area.w)
+            val a = area.slice(direction,area.length - left..<area.length)
             add(RoadBuilder(a,direction,type).build())
         }
     }
