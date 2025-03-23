@@ -1,5 +1,7 @@
 package org.schoolustc.structureDsl
 
+import org.schoolustc.structureDsl.struct.StructGenConfig
+
 enum class Direction2D {
     X1,X2,Z1,Z2;
     val isX get() = this == X1 || this == X2
@@ -36,4 +38,11 @@ enum class Direction2D {
     inline val Area2D.l get() = l(this@Direction2D)
     infix fun parallel(other:Direction2D) = isX == other.isX
     infix fun vertical(other:Direction2D) = isX == other.isZ
+    fun applyConfig(config:StructGenConfig): Direction2D {
+        var d = this
+        if(config.revX && d.isX) d = d.reverse
+        if(config.revZ && d.isZ) d = d.reverse
+        if(config.rotate) d = d.rotate
+        return d
+    }
 }

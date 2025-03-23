@@ -1,12 +1,16 @@
 package org.schoolustc.structureDsl.struct
 
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.util.RandomSource
 import net.minecraft.world.level.WorldGenLevel
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.StairBlock
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties.*
 import net.minecraft.world.level.block.state.properties.BooleanProperty
+import net.minecraft.world.level.block.state.properties.Half
+import net.minecraft.world.level.block.state.properties.StairsShape
 import net.minecraft.world.level.levelgen.Heightmap
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate
 import org.schoolustc.fullId
@@ -109,6 +113,13 @@ class StructBuildScope(
 
     fun randBool(trueChance:Float) = rand.nextFloat() < trueChance
     inline val randBool get() = randBool(0.5f)
+    fun Block.stairState(facing:Direction2D,shape:StairsShape = StairsShape.STRAIGHT,half: Half = Half.BOTTOM) =
+        defaultBlockState().setValue(StairBlock.FACING,when(facing.applyConfig(config)){
+            Direction2D.X1 -> Direction.WEST
+            Direction2D.X2 -> Direction.EAST
+            Direction2D.Z1 -> Direction.NORTH
+            Direction2D.Z2 -> Direction.SOUTH
+        }).setValue(STAIRS_SHAPE,shape).setValue(HALF,half)
 }
 
 
