@@ -15,6 +15,7 @@ import org.schoolustc.structureDsl.struct.builder.MyStructBuilder
 import org.schoolustc.structureDsl.structure.StructureBuildScope
 import org.schoolustc.structureDsl.structure.builder.MyStructListBuilder
 import kotlin.math.log2
+import kotlin.math.roundToInt
 
 class ScaffoldBuilder(
     val area:Area2D,
@@ -67,7 +68,7 @@ class ScaffoldBuilder(
         for (d in Direction2D.entries) d.run {
             val wallArea = area.sliceEnd(this,1)
             if(this == gatePos?.first){
-                val builder = GateBuilder(wallArea,gatePos!!.second, gatePos!!.first) { minY }.apply { addToList() }
+                val builder = GateBuilder(wallArea,gatePos!!.second, gatePos!!.first) { avgY.roundToInt() }.apply { addToList() }
                 WallListBuilder(right,builder.wallArea1).addToList()
                 WallListBuilder(right,builder.wallArea2).addToList()
             } else {

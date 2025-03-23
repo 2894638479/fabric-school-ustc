@@ -25,6 +25,7 @@ class StructureBuildScope(
         context.randomState
     ) - 1
     val Area2D.minY get() = listOf(y(x1,z1),y(x2,z2),y(x1,z2),y(x2,z1)).min()
+    val Area2D.avgY get() = listOf(y(x1,z1),y(x2,z2),y(x1,z2),y(x2,z1)).average()
     fun randArea(posX:Int,posZ:Int,size:IntProgression): Area2D {
         val width = rand.nextInt(size)
         val height = rand.nextInt(size)

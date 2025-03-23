@@ -23,10 +23,10 @@ class GateBuilder(
         area2D(wallArea.l,wallArea.w.first + pos - 2..<wallArea.w.first + pos + streetWidth + 2)
     }.checkNotEmpty()
     val wallArea1 = direction.run {
-        area2D(wallArea.l,wallArea.w.first..<area.w.first)
+        area2D(wallArea.l,wallArea.w.first..area.w.first)
     }.checkNotEmpty()
     val wallArea2 = direction.run {
-        area2D(wallArea.l,area.w.last + 1..wallArea.w.last)
+        area2D(wallArea.l,area.w.last..wallArea.w.last)
     }.checkNotEmpty()
     private val finalArea = area
         .sliceStart(direction,2)
