@@ -34,11 +34,12 @@ class ScaffoldBuilder(
 
 
         fun <T : MyStruct, V> addRoad(type:V) :Unit? where V : MyStructInfo<T>, V:IsRoad {
-            val direction = rand from Direction2D.entries
-            val choices = blockList.filter { direction.run {
-                it.width >= type.width + 2 * minBlockSize
+            val choices = blockList.flatMap {
+                Direction2D.entries.map { direction -> direction to it }
+            }.filter { (direction,block)-> direction.run {
+                block.width >= type.width + 2 * minBlockSize
             } }.ifEmpty { return null }
-            val block = rand from choices
+            val (direction,block) = rand from choices
             blockList.remove(block)
             direction.run {
                 val pos = rand.nextInt(minBlockSize..block.width - minBlockSize - type.width)
