@@ -1,26 +1,25 @@
-package org.schoolustc.structurePieces
+package org.schoolustc.structs
 
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.block.Blocks.*
 import org.schoolustc.structureDsl.*
-import org.schoolustc.structureDsl.struct.MyStruct
-import org.schoolustc.structureDsl.struct.MyStructInfo
-import org.schoolustc.structureDsl.struct.StructBuilder
-import org.schoolustc.structureDsl.struct.StructGenConfig
+import org.schoolustc.structureDsl.struct.*
+import org.schoolustc.structureDsl.structure.MyStructFixedAreaInfo
 
-class ClassroomPiece(config: StructGenConfig): MyStruct(Companion,config){
-    companion object : MyStructInfo<ClassroomPiece>(
+class Classroom(config: StructGenConfig): MyStructFixedSize(Companion,config){
+    companion object : MyStructFixedAreaInfo<Classroom>(
         "classroom",
-        Area(0..7,0..4,0..11)
+        Point(8,5,12)
     ) {
-        override fun loadTag(tag: CompoundTag): ClassroomPiece {
-            return ClassroomPiece(tag.getConfig())
+        override val defaultDirection = Direction2D.X1
+        override fun loadTag(tag: CompoundTag): Classroom {
+            return Classroom(tag.getConfig())
         }
-        override fun ClassroomPiece.saveTag(tag: CompoundTag) {
+        override fun Classroom.saveTag(tag: CompoundTag) {
             tag.putConfig(config)
         }
     }
-    override fun StructBuilder.build() {
+    override fun StructBuildScope.build() {
         RED_TERRACOTTA fillWall Area(0..7,1..4,0..11)
         SMOOTH_STONE fill Area(0..7,0..0,0..11)
         val light = SEA_LANTERN

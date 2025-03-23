@@ -14,3 +14,10 @@ fun RandomSource.nextInt(range:IntProgression):Int{
 }
 
 fun RandomSource.nextBool(trueChance:Float) = nextFloat() < trueChance
+
+infix fun <T> RandomSource.from(collection: Collection<T>):T{
+    if(collection.isEmpty()) error("empty collection")
+    val index = nextInt(collection.indices)
+    collection.forEachIndexed { i, it -> if(index == i) return it }
+    error("random error")
+}

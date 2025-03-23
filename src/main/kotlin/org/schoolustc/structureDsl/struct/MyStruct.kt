@@ -12,14 +12,20 @@ import net.minecraft.world.level.levelgen.structure.StructurePiece
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType
 import org.schoolustc.structureDsl.Area
+import org.schoolustc.structureDsl.Point
 
 abstract class MyStruct (
     val info: MyStructInfo<*>,
     val config: StructGenConfig,
-    area: Area? = null
-): StructurePiece(info.type,0,(
-        info.area ?: area ?: error("unknown struct area")
-    ).boundingBox(config)) {
+    val size: Point
+): StructurePiece(info.type,0,Area(
+    0..<size.x,
+    0..<size.y,
+    0..<size.z
+).checkNotEmpty().boundingBox(config)) {
+    inline val xSize get() = size.x
+    inline val ySize get() = size.y
+    inline val zSize get() = size.z
     final override fun postProcess(
         worldGenLevel: WorldGenLevel,
         structureManager: StructureManager,
@@ -29,13 +35,13 @@ abstract class MyStruct (
         chunkPos: ChunkPos,
         blockPos: BlockPos
     ) {
-        StructBuilder(
+        StructBuildScope(
             worldGenLevel,
             config,
             randomSource
         ).build()
     }
-    abstract fun StructBuilder.build()
+    abstract fun StructBuildScope.build()
 
     final override fun addAdditionalSaveData(
         structurePieceSerializationContext: StructurePieceSerializationContext,

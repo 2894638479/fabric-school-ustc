@@ -11,8 +11,19 @@ class Area(
     y:IntRange,
     z:IntRange
 ): AreaProg(x,y,z) {
+    inline val x1 get() = x.first
+    inline val x2 get() = x.last
+    inline val y1 get() = y.first
+    inline val y2 get() = y.last
+    inline val z1 get() = z.first
+    inline val z2 get() = z.last
     fun getP1() = Point(x.first,y.first,z.first)
     fun getP2() = Point(x.last,y.last,z.last)
+    fun length(direction:Direction) = when(direction){
+        Direction.X1,Direction.X2 -> x.length
+        Direction.Y1,Direction.Y2 -> y.length
+        Direction.Z1,Direction.Z2 -> z.length
+    }
     fun boundingBox(config: StructGenConfig): BoundingBox {
         val p1 = getP1().finalPos(config)
         val p2 = getP2().finalPos(config)
@@ -25,4 +36,13 @@ class Area(
             max(p1.z,p2.z),
         )
     }
+    fun toArea2D() = Area2D(x.toRange(),z.toRange())
+    fun isEmpty() = x.isEmpty() || y.isEmpty() || z.isEmpty()
+    fun ifEmpty(block:()->Unit) = apply { if(isEmpty()) block() }
+    override fun toString(): String {
+        return "x:$x1..$x2  " +
+                "y:$y1..$y2  " +
+                "z:$z1..$z2"
+    }
+    fun checkNotEmpty() = ifEmpty { error("empty area: $this") }
 }

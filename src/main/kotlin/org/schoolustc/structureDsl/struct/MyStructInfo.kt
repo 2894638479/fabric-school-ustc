@@ -6,14 +6,15 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType
 import org.schoolustc.fullId
 import org.schoolustc.structureDsl.Area
+import org.schoolustc.structureDsl.Direction2D
 
 abstract class MyStructInfo <T: MyStruct>(
-    val id:String,
-    val area: Area? = null
+    val id:String
 ){
     abstract fun loadTag(tag: CompoundTag):T
     abstract fun T.saveTag(tag: CompoundTag)
     val type = StructurePieceType { _, tag -> loadTag(tag) }
+    abstract val defaultDirection:Direction2D
     private val MyStruct.asT get() = this as T
     fun saveAsT(s: MyStruct, tag : CompoundTag) = s.asT.saveTag(tag)
     fun register() {

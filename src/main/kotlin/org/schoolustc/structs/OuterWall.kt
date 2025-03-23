@@ -1,4 +1,4 @@
-package org.schoolustc.structurePieces
+package org.schoolustc.structs
 
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.block.Blocks.IRON_BARS
@@ -6,28 +6,29 @@ import net.minecraft.world.level.block.Blocks.STONE_BRICKS
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.MyStruct
 import org.schoolustc.structureDsl.struct.MyStructInfo
-import org.schoolustc.structureDsl.struct.StructBuilder
+import org.schoolustc.structureDsl.struct.StructBuildScope
 import org.schoolustc.structureDsl.struct.StructGenConfig
 
-class OuterWallPiece(
+class OuterWall(
     config: StructGenConfig,
     val length:Int
-): MyStruct(Companion,config,Area(0..<length,0..3,0..0)) {
+): MyStruct(Companion,config,Point(length,4,1)) {
     init {
-        if(length <= 0)
-            error("wall length <= 0")
+        if(length <= 0) error("wall length <= 0")
     }
-    companion object : MyStructInfo<OuterWallPiece>("wall"){
-        override fun loadTag(tag: CompoundTag) = OuterWallPiece(
+    companion object : MyStructInfo<OuterWall>("wall"){
+        override val defaultDirection = Direction2D.X1
+        override fun loadTag(tag: CompoundTag) = OuterWall(
             tag.getConfig(),
             tag.getInt("l")
         )
-        override fun OuterWallPiece.saveTag(tag: CompoundTag) {
+        override fun OuterWall.saveTag(tag: CompoundTag) {
             tag.putConfig(config)
             tag.putInt("l",length)
         }
+        val width get() = 1
     }
-    override fun StructBuilder.build() {
+    override fun StructBuildScope.build() {
         STONE_BRICKS fillS Area(0..<length,0..1,0..0)
         IRON_BARS fillXS Area(0..<length,2..3,0..0)
 

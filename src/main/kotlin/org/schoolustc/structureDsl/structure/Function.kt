@@ -14,16 +14,3 @@ fun IntRange.split(maxLength:Int):List<Int>{
     }
     return listOf(first) + result
 }
-
-fun chooseRoad(list:List<RoadArea>,remain:Int,rand:()->Float):RoadArea?{
-    val choices = list
-        .filter { remain >= it.width }
-        .ifEmpty { return null }
-    val weightSum = choices.map { it.weight }.sum()
-    val r = rand() * weightSum
-    var sum = 0f
-    return choices.firstOrNull {
-        sum += weightSum
-        sum > r
-    } ?: choices.last()
-}

@@ -1,4 +1,4 @@
-package org.schoolustc.structurePieces
+package org.schoolustc.structs
 
 import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
@@ -9,24 +9,16 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.block.state.properties.Half
 import net.minecraft.world.level.block.state.properties.StairsShape
 import org.schoolustc.structureDsl.*
-import org.schoolustc.structureDsl.struct.MyStruct
-import org.schoolustc.structureDsl.struct.MyStructInfo
-import org.schoolustc.structureDsl.struct.StructBuilder
-import org.schoolustc.structureDsl.struct.StructGenConfig
+import org.schoolustc.structureDsl.struct.*
+import org.schoolustc.structureDsl.structure.MyStructFixedAreaInfo
 
-class GatePiece(config:StructGenConfig):MyStruct(Companion,config) {
-    companion object : MyStructInfo<MyStruct>("gate",Area(0..14,0..7,0..3)){
-        override fun loadTag(tag: CompoundTag) = GatePiece(tag.getConfig())
-        override fun MyStruct.saveTag(tag: CompoundTag) = tag.putConfig(config)
+class Gate(config:StructGenConfig):MyStructFixedSize(Companion,config) {
+    companion object : MyStructFixedAreaInfo<Gate>("gate",Point(15,8,4)){
+        override val defaultDirection = Direction2D.Z1
+        override fun loadTag(tag: CompoundTag) = Gate(tag.getConfig())
+        override fun Gate.saveTag(tag: CompoundTag) = tag.putConfig(config)
     }
-    constructor(area: Area2D,y:Int):this(
-        (area.h > area.w).let { rotate ->
-            StructGenConfig(
-                Point(area.x1 - if(rotate) 1 else 2,y,area.z1 - if(rotate) 2 else 1),false,false,rotate
-            )
-        }
-    )
-    fun BlockState.convert():BlockState{
+    private fun BlockState.convert():BlockState{
         if(!config.rotate) return this
         val dir = getValue(FACING)
         return setValue(FACING,when(dir){
@@ -37,7 +29,7 @@ class GatePiece(config:StructGenConfig):MyStruct(Companion,config) {
             else -> error("unknown direction $dir")
         })
     }
-    override fun StructBuilder.build() {
+    override fun StructBuildScope.build() {
         CALCITE fill Area(2..3,0..7,1..2)
         CALCITE fill Area(11..12,0..7,1..2)
         CALCITE fill Area(4..10,6..7,1..2)

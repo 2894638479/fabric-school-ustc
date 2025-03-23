@@ -18,11 +18,12 @@ data class Point(
             config.pos.z + if (config.rotate) xAdd else zAdd
         )
     }
-    fun finalSurfacePos(config: StructGenConfig, getH:(Int, Int)->Int):Point{
-        val finalPos = finalPos(config)
+    //对finalPos调用
+    fun toSurface(getY:(Int, Int)->Int):Point{
+        val finalPos = this
         return Point(
             finalPos.x,
-            y + getH(finalPos.x,finalPos.z),
+            y + getY(finalPos.x,finalPos.z),
             finalPos.z
         )
     }

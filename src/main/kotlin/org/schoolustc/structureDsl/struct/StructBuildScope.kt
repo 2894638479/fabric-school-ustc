@@ -14,13 +14,13 @@ import org.schoolustc.interfaces.palettes
 import org.schoolustc.logger
 import org.schoolustc.structureDsl.*
 
-class StructBuilder(
+class StructBuildScope(
     val world:WorldGenLevel,
     val config: StructGenConfig,
     val rand:RandomSource
 ) {
     inline val Point.finalPos get() = finalPos(config)
-    inline val Point.finalSurfacePos get() = finalSurfacePos(config) { x, z ->
+    inline val Point.finalSurfacePos get() = finalPos.toSurface { x, z ->
         world.getHeight(Heightmap.Types.WORLD_SURFACE_WG,x,z) - 1
     }
     private fun setBlock(finalPos: Point, state:BlockState) = world.setBlock(finalPos.blockPos,state,3)
