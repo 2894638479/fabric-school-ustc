@@ -1,6 +1,5 @@
 package org.schoolustc.structs.listBuilser
 
-import org.schoolustc.logger
 import org.schoolustc.structs.Road
 import org.schoolustc.structs.Splitter
 import org.schoolustc.structs.Street
@@ -8,9 +7,9 @@ import org.schoolustc.structs.builder.GateBuilder
 import org.schoolustc.structs.builder.WallCornerBuilder
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.Area2D.Companion.area2D
-import org.schoolustc.structureDsl.struct.IsRoad
+import org.schoolustc.structureDsl.struct.MyRoadStruct
+import org.schoolustc.structureDsl.struct.MyRoadStructInfo
 import org.schoolustc.structureDsl.struct.MyStruct
-import org.schoolustc.structureDsl.struct.MyStructInfo
 import org.schoolustc.structureDsl.struct.builder.MyStructBuilder
 import org.schoolustc.structureDsl.structure.StructureBuildScope
 import org.schoolustc.structureDsl.structure.builder.MyStructListBuilder
@@ -34,7 +33,7 @@ class ScaffoldBuilder(
         var gatePos:Pair<Direction2D,Int>? = null
 
 
-        fun <T : MyStruct, V> addRoad(type:V) :Unit? where V : MyStructInfo<T>, V:IsRoad {
+        fun <T : MyRoadStruct> addRoad(type:MyRoadStructInfo<T>) :Unit? {
             val choices = blockList.flatMap {
                 Direction2D.entries.map { direction -> direction to it }
             }.filter { (direction,block)-> direction.run {

@@ -8,9 +8,9 @@ import org.schoolustc.structureDsl.struct.*
 class Splitter(
     config: StructGenConfig,
     val length : Int
-): MyStruct(Companion,config, Point(1,1,length)) {
+): MyRoadStruct(Companion,config, Point(1,1,length)) {
     init { if(length <= 0) error("$id length <= 0") }
-    companion object : MyStructInfo<Splitter>("splitter") ,IsRoad{
+    companion object : MyRoadStructInfo<Splitter>("splitter"){
         override val defaultDirection = Direction2D.Z1
         override fun loadTag(tag: CompoundTag) = Splitter(
             tag.getConfig(),
@@ -22,6 +22,7 @@ class Splitter(
         }
         override val period get() = 10
         override val width get() = 1
+        override val constructor get() = ::Splitter
     }
     override fun StructBuildScope.build() {
         SMOOTH_STONE_SLAB fillS Area(0..0,1..1,0..<length)

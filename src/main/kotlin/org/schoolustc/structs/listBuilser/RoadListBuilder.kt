@@ -4,17 +4,16 @@ import org.schoolustc.structs.builder.RoadBuilder
 import org.schoolustc.structureDsl.Area2D
 import org.schoolustc.structureDsl.Direction2D
 import org.schoolustc.structureDsl.match
-import org.schoolustc.structureDsl.struct.IsRoad
-import org.schoolustc.structureDsl.struct.MyStruct
-import org.schoolustc.structureDsl.struct.MyStructInfo
+import org.schoolustc.structureDsl.struct.MyRoadStruct
+import org.schoolustc.structureDsl.struct.MyRoadStructInfo
 import org.schoolustc.structureDsl.structure.StructureBuildScope
 import org.schoolustc.structureDsl.structure.builder.MyStructListBuilder
 
-class RoadListBuilder <T:MyStruct,V>  (
+class RoadListBuilder <T:MyRoadStruct>  (
     val area:Area2D,
     val direction: Direction2D,
-    val type: V,
-): MyStructListBuilder<T> where V:MyStructInfo<T>,V:IsRoad {
+    val type: MyRoadStructInfo<T>
+): MyStructListBuilder<T> {
     override fun StructureBuildScope.build() = direction.run {
         area.width.match(type.width)
         mutableListOf<T>().apply {

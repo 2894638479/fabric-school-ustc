@@ -8,11 +8,11 @@ import org.schoolustc.structureDsl.struct.*
 class Road(
     config: StructGenConfig,
     val length : Int
-): MyStruct(Companion,config, Point(3,1,length)) {
+): MyRoadStruct(Companion,config, Point(3,1,length)) {
     init {
         length.match { it >= 0 }
     }
-    companion object : MyStructInfo<Road>("road"),IsRoad {
+    companion object : MyRoadStructInfo<Road>("road"){
         override val defaultDirection = Direction2D.Z1
         override fun loadTag(tag: CompoundTag) = Road(
             tag.getConfig(),
@@ -24,6 +24,7 @@ class Road(
         }
         override val width get() = 3
         override val period get() = 10
+        override val constructor get() = ::Road
     }
     override fun StructBuildScope.build() {
         DIRT_PATH fillS Area(0..2,0..0,0..<length)
