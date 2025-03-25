@@ -1,14 +1,11 @@
 package org.schoolustc.structureDsl.struct
 
-import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
 import net.minecraft.util.RandomSource
 import net.minecraft.world.level.WorldGenLevel
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.StairBlock
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties.*
-import net.minecraft.world.level.block.state.properties.BooleanProperty
 import net.minecraft.world.level.block.state.properties.Half
 import net.minecraft.world.level.block.state.properties.StairsShape
 import net.minecraft.world.level.levelgen.Heightmap
@@ -31,13 +28,9 @@ class StructBuildScope(
     private infix fun BlockState.setTo(finalPos: Point) = setBlock(finalPos,this)
     private inline val Block.state get() = defaultBlockState()
 
-
-    infix fun Selector<Block>.fill(pos: Point) = select().state setTo pos.finalPos
-    infix fun Selector<Block>.fill(area: AreaProg) = area.iterate { fill(it) }
-    infix fun BlockState.fill(pos:Point) = this setTo pos.finalPos
-    infix fun BlockState.fill(area:AreaProg) = area.iterate { this fill it }
-    infix fun Block.fill(pos: Point) = state setTo pos.finalPos
-    infix fun Block.fill(area: AreaProg) = area.iterate { fill(it) }
+    infix fun Selector<Block>.fill(fillable: Fillable) = fillable.fill { select().state setTo it.finalPos }
+    infix fun BlockState.fill(fillable: Fillable) = fillable.fill { this setTo it.finalPos }
+    infix fun Block.fill(fillable: Fillable) = fillable.fill { state setTo it.finalPos }
     infix fun Selector<Block>.fillWall(area: Area){
         val p1 = area.getP1()
         val p2 = area.getP2()
@@ -48,36 +41,17 @@ class StructBuildScope(
     }
     infix fun Block.fillWall(area: Area) = Selector { this } fillWall area
     //填充并处理玻璃板等连接
-    infix fun Block.fillX(area: Area) = area.iterate { this fillX it }
-    infix fun Block.fillX(pos: Point) = connectedState(config.rotate) setTo pos.finalPos
-    infix fun Block.fillZ(area: Area) = area.iterate { this fillZ it }
-    infix fun Block.fillZ(pos: Point) = connectedState(!config.rotate) setTo pos.finalPos
-    infix fun Block.fillXS(area: Area) = area.iterate { this fillXS it }
-    infix fun Block.fillXS(pos: Point) = connectedState(config.rotate) setTo pos.finalSurfacePos
-    infix fun Block.fillZS(area: Area) = area.iterate { this fillZS it }
-    infix fun Block.fillZS(pos: Point) = connectedState(!config.rotate) setTo pos.finalSurfacePos
-    private fun Block.connectedState(finalPos: Point):BlockState{
-        var state = state
-        fun connect(pos: BlockPos,prop:BooleanProperty){
-            if(!world.getBlockState(pos).isAir){
-                state = state.setValue(prop,true)
-            }
-        }
-        val p = finalPos.blockPos
-        connect(p.west(),WEST)
-        connect(p.east(), EAST)
-        connect(p.south(), SOUTH)
-        connect(p.north(), NORTH)
-        return state
-    }
+    infix fun Block.fillX(fillable: Fillable) = fillable.fill { connectedState(config.rotate) setTo it.finalPos }
+    infix fun Block.fillZ(fillable: Fillable) = fillable.fill { connectedState(!config.rotate) setTo it.finalPos }
+    infix fun Block.fillXS(fillable: Fillable) = fillable.fill { connectedState(config.rotate) setTo it.finalSurfacePos }
+    infix fun Block.fillZS(fillable: Fillable) = fillable.fill { connectedState(!config.rotate) setTo it.finalSurfacePos }
     //true为x轴方向连接，false为z轴方向连接
     private fun Block.connectedState(rotate:Boolean) = state
         .setValue(if(rotate) NORTH else WEST,true)
         .setValue(if(rotate) SOUTH else EAST,true)
     //将y轴转化为相对于世界表面的坐标
-    infix fun Block.fillS(area: AreaProg) = area.iterate { state setTo it.finalSurfacePos }
-    infix fun Block.fillS(pos: Point) = state setTo pos.finalSurfacePos
-    infix fun Selector<BlockState>.fillS(area: AreaProg) = area.iterate { select() setTo it.finalSurfacePos }
+    infix fun Block.fillS(fillable: Fillable) = fillable.fill { state setTo it.finalSurfacePos }
+    infix fun Selector<BlockState>.fillS(fillable: Fillable) = fillable.fill { select() setTo it.finalSurfacePos }
 
     fun <T> selector(map:Map<T,Float>): Selector<T> {
         val sum = map.values.sum()
@@ -113,14 +87,11 @@ class StructBuildScope(
     infix fun String.putF(startPos: Point) = putNbtStruct(this,startPos,true)
 
     fun randBool(trueChance:Float) = rand.nextFloat() < trueChance
-    inline val randBool get() = randBool(0.5f)
     fun Block.stairState(facing:Direction2D,shape:StairsShape = StairsShape.STRAIGHT,half: Half = Half.BOTTOM) =
-        defaultBlockState().setValue(StairBlock.FACING,when(facing.applyConfig(config)){
-            Direction2D.X1 -> Direction.WEST
-            Direction2D.X2 -> Direction.EAST
-            Direction2D.Z1 -> Direction.NORTH
-            Direction2D.Z2 -> Direction.SOUTH
-        }).setValue(STAIRS_SHAPE,shape).setValue(HALF,half)
+        defaultBlockState()
+            .setValue(StairBlock.FACING,facing.applyConfig(config).toMcDirection())
+            .setValue(STAIRS_SHAPE,shape)
+            .setValue(HALF,half)
     fun Block.leafState(persist:Boolean) = defaultBlockState().setValue(PERSISTENT,persist)
 }
 

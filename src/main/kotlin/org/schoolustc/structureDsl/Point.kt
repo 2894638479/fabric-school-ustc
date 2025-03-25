@@ -7,7 +7,7 @@ data class Point(
     val x:Int,
     val y:Int,
     val z:Int
-){
+):Fillable{
     val blockPos get() = BlockPos(x,y,z)
     fun finalPos(config: StructGenConfig):Point{
         val xAdd = if (config.revX) - x else x
@@ -32,5 +32,6 @@ data class Point(
         y + other.y,
         z + other.z
     )
+    override fun fill(block: (Point) -> Unit) = block(this)
 }
 val BlockPos.point get() = Point(x,y,z)

@@ -1,5 +1,6 @@
 package org.schoolustc.structureDsl
 
+import net.minecraft.core.Direction
 import org.schoolustc.structureDsl.struct.StructGenConfig
 
 enum class Direction2D {
@@ -44,5 +45,11 @@ enum class Direction2D {
         if(config.revZ && d.isZ) d = d.reverse
         if(config.rotate) d = d.rotate
         return d
+    }
+    fun toMcDirection() = when(this){
+        X1 -> Direction.WEST
+        X2 -> Direction.EAST
+        Z1 -> Direction.NORTH
+        Z2 -> Direction.SOUTH
     }
 }

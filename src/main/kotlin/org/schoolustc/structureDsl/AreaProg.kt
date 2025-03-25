@@ -4,7 +4,7 @@ open class AreaProg (
     val x:IntProgression,
     val y:IntProgression,
     val z:IntProgression
-){
+):Fillable{
     inline fun iterate(block:(Point) -> Unit){
         for(i in x){for (j in y){for (k in z){
             block(Point(i,j,k))
@@ -16,4 +16,5 @@ open class AreaProg (
         y.range,
         z.range
     )
+    override fun fill(block: (Point) -> Unit) = iterate(block)
 }
