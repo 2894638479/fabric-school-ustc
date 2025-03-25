@@ -8,7 +8,7 @@ import org.schoolustc.structureDsl.structure.MyStructFixedAreaInfo
 
 class OuterWallCorner(config: StructGenConfig): MyStructFixedSize(Companion,config) {
     companion object : MyStructFixedAreaInfo<OuterWallCorner>("wallcorner",Point(1,5,1)) {
-        override val defaultDirection = Direction2D.X1
+        override val defaultDirection = Direction2D.XPlus
         override fun loadTag(tag: CompoundTag) = OuterWallCorner(tag.getConfig())
         override fun OuterWallCorner.saveTag(tag: CompoundTag) = tag.putConfig(config)
     }

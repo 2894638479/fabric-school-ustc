@@ -21,26 +21,42 @@ class Area2D(
     inline val z2 get() = z.last
     inline val size get() = xl * zl
 
+    fun bound(direction:Direction2D) = when(direction){
+        Direction2D.XPlus -> x2
+        Direction2D.XMin -> x1
+        Direction2D.ZPlus -> z2
+        Direction2D.ZMin -> z1
+    }
     fun l(direction: Direction2D) = if(direction.isX) x else z
     fun w(direction: Direction2D) = if(direction.isX) z else x
     fun width(direction: Direction2D) = w(direction).length
     fun length(direction: Direction2D) = l(direction).length
     fun sliceStart(direction:Direction2D,length:Int) = direction.run {
-        if(is1) area2D(l.first(length),w)
+        if(isPlus) area2D(l.first(length),w)
         else area2D(l.last(length),w)
     }
     fun sliceEnd(direction: Direction2D,length: Int) = sliceStart(direction.reverse,length)
     fun slice(direction:Direction2D,index:IntRange) = direction.run {
-        if(is1) area2D(l.first + index.first..l.first + index.last,w)
+        if(isPlus) area2D(l.first + index.first..l.first + index.last,w)
         else area2D(l.last - index.last..l.last - index.first,w)
     }
     fun expand(count:Int) = Area2D(x.expand(count),z.expand(count))
     fun expand(direction:Direction2D,count:Int) = direction.run {
-        if(is1) area2D(l.expand(0,count),w)
+        if(isPlus) area2D(l.expand(0,count),w)
         else area2D(l.expand(count,0),w)
     }
     infix fun overlap(other:Area2D) = x overlap other.x && z overlap other.z
     infix fun contains(other: Area2D) = x contains other.x && z contains other.z
+    infix fun nextTo(other:Area2D):Direction2D?{
+        if(z overlap other.z) {
+            if(x1 - 1 == other.x2) return Direction2D.XMin
+            if(x2 + 1 == other.x1) return Direction2D.XPlus
+        } else if(x overlap other.x) {
+            if(z1 - 1 == other.z2) return Direction2D.ZMin
+            if(z2 + 1 == other.z1) return Direction2D.ZPlus
+        }
+        return null
+    }
     fun isEmpty() = x.isEmpty() || z.isEmpty()
     fun ifEmpty(block:()->Unit)=apply{if(isEmpty())block()}
     override fun toString(): String {

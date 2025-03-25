@@ -53,19 +53,6 @@ class StructBuildScope(
     infix fun Block.fillS(fillable: Fillable) = fillable.fill { state setTo it.finalSurfacePos }
     infix fun Selector<BlockState>.fillS(fillable: Fillable) = fillable.fill { select() setTo it.finalSurfacePos }
 
-    fun <T> selector(map:Map<T,Float>): Selector<T> {
-        val sum = map.values.sum()
-        return Selector {
-            val r = rand.nextFloat() * sum
-            var f = 0f
-            for((block,weight) in map){
-                f += weight
-                if(r < f) return@Selector block
-            }
-            return@Selector map.keys.last()
-        }
-    }
-
     private fun getNbtStruct(name:String):StructureTemplate?{
         return (world.server ?: return null)
             .structureManager
@@ -88,11 +75,11 @@ class StructBuildScope(
 
     fun randBool(trueChance:Float) = rand.nextFloat() < trueChance
     fun Block.stairState(facing:Direction2D,shape:StairsShape = StairsShape.STRAIGHT,half: Half = Half.BOTTOM) =
-        defaultBlockState()
+        state
             .setValue(StairBlock.FACING,facing.applyConfig(config).toMcDirection())
             .setValue(STAIRS_SHAPE,shape)
             .setValue(HALF,half)
-    fun Block.leafState(persist:Boolean) = defaultBlockState().setValue(PERSISTENT,persist)
+    fun Block.leafState(persist:Boolean) = state.setValue(PERSISTENT,persist)
 }
 
 

@@ -20,9 +20,9 @@ class Area(
     fun getP1() = Point(x.first,y.first,z.first)
     fun getP2() = Point(x.last,y.last,z.last)
     fun length(direction:Direction) = when(direction){
-        Direction.X1,Direction.X2 -> x.length
-        Direction.Y1,Direction.Y2 -> y.length
-        Direction.Z1,Direction.Z2 -> z.length
+        Direction.XPlus,Direction.XMin -> x.length
+        Direction.YPlus,Direction.YMin -> y.length
+        Direction.ZPlus,Direction.ZMin -> z.length
     }
     fun boundingBox(config: StructGenConfig): BoundingBox {
         val p1 = getP1().finalPos(config)

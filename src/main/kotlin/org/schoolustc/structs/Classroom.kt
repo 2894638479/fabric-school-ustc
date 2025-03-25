@@ -11,7 +11,7 @@ class Classroom(config: StructGenConfig): MyStructFixedSize(Companion,config){
         "classroom",
         Point(8,5,12)
     ) {
-        override val defaultDirection = Direction2D.X1
+        override val defaultDirection = Direction2D.XPlus
         override fun loadTag(tag: CompoundTag): Classroom {
             return Classroom(tag.getConfig())
         }

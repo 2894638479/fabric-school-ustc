@@ -4,34 +4,34 @@ import net.minecraft.core.Direction
 import org.schoolustc.structureDsl.struct.StructGenConfig
 
 enum class Direction2D {
-    X1,X2,Z1,Z2;
-    val isX get() = this == X1 || this == X2
-    val isZ get() = this == Z1 || this == Z2
-    val is1 get() = this == X1 || this == Z1
-    val is2 get() = this == X2 || this == Z2
+    XPlus,XMin,ZPlus,ZMin;
+    val isX get() = this == XPlus || this == XMin
+    val isZ get() = this == ZPlus || this == ZMin
+    val isPlus get() = this == XPlus || this == ZPlus
+    val isMin get() = this == XMin || this == ZMin
     val rotate get() = when(this){
-        X1 -> Z1
-        X2 -> Z2
-        Z1 -> X1
-        Z2 -> X2
+        XPlus -> ZPlus
+        XMin -> ZMin
+        ZPlus -> XPlus
+        ZMin -> XMin
     }
     val reverse get() = when(this){
-        X1 -> X2
-        X2 -> X1
-        Z1 -> Z2
-        Z2 -> Z1
+        XPlus -> XMin
+        XMin -> XPlus
+        ZPlus -> ZMin
+        ZMin -> ZPlus
     }
     val left get() = when(this){
-        X1 -> Z2
-        X2 -> Z1
-        Z1 -> X1
-        Z2 -> X2
+        XPlus -> ZMin
+        XMin -> ZPlus
+        ZPlus -> XPlus
+        ZMin -> XMin
     }
     val right get() = when(this){
-        X1 -> Z1
-        X2 -> Z2
-        Z1 -> X2
-        Z2 -> X1
+        XPlus -> ZPlus
+        XMin -> ZMin
+        ZPlus -> XMin
+        ZMin -> XPlus
     }
     inline val Area2D.width get() = width(this@Direction2D)
     inline val Area2D.length get() = length(this@Direction2D)
@@ -47,9 +47,24 @@ enum class Direction2D {
         return d
     }
     fun toMcDirection() = when(this){
-        X1 -> Direction.WEST
-        X2 -> Direction.EAST
-        Z1 -> Direction.NORTH
-        Z2 -> Direction.SOUTH
+        XPlus -> Direction.WEST
+        XMin -> Direction.EAST
+        ZPlus -> Direction.NORTH
+        ZMin -> Direction.SOUTH
+    }
+    fun toInt() = when(this){
+        XPlus -> 0
+        XMin -> 1
+        ZPlus -> 2
+        ZMin -> 3
+    }
+    companion object {
+        fun fromInt(int: Int) = when(int){
+            0 -> XPlus
+            1 -> XMin
+            2 -> ZPlus
+            3 -> ZMin
+            else -> error("unknown Direction2D int: $int")
+        }
     }
 }

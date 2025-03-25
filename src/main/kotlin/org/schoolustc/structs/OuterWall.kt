@@ -14,7 +14,7 @@ class OuterWall(
     val length:Int
 ): MyStruct(Companion,config,Point(length,4,1)) {
     companion object : MyStructInfo<OuterWall>("wall"){
-        override val defaultDirection = Direction2D.X1
+        override val defaultDirection = Direction2D.XPlus
         override fun loadTag(tag: CompoundTag) = OuterWall(
             tag.getConfig(),
             tag.getInt("l")

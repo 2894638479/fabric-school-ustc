@@ -10,7 +10,7 @@ class Road(
     val length : Int
 ): MyRoadStruct(Companion,config, Point(3,1,length)) {
     companion object : MyRoadStructInfo<Road>("road"){
-        override val defaultDirection = Direction2D.Z1
+        override val defaultDirection = Direction2D.ZPlus
         override fun loadTag(tag: CompoundTag) = Road(
             tag.getConfig(),
             tag.getInt("l")

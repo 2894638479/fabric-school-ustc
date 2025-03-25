@@ -10,7 +10,7 @@ class Splitter(
     val length : Int
 ): MyRoadStruct(Companion,config, Point(1,1,length)) {
     companion object : MyRoadStructInfo<Splitter>("splitter"){
-        override val defaultDirection = Direction2D.Z1
+        override val defaultDirection = Direction2D.ZPlus
         override fun loadTag(tag: CompoundTag) = Splitter(
             tag.getConfig(),
             tag.getInt("l")
