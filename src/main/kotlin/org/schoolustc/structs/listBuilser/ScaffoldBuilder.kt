@@ -3,6 +3,7 @@ package org.schoolustc.structs.listBuilser
 import org.schoolustc.structs.Road
 import org.schoolustc.structs.Splitter
 import org.schoolustc.structs.Street
+import org.schoolustc.structs.blockBuilder.NormalBlock
 import org.schoolustc.structs.builder.GateBuilder
 import org.schoolustc.structs.builder.WallCornerBuilder
 import org.schoolustc.structureDsl.*
@@ -77,6 +78,9 @@ class ScaffoldBuilder(
         area.run {
             fun add(x:Int,z:Int) = WallCornerBuilder(x,z).addToList()
             add(x1,z1);add(x2,z1);add(x1,z2);add(x2,z2)
+        }
+        blockList.forEach {
+            NormalBlock(it).addToList()
         }
     }
 }

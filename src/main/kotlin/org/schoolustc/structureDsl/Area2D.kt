@@ -41,33 +41,6 @@ class Area2D(
     }
     infix fun overlap(other:Area2D) = x overlap other.x && z overlap other.z
     infix fun contains(other: Area2D) = x contains other.x && z contains other.z
-    //分割长条形区间，最终长度在minLen..<2*minLen
-    fun split(minLen:Int):List<Area2D>{
-        val list = mutableListOf<Area2D>()
-        val rotate = xl > zl
-        var remain = this
-        fun left():Int {
-            return if (rotate) remain.xl else remain.zl
-        }
-        fun split():Area2D = remain.run {
-            if(rotate){
-                val newRemain = Area2D(x1+minLen..x2,z)
-                val result = Area2D(x1..<x1 + minLen,z)
-                remain = newRemain
-                return result
-            } else {
-                val newRemain = Area2D(x,z1+minLen..z2)
-                val result = Area2D(x,z1..<z1+minLen)
-                remain = newRemain
-                return result
-            }
-        }
-        while(left() >= 2*minLen){
-            list.add(split())
-        }
-        list.add(remain)
-        return list
-    }
     fun isEmpty() = x.isEmpty() || z.isEmpty()
     fun ifEmpty(block:()->Unit)=apply{if(isEmpty())block()}
     override fun toString(): String {

@@ -13,9 +13,6 @@ class OuterWall(
     config: StructGenConfig,
     val length:Int
 ): MyStruct(Companion,config,Point(length,4,1)) {
-    init {
-        if(length <= 0) error("wall length <= 0")
-    }
     companion object : MyStructInfo<OuterWall>("wall"){
         override val defaultDirection = Direction2D.X1
         override fun loadTag(tag: CompoundTag) = OuterWall(
@@ -26,7 +23,6 @@ class OuterWall(
             tag.putConfig(config)
             tag.putInt("l",length)
         }
-        val width get() = 1
     }
     override fun StructBuildScope.build() {
         STONE_BRICKS fillS Area(0..<length,0..1,0..0)

@@ -77,6 +77,7 @@ class StructBuildScope(
     //将y轴转化为相对于世界表面的坐标
     infix fun Block.fillS(area: AreaProg) = area.iterate { state setTo it.finalSurfacePos }
     infix fun Block.fillS(pos: Point) = state setTo pos.finalSurfacePos
+    infix fun Selector<BlockState>.fillS(area: AreaProg) = area.iterate { select() setTo it.finalSurfacePos }
 
     fun <T> selector(map:Map<T,Float>): Selector<T> {
         val sum = map.values.sum()
@@ -120,6 +121,7 @@ class StructBuildScope(
             Direction2D.Z1 -> Direction.NORTH
             Direction2D.Z2 -> Direction.SOUTH
         }).setValue(STAIRS_SHAPE,shape).setValue(HALF,half)
+    fun Block.leafState(persist:Boolean) = defaultBlockState().setValue(PERSISTENT,persist)
 }
 
 

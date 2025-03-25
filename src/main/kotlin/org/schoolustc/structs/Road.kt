@@ -9,9 +9,6 @@ class Road(
     config: StructGenConfig,
     val length : Int
 ): MyRoadStruct(Companion,config, Point(3,1,length)) {
-    init {
-        length.match { it >= 0 }
-    }
     companion object : MyRoadStructInfo<Road>("road"){
         override val defaultDirection = Direction2D.Z1
         override fun loadTag(tag: CompoundTag) = Road(

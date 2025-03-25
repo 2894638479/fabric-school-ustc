@@ -21,5 +21,6 @@ object SchoolUSTC : ModInitializer {
 		Road.register()
 		Splitter.register()
 		Gate.register()
+		LeafWall.register()
 	}
 }

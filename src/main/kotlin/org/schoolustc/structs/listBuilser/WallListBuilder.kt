@@ -18,7 +18,7 @@ class WallListBuilder(
     val maxStep: Int = 10
 ): MyStructListBuilder<MyStruct> {
     override fun StructureBuildScope.build() = direction.run {
-        area.checkNotEmpty().width.match(OuterWall.width)
+        area.checkNotEmpty().width.match(1)
         mutableListOf<MyStruct>().also { list ->
             val split = area.l.split(maxStep)
             split.zipWithNext { a, b ->
