@@ -24,6 +24,7 @@ class StructBuildScope(
     inline val Point.finalSurfacePos get() = finalPos.toSurface { x, z ->
         world.getHeight(Heightmap.Types.WORLD_SURFACE_WG,x,z) - 1
     }
+    inline val Direction2D.finalDirection get() = applyConfig(config)
     private fun setBlock(finalPos: Point, state:BlockState) = world.setBlock(finalPos.blockPos,state,3)
     private infix fun BlockState.setTo(finalPos: Point) = setBlock(finalPos,this)
     private inline val Block.state get() = defaultBlockState()
@@ -40,17 +41,18 @@ class StructBuildScope(
         this fill Area(p1.x+1 ..p2.x-1,p1.y..p2.y,p2.z..p2.z)
     }
     infix fun Block.fillWall(area: Area) = Selector { this } fillWall area
-    //填充并处理玻璃板等连接
-    infix fun Block.fillX(fillable: Fillable) = fillable.fill { connectedState(config.rotate) setTo it.finalPos }
-    infix fun Block.fillZ(fillable: Fillable) = fillable.fill { connectedState(!config.rotate) setTo it.finalPos }
-    infix fun Block.fillXS(fillable: Fillable) = fillable.fill { connectedState(config.rotate) setTo it.finalSurfacePos }
-    infix fun Block.fillZS(fillable: Fillable) = fillable.fill { connectedState(!config.rotate) setTo it.finalSurfacePos }
-    //true为x轴方向连接，false为z轴方向连接
-    private fun Block.connectedState(rotate:Boolean) = state
-        .setValue(if(rotate) NORTH else WEST,true)
-        .setValue(if(rotate) SOUTH else EAST,true)
+    fun Block.connectedState(vararg direction:Direction2D):BlockState {
+        var result = state
+        for (d in direction){
+            result = result.setValue(d.finalDirection.toMcProperty(),true)
+        }
+        return result
+    }
+    inline val Block.connectedX get() = connectedState(Direction2D.XMin,Direction2D.XPlus)
+    inline val Block.connectedZ get() = connectedState(Direction2D.ZMin,Direction2D.ZPlus)
     //将y轴转化为相对于世界表面的坐标
     infix fun Block.fillS(fillable: Fillable) = fillable.fill { state setTo it.finalSurfacePos }
+    infix fun BlockState.fillS(fillable: Fillable) = fillable.fill { this setTo it.finalSurfacePos }
     infix fun Selector<BlockState>.fillS(fillable: Fillable) = fillable.fill { select() setTo it.finalSurfacePos }
 
     private fun getNbtStruct(name:String):StructureTemplate?{
@@ -76,7 +78,7 @@ class StructBuildScope(
     fun randBool(trueChance:Float) = rand.nextFloat() < trueChance
     fun Block.stairState(facing:Direction2D,shape:StairsShape = StairsShape.STRAIGHT,half: Half = Half.BOTTOM) =
         state
-            .setValue(StairBlock.FACING,facing.applyConfig(config).toMcDirection())
+            .setValue(StairBlock.FACING,facing.finalDirection.toMcDirection())
             .setValue(STAIRS_SHAPE,shape)
             .setValue(HALF,half)
     fun Block.leafState(persist:Boolean) = state.setValue(PERSISTENT,persist)

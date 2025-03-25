@@ -1,6 +1,7 @@
 package org.schoolustc.structureDsl
 
 import net.minecraft.core.Direction
+import net.minecraft.world.level.block.state.properties.BlockStateProperties.*
 import org.schoolustc.structureDsl.struct.StructGenConfig
 
 enum class Direction2D {
@@ -51,6 +52,12 @@ enum class Direction2D {
         XMin -> Direction.EAST
         ZPlus -> Direction.NORTH
         ZMin -> Direction.SOUTH
+    }
+    fun toMcProperty() = when(this){
+        XPlus -> WEST
+        XMin -> EAST
+        ZPlus -> NORTH
+        ZMin -> SOUTH
     }
     fun toInt() = when(this){
         XPlus -> 0

@@ -31,11 +31,13 @@ class Classroom(config: StructGenConfig): MyStructFixedSize(Companion,config){
         AIR fill Area(7..7,1..3,2..4)
         val windowY = 2..4
         val windowBlock = GLASS_PANE
-        windowBlock fillX Area(3..4,windowY,0..0)
-        windowBlock fillX Area(3..4,windowY,11..11)
-        windowBlock fillZ Area(0..0,windowY,2..4)
-        windowBlock fillZ Area(0..0,windowY,7..9)
-        windowBlock fillZ Area(7..7,windowY,7..9)
+        val xState = windowBlock.connectedX
+        val zState = windowBlock.connectedZ
+        xState fill Area(3..4,windowY,0..0)
+        xState fill Area(3..4,windowY,11..11)
+        zState fill Area(0..0,windowY,2..4)
+        zState fill Area(0..0,windowY,7..9)
+        zState fill Area(7..7,windowY,7..9)
         "test" put Point(1,1,1)
     }
 }
