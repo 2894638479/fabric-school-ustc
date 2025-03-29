@@ -15,7 +15,7 @@ class StreetLightBuilder(
 ):MyStructBuilder<StreetLight> {
     override fun build(): StreetLight {
         val area = Area2D(x..x,z..z).expand(direction,1)
-        val config = StructGenConfig.byDirection(area,0,direction,StreetLight)
+        val config = StructGenConfig.byDirection(area,1,direction,StreetLight)
         return StreetLight(config)
     }
     fun distanceTo(other:StreetLightBuilder): Double = sqrt((pow(x-other.x,2)+ pow(z-other.z,2)).toDouble())
