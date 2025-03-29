@@ -62,6 +62,8 @@ class StructBuildScope(
     infix fun Block.fillS(fillable: Fillable) = fillable.fill { state setTo it.finalSurfacePos }
     infix fun BlockState.fillS(fillable: Fillable) = fillable.fill { this setTo it.finalSurfacePos }
     infix fun Selector<BlockState>.fillS(fillable: Fillable) = fillable.fill { select() setTo it.finalSurfacePos }
+    @JvmName("fillS1")
+    infix fun Selector<Block>.fillS(fillable: Fillable) = fillable.fill { select().state setTo it.finalSurfacePos }
 
     private fun getNbtStruct(name:String):StructureTemplate?{
         return (world.server ?: return null)
