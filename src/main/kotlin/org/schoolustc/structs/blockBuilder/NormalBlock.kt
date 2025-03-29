@@ -12,19 +12,20 @@ import org.schoolustc.structureDsl.structure.builder.MyStructListBuilder
 
 class NormalBlock(
     val area:Area2D,
-    val toOuterWall:(Direction2D)->Boolean
+    val nextToWalls:List<Direction2D>,
+    val nextToSplitter:List<Direction2D>
 ): MyStructListBuilder<MyStruct>() {
     override fun StructureBuildScope.build() = mutableListOf<MyStruct>().also { list ->
         val light = mutableListOf<StreetLightBuilder>()
         Direction2D.entries.forEach {
-            val toOuterWall = toOuterWall(it)
-            val wallArea = area.sliceStart(it,1).sliceStart(it.left,area.length(it.left) - 1)
+            val wallArea = area.sliceEnd(it,1).sliceStart(it.left,area.length(it.left) - 1)
             list += LeafWallListBuilder(wallArea,it.left).build(this)
-            val lightArea = area.slice(it,1..1).slice(it.left,1..area.length(it.left) - 2)
+            val lightArea = area.slice(it.reverse,1..1).slice(it.left,1..area.length(it.left) - 2)
             lightArea.iterate { x, z ->
-                if (!toOuterWall && rand.nextBool(0.5f)) {
-                    val li = StreetLightBuilder(x, z, it.reverse)
-                    if(light.firstOrNull { it.distanceTo(li) < 7.0 } == null) {
+                val distance = if(it in nextToSplitter) 15.0 else 7.0
+                if (it !in nextToWalls && rand.nextBool(0.5f)) {
+                    val li = StreetLightBuilder(x, z, it)
+                    if(light.firstOrNull { it.distanceTo(li) < distance } == null) {
                         light += li
                     }
                 }

@@ -33,7 +33,7 @@ class ScaffoldBuilder(
         val splitTime = (log2(innerArea.size.toFloat())).toInt().match { it > 0 }
         var gatePos:Pair<Direction2D,Int>? = null
 
-
+        val roadBuilders = mutableListOf<RoadListBuilder<*>>()
         fun <T : MyRoadStruct> addRoad(type:MyRoadStructInfo<T>) :Unit? {
             val choices = blockList.flatMap {
                 Direction2D.entries.map { direction -> direction to it }
@@ -47,11 +47,11 @@ class ScaffoldBuilder(
                 if(gatePos == null) gatePos = rand from listOf(direction,direction.reverse) to pos + 1
                 blockList += area2D(block.l,block.w.first..<block.w.first + pos)
                 blockList += area2D(block.l,block.w.first + pos + type.width..block.w.last)
-                RoadListBuilder(
+                roadBuilders += RoadListBuilder(
                     area2D(block.l,block.w.first + pos..<block.w.first + pos + type.width),
                     direction,
                     type
-                ).addToList()
+                )
             }
             return Unit
         }
@@ -64,24 +64,33 @@ class ScaffoldBuilder(
             else if(i < roadMark) addRoad(Road) ?: break
             else addRoad(Splitter) ?: break
         }
-
+        val wallBuilders = mutableListOf<WallListBuilder>()
+        val wallCornerBuilders = mutableListOf<WallCornerBuilder>()
         for (d in Direction2D.entries) d.run {
             val wallArea = area.sliceEnd(this,1)
             if(this == gatePos?.first){
                 val builder = GateBuilder(wallArea,gatePos!!.second, gatePos!!.first) { avgY.roundToInt() }.apply { addToList() }
-                WallListBuilder(right,builder.wallArea1).addToList()
-                WallListBuilder(right,builder.wallArea2).addToList()
+                wallBuilders += WallListBuilder(right,builder.wallArea1)
+                wallBuilders += WallListBuilder(right,builder.wallArea2)
             } else {
-                WallListBuilder(right,wallArea).addToList()
+                wallBuilders += WallListBuilder(right,wallArea)
             }
         }
         area.run {
-            fun add(x:Int,z:Int) = WallCornerBuilder(x,z).addToList()
+            fun add(x:Int,z:Int) { wallCornerBuilders += WallCornerBuilder(x, z) }
             add(x1,z1);add(x2,z1);add(x1,z2);add(x2,z2)
         }
         blockList.forEach { area ->
-            val nextWalls = Direction2D.entries.filter { area.nextTo(this@ScaffoldBuilder.area.sliceStart(it,1)) != null }
-            NormalBlock(area){ it in nextWalls }.addToList()
+            val nextWalls = Direction2D.entries.filter {
+                area.nextTo(this@ScaffoldBuilder.area.sliceEnd(it,1)) != null
+            }
+            val nextSplitter = Direction2D.entries.filter {
+                roadBuilders.firstOrNull { road ->road.type == Splitter && area.nextTo(road.area) == it } != null
+            }
+            NormalBlock(area,nextWalls,nextSplitter).addToList()
         }
+        roadBuilders.forEach { it.addToList() }
+        wallBuilders.forEach { it.addToList() }
+        wallCornerBuilders.forEach { it.addToList() }
     }
 }
