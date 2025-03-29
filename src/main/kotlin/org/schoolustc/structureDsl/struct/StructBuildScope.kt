@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties.*
 import net.minecraft.world.level.block.state.properties.Half
 import net.minecraft.world.level.block.state.properties.StairsShape
+import net.minecraft.world.level.block.state.properties.WallSide
 import net.minecraft.world.level.levelgen.Heightmap
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate
 import org.schoolustc.fullId
@@ -26,8 +27,8 @@ class StructBuildScope(
     }
     inline val Direction2D.finalDirection get() = applyConfig(config)
     private fun setBlock(finalPos: Point, state:BlockState) = world.setBlock(finalPos.blockPos,state,3)
-    private infix fun BlockState.setTo(finalPos: Point) = setBlock(finalPos,this)
-    private inline val Block.state get() = defaultBlockState()
+    infix fun BlockState.setTo(finalPos: Point) = setBlock(finalPos,this)
+    inline val Block.state get() = defaultBlockState()
 
     infix fun Selector<Block>.fill(fillable: Fillable) = fillable.fill { select().state setTo it.finalPos }
     infix fun BlockState.fill(fillable: Fillable) = fillable.fill { this setTo it.finalPos }
@@ -41,15 +42,22 @@ class StructBuildScope(
         this fill Area(p1.x+1 ..p2.x-1,p1.y..p2.y,p2.z..p2.z)
     }
     infix fun Block.fillWall(area: Area) = Selector { this } fillWall area
-    fun Block.connectedState(vararg direction:Direction2D):BlockState {
-        var result = state
+    fun BlockState.connected(vararg direction:Direction2D):BlockState {
+        var result = this
         for (d in direction){
             result = result.setValue(d.finalDirection.toMcProperty(),true)
         }
         return result
     }
-    inline val Block.connectedX get() = connectedState(Direction2D.XMin,Direction2D.XPlus)
-    inline val Block.connectedZ get() = connectedState(Direction2D.ZMin,Direction2D.ZPlus)
+    fun BlockState.connected(wallSide: WallSide,vararg direction:Direction2D):BlockState {
+        var result = this
+        for (d in direction){
+            result = result.setValue(d.finalDirection.toMcWallProperty(),wallSide)
+        }
+        return result
+    }
+    inline val Block.connectedX get() = state.connected(Direction2D.XMin,Direction2D.XPlus)
+    inline val Block.connectedZ get() = state.connected(Direction2D.ZMin,Direction2D.ZPlus)
     //将y轴转化为相对于世界表面的坐标
     infix fun Block.fillS(fillable: Fillable) = fillable.fill { state setTo it.finalSurfacePos }
     infix fun BlockState.fillS(fillable: Fillable) = fillable.fill { this setTo it.finalSurfacePos }

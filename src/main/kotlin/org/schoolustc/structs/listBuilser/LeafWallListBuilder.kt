@@ -14,7 +14,7 @@ class LeafWallListBuilder(
     val area: Area2D,
     val direction:Direction2D,
     val maxLen:Int = 10
-) :MyStructListBuilder<LeafWall>{
+) : MyStructListBuilder<LeafWall>() {
     override fun StructureBuildScope.build() = mutableListOf<LeafWall>().apply {
         direction.run {
             area.l.first(area.length + 1).split(maxLen).zipWithNext { a, b ->

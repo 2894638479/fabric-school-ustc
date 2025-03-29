@@ -5,8 +5,8 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType
 import org.schoolustc.fullId
-import org.schoolustc.structureDsl.Area
 import org.schoolustc.structureDsl.Direction2D
+import org.schoolustc.structs
 
 abstract class MyStructInfo <T: MyStruct>(
     val id:String

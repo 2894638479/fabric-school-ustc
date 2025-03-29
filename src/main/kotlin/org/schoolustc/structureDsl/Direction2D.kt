@@ -48,22 +48,34 @@ enum class Direction2D {
         return d
     }
     fun toMcDirection() = when(this){
-        XPlus -> Direction.WEST
-        XMin -> Direction.EAST
-        ZPlus -> Direction.NORTH
-        ZMin -> Direction.SOUTH
+        XPlus -> Direction.EAST
+        XMin -> Direction.WEST
+        ZPlus -> Direction.SOUTH
+        ZMin -> Direction.NORTH
     }
     fun toMcProperty() = when(this){
-        XPlus -> WEST
-        XMin -> EAST
-        ZPlus -> NORTH
-        ZMin -> SOUTH
+        XPlus -> EAST
+        XMin -> WEST
+        ZPlus -> SOUTH
+        ZMin -> NORTH
+    }
+    fun toMcWallProperty() = when(this){
+        XPlus -> EAST_WALL
+        XMin -> WEST_WALL
+        ZPlus -> SOUTH_WALL
+        ZMin -> NORTH_WALL
     }
     fun toInt() = when(this){
         XPlus -> 0
         XMin -> 1
         ZPlus -> 2
         ZMin -> 3
+    }
+    fun toDirection() = when(this){
+        XPlus -> org.schoolustc.structureDsl.Direction.XPlus
+        XMin -> org.schoolustc.structureDsl.Direction.XMin
+        ZPlus -> org.schoolustc.structureDsl.Direction.ZPlus
+        ZMin -> org.schoolustc.structureDsl.Direction.ZMin
     }
     companion object {
         fun fromInt(int: Int) = when(int){

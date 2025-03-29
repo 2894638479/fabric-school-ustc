@@ -63,4 +63,7 @@ class Area2D(
         return "x:$x1..$x2  z:$z1..$z2"
     }
     fun checkNotEmpty() = ifEmpty { error("empty area2D: $this") }
+    inline fun iterate(block:(Int,Int)->Unit) {for(x in x){for(z in z){
+      block(x,z)
+    }}}
 }

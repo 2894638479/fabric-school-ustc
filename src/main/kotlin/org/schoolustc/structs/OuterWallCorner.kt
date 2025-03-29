@@ -4,10 +4,10 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.block.Blocks.*
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.*
-import org.schoolustc.structureDsl.structure.MyStructFixedAreaInfo
+import org.schoolustc.structureDsl.structure.MyStructFixedSizeInfo
 
 class OuterWallCorner(config: StructGenConfig): MyStructFixedSize(Companion,config) {
-    companion object : MyStructFixedAreaInfo<OuterWallCorner>("wallcorner",Point(1,5,1)) {
+    companion object : MyStructFixedSizeInfo<OuterWallCorner>("wallcorner",Point(1,5,1)) {
         override val defaultDirection = Direction2D.XPlus
         override fun loadTag(tag: CompoundTag) = OuterWallCorner(tag.getConfig())
         override fun OuterWallCorner.saveTag(tag: CompoundTag) = tag.putConfig(config)

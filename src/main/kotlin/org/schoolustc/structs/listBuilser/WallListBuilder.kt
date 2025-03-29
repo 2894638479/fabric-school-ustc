@@ -16,7 +16,7 @@ class WallListBuilder(
     val direction:Direction2D,
     val area: Area2D,
     val maxStep: Int = 10
-): MyStructListBuilder<MyStruct> {
+): MyStructListBuilder<MyStruct>() {
     override fun StructureBuildScope.build() = direction.run {
         area.checkNotEmpty().width.match(1)
         mutableListOf<MyStruct>().also { list ->

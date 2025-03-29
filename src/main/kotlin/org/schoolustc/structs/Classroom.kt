@@ -4,10 +4,10 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.block.Blocks.*
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.*
-import org.schoolustc.structureDsl.structure.MyStructFixedAreaInfo
+import org.schoolustc.structureDsl.structure.MyStructFixedSizeInfo
 
 class Classroom(config: StructGenConfig): MyStructFixedSize(Companion,config){
-    companion object : MyStructFixedAreaInfo<Classroom>(
+    companion object : MyStructFixedSizeInfo<Classroom>(
         "classroom",
         Point(8,5,12)
     ) {

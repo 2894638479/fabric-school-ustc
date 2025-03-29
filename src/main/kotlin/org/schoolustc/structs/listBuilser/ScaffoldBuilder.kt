@@ -20,10 +20,10 @@ import kotlin.math.roundToInt
 class ScaffoldBuilder(
     val area:Area2D,
     val minBlockSize:Int = 15
-): MyStructListBuilder<MyStruct> {
+): MyStructListBuilder<MyStruct>() {
     override fun StructureBuildScope.build() = mutableListOf<MyStruct>().also { list ->
         fun MyStructListBuilder<*>.addToList(){
-            list.addAll(this.run { this@build.build() })
+            list.addAll(this.build(this@build))
         }
         fun MyStructBuilder<*>.addToList(){
             list.add(this.build())
@@ -79,8 +79,9 @@ class ScaffoldBuilder(
             fun add(x:Int,z:Int) = WallCornerBuilder(x,z).addToList()
             add(x1,z1);add(x2,z1);add(x1,z2);add(x2,z2)
         }
-        blockList.forEach {
-            NormalBlock(it).addToList()
+        blockList.forEach { area ->
+            val nextWalls = Direction2D.entries.filter { area.nextTo(this@ScaffoldBuilder.area.sliceStart(it,1)) != null }
+            NormalBlock(area){ it in nextWalls }.addToList()
         }
     }
 }

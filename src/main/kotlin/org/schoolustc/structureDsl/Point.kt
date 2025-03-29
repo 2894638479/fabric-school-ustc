@@ -33,5 +33,19 @@ data class Point(
         z + other.z
     )
     override fun fill(block: (Point) -> Unit) = block(this)
+    fun offset(direction:Direction,count:Int = 1):Point{
+        var x = x
+        var y = y
+        var z = z
+        when(direction){
+            Direction.XPlus -> x += count
+            Direction.XMin -> x -= count
+            Direction.YPlus -> y += count
+            Direction.YMin -> y -= count
+            Direction.ZPlus -> z += count
+            Direction.ZMin -> z -= count
+        }
+        return Point(x,y,z)
+    }
 }
 val BlockPos.point get() = Point(x,y,z)

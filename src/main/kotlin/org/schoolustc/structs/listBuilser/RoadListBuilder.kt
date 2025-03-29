@@ -13,7 +13,7 @@ class RoadListBuilder <T:MyRoadStruct>  (
     val area:Area2D,
     val direction: Direction2D,
     val type: MyRoadStructInfo<T>
-): MyStructListBuilder<T> {
+): MyStructListBuilder<T>() {
     override fun StructureBuildScope.build() = direction.run {
         area.width.match(type.width)
         mutableListOf<T>().apply {
