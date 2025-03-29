@@ -25,9 +25,9 @@ class StreetLight(config: StructGenConfig):MyStructFixedSize(Companion,config) {
             SEA_LANTERN to 5f,
             GLOWSTONE to 1f
         )).select()
-        wall fillS Area(0..0,0..3,0..0)
-        wall.state.connected(Direction2D.XPlus) fillS Point(0,4,0)
-        wall.state.connected(Direction2D.XMin) setTo Point(0,4,0).finalSurfacePos.offset(Direction2D.XPlus.finalDirection.toDirection())
-        light.state setTo Point(0,3,0).finalSurfacePos.offset(Direction2D.XPlus.finalDirection.toDirection())
+        wall fill Area(0..0,0..3,0..0)
+        wall.state.connected(Direction2D.XPlus) fill Point(0,4,0)
+        wall.state.connected(Direction2D.XMin) fill Point(1,4,0)
+        light.state fill Point(1,3,0)
     }
 }

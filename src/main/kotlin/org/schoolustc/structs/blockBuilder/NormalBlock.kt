@@ -1,10 +1,10 @@
 package org.schoolustc.structs.blockBuilder
 
-import org.schoolustc.structs.builder.LeafWallBuilder
 import org.schoolustc.structs.builder.StreetLightBuilder
 import org.schoolustc.structs.listBuilser.LeafWallListBuilder
 import org.schoolustc.structureDsl.Area2D
 import org.schoolustc.structureDsl.Direction2D
+import org.schoolustc.structureDsl.Point
 import org.schoolustc.structureDsl.nextBool
 import org.schoolustc.structureDsl.struct.MyStruct
 import org.schoolustc.structureDsl.structure.StructureBuildScope
@@ -24,8 +24,8 @@ class NormalBlock(
             lightArea.iterate { x, z ->
                 val distance = if(it in nextToSplitter) 15.0 else 7.0
                 if (it !in nextToWalls && rand.nextBool(0.5f)) {
-                    val li = StreetLightBuilder(x, z, it)
-                    if(light.firstOrNull { it.distanceTo(li) < distance } == null) {
+                    val li = StreetLightBuilder(Point(x,y(x,z) + 1,z), it)
+                    if(light.firstOrNull { it.pos.distanceTo(li.pos) < distance } == null) {
                         light += li
                     }
                 }

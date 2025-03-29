@@ -30,7 +30,7 @@ class OuterWall(
         state fillS Area(0..<length,2..3,0..0)
 
         //填补高度差带来的漏洞
-        val h = (0..<length).map { Point(it,0,0).finalSurfacePos }
+        val h = (0..<length).map { Point(it,0,0).getFinalSurfacePos() }
         for(i in 1..<length){
             if(h[i].y < h[i-1].y) state fillS Point(i,4,0)
         }

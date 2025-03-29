@@ -1,7 +1,9 @@
 package org.schoolustc.structureDsl
 
+import com.google.common.math.IntMath.pow
 import net.minecraft.core.BlockPos
 import org.schoolustc.structureDsl.struct.StructGenConfig
+import kotlin.math.sqrt
 
 data class Point(
     val x:Int,
@@ -47,5 +49,6 @@ data class Point(
         }
         return Point(x,y,z)
     }
+    fun distanceTo(other: Point) = sqrt((pow(x-other.x,2) + pow(y-other.y,2) + pow(z-other.z,2)).toDouble())
 }
 val BlockPos.point get() = Point(x,y,z)
