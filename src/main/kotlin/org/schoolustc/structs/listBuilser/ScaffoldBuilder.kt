@@ -59,7 +59,7 @@ class ScaffoldBuilder(
 
 
         val streetMark = rand.nextInt(splitTime / 4..splitTime / 2).match { it > 0 }
-        val roadMark = rand.nextInt(streetMark..splitTime)
+        val roadMark = rand.nextInt(splitTime * 3 / 4..splitTime)
         for(i in 0..<splitTime){
             if(i < streetMark) addRoad(Street) ?: break
             else if(i < roadMark) addRoad(Road) ?: break

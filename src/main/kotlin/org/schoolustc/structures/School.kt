@@ -1,5 +1,6 @@
 package org.schoolustc.structures
 
+import org.schoolustc.logger
 import org.schoolustc.structs.listBuilser.ScaffoldBuilder
 import org.schoolustc.structureDsl.Point
 import org.schoolustc.structureDsl.structure.MyStructure
@@ -10,7 +11,8 @@ class School(settings:StructureSettings): MyStructure(Companion,settings) {
     companion object : MyStructureInfo<School>("school",::School)
 
     override fun StructureBuildScope.build(pos:Point) {
-        val area = randArea(pos.x,pos.z,50..80)
+        logger.info(pos.toString())
+        val area = randArea(pos.x,pos.z,108..143)
         try {
             ScaffoldBuilder(area).run { this@build.build() }.addToPieces()
         } catch (e:Exception){e.printStackTrace()}

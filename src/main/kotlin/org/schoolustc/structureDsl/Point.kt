@@ -55,5 +55,9 @@ open class Point(
             it.x == x && it.y == y && it.z == z
         } ?: false
     }
+
+    override fun toString(): String {
+        return "Point{x:$x,y:$y,z:$z}"
+    }
 }
 val BlockPos.point get() = Point(x,y,z)
