@@ -10,3 +10,4 @@ fun IntRange.first(count:Int) = first..<first + count
 fun IntRange.last(count:Int) = last + 1 - count..last
 fun IntRange.expand(count:Int) = first - count..last + count
 fun IntRange.expand(start:Int,end:Int) = first - start..last + end
+inline val IntRange.middle get() = (first + last) / 2

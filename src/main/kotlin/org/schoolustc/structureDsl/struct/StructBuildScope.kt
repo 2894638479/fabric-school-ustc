@@ -80,17 +80,17 @@ class StructBuildScope(
     }
     private fun putNbtStruct(name:String, startPos: Point, filterAir:Boolean){
         val struct = getNbtStruct(name) ?: return logger.warn("not found structure nbt $name")
-        struct.palettes.run {
-            getOrNull(rand.nextInt(size)) ?: return logger.warn("empty palette")
-        }.blocks().forEach {
-            if(!(filterAir && it.state.isAir))
-                world.setBlock(it.pos.point.plus(startPos).finalPos.blockPos,it.state,3)
+        struct.palettes.forEach {
+                it.blocks().forEach {
+                if(!(filterAir && it.state.isAir))
+                    world.setBlock(it.pos.point.plus(startPos).finalPos.blockPos,it.state,3)
+            }
         }
     }
     //放置nbt
-    infix fun String.put(startPos: Point) = putNbtStruct(this,startPos,false)
-    //过滤空气
-    infix fun String.putF(startPos: Point) = putNbtStruct(this,startPos,true)
+    infix fun String.put(startPos: Point) = putNbtStruct(this,startPos,true)
+    //不过滤空气
+    infix fun String.putA(startPos: Point) = putNbtStruct(this,startPos,false)
 
     fun randBool(trueChance:Float) = rand.nextFloat() < trueChance
     fun Block.stairState(facing:Direction2D,shape:StairsShape = StairsShape.STRAIGHT,half: Half = Half.BOTTOM) =

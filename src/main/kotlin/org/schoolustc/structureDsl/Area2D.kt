@@ -67,4 +67,9 @@ class Area2D(
     inline fun iterate(block:(Int,Int)->Unit) {for(x in x){for(z in z){
       block(x,z)
     }}}
+    fun middle(y:(Int,Int)->Int):Point{
+        val xMid = x.middle
+        val zMid = z.middle
+        return Point(xMid,y(xMid,zMid),zMid)
+    }
 }

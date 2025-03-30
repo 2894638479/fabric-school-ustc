@@ -11,7 +11,6 @@ class School(settings:StructureSettings): MyStructure(Companion,settings) {
     companion object : MyStructureInfo<School>("school",::School)
 
     override fun StructureBuildScope.build(pos:Point) {
-        logger.info(pos.toString())
         val area = randArea(pos.x,pos.z,108..143)
         try {
             ScaffoldBuilder(area).run { this@build.build() }.addToPieces()
