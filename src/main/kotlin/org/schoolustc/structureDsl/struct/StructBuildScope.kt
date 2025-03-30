@@ -82,8 +82,15 @@ class StructBuildScope(
         val struct = getNbtStruct(name) ?: return logger.warn("not found structure nbt $name")
         struct.palettes.forEach {
                 it.blocks().forEach {
-                if(!(filterAir && it.state.isAir))
-                    world.setBlock(it.pos.point.plus(startPos).finalPos.blockPos,it.state,3)
+                if(!(filterAir && it.state.isAir)){
+                    var state = it.state
+                    if(it.state.hasProperty(Direction2D.XMin.toMcProperty())){
+                        Direction2D.entries.forEach{ dir ->
+                            state = state.setValue(dir.finalDirection.toMcProperty(),it.state.getValue(dir.toMcProperty()))
+                        }
+                    }
+                    world.setBlock(it.pos.point.plus(startPos).finalPos.blockPos,state,3)
+                }
             }
         }
     }
