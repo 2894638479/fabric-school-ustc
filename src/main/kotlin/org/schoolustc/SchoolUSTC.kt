@@ -12,7 +12,7 @@ const val id = "school-ustc"
 fun fullId(str: String) = ResourceLocation(id,str)
 val logger = LoggerFactory.getLogger(id)
 val structs = listOf<MyStructInfo<*>>(
-	Classroom,Gate,LeafWall,OuterWall,OuterWallCorner,Road,Splitter,Street,StreetLight
+	Classroom,Gate,LeafWall,OuterWall,OuterWallCorner,Road,Splitter,Street,StreetLight,Sakura
 )
 object SchoolUSTC : ModInitializer {
 	override fun onInitialize() {

@@ -1,5 +1,8 @@
 package org.schoolustc.structureDsl.struct
 
+import net.minecraft.core.registries.Registries
+import net.minecraft.data.worldgen.features.TreeFeatures
+import net.minecraft.resources.ResourceKey
 import net.minecraft.util.RandomSource
 import net.minecraft.world.level.WorldGenLevel
 import net.minecraft.world.level.block.Block
@@ -9,7 +12,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties.*
 import net.minecraft.world.level.block.state.properties.Half
 import net.minecraft.world.level.block.state.properties.StairsShape
 import net.minecraft.world.level.block.state.properties.WallSide
+import net.minecraft.world.level.chunk.ChunkGenerator
 import net.minecraft.world.level.levelgen.Heightmap
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate
 import org.schoolustc.fullId
 import org.schoolustc.interfaces.palettes
@@ -19,7 +24,8 @@ import org.schoolustc.structureDsl.*
 class StructBuildScope(
     val world:WorldGenLevel,
     val config: StructGenConfig,
-    val rand:RandomSource
+    val rand:RandomSource,
+    val chunkGenerator: ChunkGenerator
 ) {
     private inline val Point.finalPos get() = finalPos(config)
     private inline val Point.finalSurfacePos get() = finalPos.toSurface { x, z ->
@@ -93,6 +99,20 @@ class StructBuildScope(
             .setValue(STAIRS_SHAPE,shape)
             .setValue(HALF,half)
     fun Block.leafState(persist:Boolean) = state.setValue(PERSISTENT,persist)
+
+    fun placeTree(pos:Point,type: ResourceKey<ConfiguredFeature<*, *>>) = world
+        .level
+        .registryAccess()
+        .registryOrThrow(Registries.CONFIGURED_FEATURE)
+        .getHolder(type)
+        .orElse(null)
+        ?.value()
+        ?.place(
+            world,
+            chunkGenerator,
+            rand,
+            pos.finalPos.blockPos,
+        )
 }
 
 

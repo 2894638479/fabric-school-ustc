@@ -4,6 +4,7 @@ import org.schoolustc.structs.Road
 import org.schoolustc.structs.Splitter
 import org.schoolustc.structs.Street
 import org.schoolustc.structs.blockBuilder.NormalBlock
+import org.schoolustc.structs.blockBuilder.SakuraBlock
 import org.schoolustc.structs.builder.GateBuilder
 import org.schoolustc.structs.builder.WallCornerBuilder
 import org.schoolustc.structureDsl.*
@@ -87,7 +88,8 @@ class ScaffoldBuilder(
             val nextSplitter = Direction2D.entries.filter {
                 roadBuilders.firstOrNull { road ->road.type == Splitter && area.nextTo(road.area) == it } != null
             }
-            NormalBlock(area,nextWalls,nextSplitter).addToList()
+            if(rand.nextBool(0.5f)) NormalBlock(area,nextWalls,nextSplitter).addToList()
+            else SakuraBlock(area,nextWalls,nextSplitter).addToList()
         }
         roadBuilders.forEach { it.addToList() }
         wallBuilders.forEach { it.addToList() }

@@ -38,7 +38,8 @@ abstract class MyStruct (
         StructBuildScope(
             worldGenLevel,
             config,
-            randomSource
+            randomSource,
+            chunkGenerator
         ).build()
     }
     abstract fun StructBuildScope.build()

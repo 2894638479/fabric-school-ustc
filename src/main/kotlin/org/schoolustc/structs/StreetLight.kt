@@ -16,15 +16,15 @@ class StreetLight(config: StructGenConfig):MyStructFixedSize(Companion,config) {
         override val defaultDirection = Direction2D.XPlus
     }
     override fun StructBuildScope.build() {
-        val wall = Selector.selector(rand, mapOf(
+        val wall = rand from mapOf(
             ACACIA_FENCE to 1f,
             OAK_FENCE to 5f,
             BIRCH_FENCE to 1f
-        )).select()
-        val light = Selector.selector(rand, mapOf(
+        )
+        val light = rand from mapOf(
             SEA_LANTERN to 5f,
             GLOWSTONE to 1f
-        )).select()
+        )
         wall fill Area(0..0,0..3,0..0)
         wall.state.connected(Direction2D.XPlus) fill Point(0,4,0)
         wall.state.connected(Direction2D.XMin) fill Point(1,4,0)

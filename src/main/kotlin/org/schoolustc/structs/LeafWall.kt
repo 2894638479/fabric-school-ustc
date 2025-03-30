@@ -3,7 +3,6 @@ package org.schoolustc.structs
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.block.Blocks.*
 import org.schoolustc.structureDsl.*
-import org.schoolustc.structureDsl.Selector.Companion.selector
 import org.schoolustc.structureDsl.struct.MyStruct
 import org.schoolustc.structureDsl.struct.MyStructInfo
 import org.schoolustc.structureDsl.struct.StructBuildScope
@@ -26,12 +25,12 @@ class LeafWall(
     }
 
     override fun StructBuildScope.build() {
-        val leaves = selector(rand,mapOf(
-            OAK_LEAVES.leafState(true) to 3f,
-            SPRUCE_LEAVES.leafState(true) to 1f,
-            AZALEA_LEAVES.leafState(true) to 2f,
-            FLOWERING_AZALEA_LEAVES.leafState(true) to 2f
-        ))
-        leaves fillS Area(0..<length,1..1,0..0)
+        val leaves = rand from mapOf(
+            OAK_LEAVES to 3f,
+            SPRUCE_LEAVES to 1f,
+            AZALEA_LEAVES to 2f,
+            FLOWERING_AZALEA_LEAVES to 2f
+        )
+        leaves.leafState(true) fillS Area(0..<length,1..1,0..0)
     }
 }

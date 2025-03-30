@@ -15,6 +15,7 @@ class Area2D(
         x.first + i .. x.last - i,
         z.first + i .. z.last - i
     )
+    fun padding(i:Int,direction:Direction2D) = slice(direction,0..<length(direction) - i)
     inline val x1 get() = x.first
     inline val x2 get() = x.last
     inline val z1 get() = z.first

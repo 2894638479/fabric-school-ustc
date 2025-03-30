@@ -10,7 +10,7 @@ import org.schoolustc.structureDsl.struct.MyStruct
 import org.schoolustc.structureDsl.structure.StructureBuildScope
 import org.schoolustc.structureDsl.structure.builder.MyStructListBuilder
 
-class NormalBlock(
+open class NormalBlock(
     val area:Area2D,
     val nextToWalls:List<Direction2D>,
     val nextToSplitter:List<Direction2D>
