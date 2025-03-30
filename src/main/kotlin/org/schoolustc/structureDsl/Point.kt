@@ -5,25 +5,25 @@ import net.minecraft.core.BlockPos
 import org.schoolustc.structureDsl.struct.StructGenConfig
 import kotlin.math.sqrt
 
-data class Point(
+open class Point(
     val x:Int,
     val y:Int,
     val z:Int
 ):Fillable{
+    class FinalPoint(x:Int,y: Int,z: Int):Point(x,y,z)
     val blockPos get() = BlockPos(x,y,z)
-    fun finalPos(config: StructGenConfig):Point{
+    fun finalPos(config: StructGenConfig):FinalPoint{
         val xAdd = if (config.revX) - x else x
         val zAdd = if (config.revZ) - z else z
-        return Point(
+        return FinalPoint(
             config.pos.x + if (config.rotate) zAdd else xAdd,
             config.pos.y + y,
             config.pos.z + if (config.rotate) xAdd else zAdd
         )
     }
-    //对finalPos调用
-    fun toSurface(getY:(Int, Int)->Int):Point{
-        val finalPos = this
-        return Point(
+    fun finalSurfacePos(config:StructGenConfig,getY:(Int, Int)->Int):FinalPoint{
+        val finalPos = finalPos(config)
+        return FinalPoint(
             finalPos.x,
             y + getY(finalPos.x,finalPos.z),
             finalPos.z
@@ -50,5 +50,10 @@ data class Point(
         return Point(x,y,z)
     }
     fun distanceTo(other: Point) = sqrt((pow(x-other.x,2) + pow(y-other.y,2) + pow(z-other.z,2)).toDouble())
+    override fun equals(other: Any?): Boolean {
+        return (other as? Point)?.let {
+            it.x == x && it.y == y && it.z == z
+        } ?: false
+    }
 }
 val BlockPos.point get() = Point(x,y,z)

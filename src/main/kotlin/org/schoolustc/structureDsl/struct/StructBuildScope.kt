@@ -28,12 +28,12 @@ class StructBuildScope(
     val chunkGenerator: ChunkGenerator
 ) {
     private inline val Point.finalPos get() = finalPos(config)
-    private inline val Point.finalSurfacePos get() = finalPos.toSurface { x, z ->
+    private inline val Point.finalSurfacePos get() = finalSurfacePos(config){ x, z ->
         world.getHeight(Heightmap.Types.WORLD_SURFACE_WG,x,z) - 1
     }
     private inline val Direction2D.finalDirection get() = applyConfig(config)
     private fun setBlock(finalPos: Point, state:BlockState) = world.setBlock(finalPos.blockPos,state,3)
-    private infix fun BlockState.setTo(finalPos: Point) = setBlock(finalPos,this)
+    private infix fun BlockState.setTo(finalPos: Point.FinalPoint) = setBlock(finalPos,this)
     @JvmName("finalSurfacePosGetter") fun Point.getFinalSurfacePos() = finalSurfacePos
     inline val Block.state get() = defaultBlockState()
 
