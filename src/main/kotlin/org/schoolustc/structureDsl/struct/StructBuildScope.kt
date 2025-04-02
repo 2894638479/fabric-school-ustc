@@ -4,9 +4,16 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.data.worldgen.features.TreeFeatures
 import net.minecraft.resources.ResourceKey
 import net.minecraft.util.RandomSource
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.enchantment.Enchantment
+import net.minecraft.world.item.enchantment.EnchantmentHelper
 import net.minecraft.world.level.WorldGenLevel
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.Blocks.CHEST
+import net.minecraft.world.level.block.ChestBlock
 import net.minecraft.world.level.block.StairBlock
+import net.minecraft.world.level.block.entity.ChestBlockEntity
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties.*
 import net.minecraft.world.level.block.state.properties.Half
@@ -107,11 +114,11 @@ class StructBuildScope(
             .setValue(HALF,half)
     fun Block.leafState(persist:Boolean) = state.setValue(PERSISTENT,persist)
 
-    fun placeTree(pos:Point,type: ResourceKey<ConfiguredFeature<*, *>>) = world
+    infix fun ResourceKey<ConfiguredFeature<*, *>>.place(pos:Point)= world
         .level
         .registryAccess()
         .registryOrThrow(Registries.CONFIGURED_FEATURE)
-        .getHolder(type)
+        .getHolder(this)
         .orElse(null)
         ?.value()
         ?.place(
@@ -120,6 +127,18 @@ class StructBuildScope(
             rand,
             pos.finalPos.blockPos,
         )
+
+    fun chest(
+        pos:Point,
+        facing:Direction2D,
+        addItem:(Int)->ItemStack?
+    ){
+        CHEST.state.setValue(ChestBlock.FACING,facing.finalDirection.toMcDirection()) setTo pos.finalPos
+        val entity = world.getBlockEntity(pos.finalPos.blockPos) as ChestBlockEntity
+        for(i in 0..<entity.containerSize){
+            addItem(i)?.let { entity.setItem(i,it) }
+        }
+    }
 }
 
 

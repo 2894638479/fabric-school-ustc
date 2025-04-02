@@ -1,6 +1,12 @@
 package org.schoolustc.structs
 
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items.*
+import net.minecraft.world.item.enchantment.EnchantmentHelper
+import net.minecraft.world.item.enchantment.Enchantments
+import net.minecraft.world.item.enchantment.Enchantments.ALL_DAMAGE_PROTECTION
+import net.minecraft.world.level.block.Blocks.AIR
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.MyStructFixedSize
 import org.schoolustc.structureDsl.struct.StructBuildScope
@@ -27,13 +33,43 @@ class Building(
     }
 
     override fun StructBuildScope.build() {
+        infix fun String.putA(y:Int) = putA(Point(0,y,0))
         infix fun String.put(y:Int) = put(Point(0,y,0))
+        val topestHeight = if(flatTop) 1 else 12
+        val normalChestPoints = List(height + 2){Point(5,it * 4 + 1,5)}
+        val specialChestPoints = if(flatTop) listOf() else listOf(Point(5,height*4+9,5))
+
+        AIR fill Area(0..<11,1..<4,0..<11)
         "building_base" put 0
         for(i in 1..height){
-            "building_middle" put i*4
+            "building_middle" putA i*4
         }
-        "building_top" put height*4 + 4
+        "building_top" putA height*4 + 4
         val topest = if(flatTop) "building_topest_flat" else "building_topest"
-        topest put height*4 + 8
+        topest putA height*4 + 8
+
+        normalChestPoints.forEach {
+            chest(it, defaultDirection){
+                (rand from mapOf(
+                    { ItemStack(DIAMOND,rand from 1..<10) } to 0.15,
+                    { ItemStack(GOLD_INGOT,rand from 3..<20) } to 0.3,
+                    { ItemStack(IRON_INGOT,rand from 5..<40) } to 0.5,
+                    { null } to 6
+                ))()
+            }
+        }
+        specialChestPoints.forEach {
+            chest(it, defaultDirection){
+                (rand from mapOf(
+                    {ItemStack(rand from mapOf(
+                        DIAMOND_BOOTS to 1,
+                        DIAMOND_HELMET to 1,
+                        DIAMOND_LEGGINGS to 0.7,
+                        DIAMOND_CHESTPLATE to 0.5
+                    )).apply{enchant(ALL_DAMAGE_PROTECTION , rand from 1..5)}} to 1,
+                    { null } to 10
+                ))()
+            }
+        }
     }
 }

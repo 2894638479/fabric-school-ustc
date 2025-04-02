@@ -14,6 +14,7 @@ fun RandomSource.nextInt(range:IntProgression):Int{
 }
 
 fun RandomSource.nextBool(trueChance:Float) = nextFloat() < trueChance
+fun RandomSource.nextBool(trueChance:Double) = nextFloat() < trueChance
 
 infix fun <T> RandomSource.from(collection: Collection<T>):T{
     if(collection.isEmpty()) error("empty collection")
@@ -22,12 +23,12 @@ infix fun <T> RandomSource.from(collection: Collection<T>):T{
     error("random error")
 }
 infix fun RandomSource.from(range:IntProgression) = nextInt(range)
-infix fun <T> RandomSource.from(map:Map<T,Float>):T{
-    val sum = map.values.sum()
+infix fun <T,V:Number> RandomSource.from(map:Map<T,V>):T{
+    val sum = map.values.sumOf { it.toDouble() }
     val r = nextFloat() * sum
-    var f = 0f
+    var f = 0.0
     for((block,weight) in map){
-        f += weight
+        f += weight.toDouble()
         if(r < f) return block
     }
     return map.keys.last()
