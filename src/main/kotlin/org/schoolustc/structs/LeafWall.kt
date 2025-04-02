@@ -25,12 +25,14 @@ class LeafWall(
     }
 
     override fun StructBuildScope.build() {
-        val leaves = rand from mapOf(
-            OAK_LEAVES to 3f,
-            SPRUCE_LEAVES to 1f,
-            AZALEA_LEAVES to 2f,
-            FLOWERING_AZALEA_LEAVES to 2f
-        )
-        leaves.leafState(true) fillS Area(0..<length,1..1,0..0)
+        val leaves = {
+            rand from mapOf(
+                OAK_LEAVES to 3f,
+                SPRUCE_LEAVES to 1f,
+                AZALEA_LEAVES to 2f,
+                FLOWERING_AZALEA_LEAVES to 2f
+            )
+        }
+        Selector { leaves().leafState(true) } fillS Area(0..<length,1..1,0..0)
     }
 }

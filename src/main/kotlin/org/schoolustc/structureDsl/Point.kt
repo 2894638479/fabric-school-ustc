@@ -2,6 +2,7 @@ package org.schoolustc.structureDsl
 
 import com.google.common.math.IntMath.pow
 import net.minecraft.core.BlockPos
+import net.minecraft.world.level.levelgen.structure.BoundingBox
 import org.schoolustc.structureDsl.struct.StructGenConfig
 import kotlin.math.sqrt
 
@@ -59,5 +60,6 @@ open class Point(
     override fun toString(): String {
         return "Point{x:$x,y:$y,z:$z}"
     }
+    fun inBox(box:BoundingBox) = box.isInside(x,y,z)
 }
 val BlockPos.point get() = Point(x,y,z)

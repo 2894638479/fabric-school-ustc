@@ -1,19 +1,15 @@
 package org.schoolustc.structureDsl.struct
 
 import net.minecraft.core.registries.Registries
-import net.minecraft.data.worldgen.features.TreeFeatures
 import net.minecraft.resources.ResourceKey
 import net.minecraft.util.RandomSource
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.enchantment.Enchantment
-import net.minecraft.world.item.enchantment.EnchantmentHelper
 import net.minecraft.world.level.WorldGenLevel
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks.CHEST
 import net.minecraft.world.level.block.ChestBlock
 import net.minecraft.world.level.block.StairBlock
 import net.minecraft.world.level.block.entity.ChestBlockEntity
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties.*
 import net.minecraft.world.level.block.state.properties.Half
@@ -22,6 +18,7 @@ import net.minecraft.world.level.block.state.properties.WallSide
 import net.minecraft.world.level.chunk.ChunkGenerator
 import net.minecraft.world.level.levelgen.Heightmap
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature
+import net.minecraft.world.level.levelgen.structure.BoundingBox
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate
 import org.schoolustc.fullId
 import org.schoolustc.interfaces.palettes
@@ -32,17 +29,23 @@ class StructBuildScope(
     val world:WorldGenLevel,
     val config: StructGenConfig,
     val rand:RandomSource,
+    val boundingBox: BoundingBox,
     val chunkGenerator: ChunkGenerator
 ) {
     private inline val Point.finalPos get() = finalPos(config)
     private inline val Point.finalSurfacePos get() = finalSurfacePos(config){ x, z ->
         world.getHeight(Heightmap.Types.WORLD_SURFACE_WG,x,z) - 1
     }
+    private inline val Point.FinalPoint.inBox get() = inBox(boundingBox)
     private inline val Direction2D.finalDirection get() = applyConfig(config)
     private fun setBlock(finalPos: Point, state:BlockState) = world.setBlock(finalPos.blockPos,state,3)
-    private infix fun BlockState.setTo(finalPos: Point.FinalPoint) = setBlock(finalPos,this)
+    private infix fun BlockState.setTo(finalPos: Point.FinalPoint) {
+        if(finalPos.inBox) setBlock(finalPos, this)
+    }
     @JvmName("finalSurfacePosGetter") fun Point.getFinalSurfacePos() = finalSurfacePos
     inline val Block.state get() = defaultBlockState()
+
+    infix fun Block.fillRaw(fillable: Fillable) = fillable.fill { state setTo Point.FinalPoint(it.x,it.y,it.z) }
 
     infix fun Selector<Block>.fill(fillable: Fillable) = fillable.fill { select().state setTo it.finalPos }
     infix fun BlockState.fill(fillable: Fillable) = fillable.fill { this setTo it.finalPos }
@@ -94,7 +97,9 @@ class StructBuildScope(
                             state = state.setValue(dir.finalDirection.toMcProperty(),it.state.getValue(dir.toMcProperty()))
                         }
                     }
-                    world.setBlock(it.pos.point.plus(startPos).finalPos.blockPos,state,3)
+                    val finalPos = it.pos.point.plus(startPos).finalPos
+                    if(finalPos.inBox)
+                    world.setBlock(finalPos.blockPos,state,3)
                 }
             }
         }
@@ -112,7 +117,7 @@ class StructBuildScope(
             .setValue(HALF,half)
     fun Block.leafState(persist:Boolean) = state.setValue(PERSISTENT,persist)
 
-    infix fun ResourceKey<ConfiguredFeature<*, *>>.place(pos:Point)= world
+    infix fun ResourceKey<ConfiguredFeature<*, *>>.place(pos:Point) = world
         .level
         .registryAccess()
         .registryOrThrow(Registries.CONFIGURED_FEATURE)
@@ -123,7 +128,7 @@ class StructBuildScope(
             world,
             chunkGenerator,
             rand,
-            pos.finalPos.blockPos,
+            pos.finalPos.apply { if (!inBox) return false }.blockPos,
         )
 
     fun chest(
@@ -131,8 +136,10 @@ class StructBuildScope(
         facing:Direction2D,
         addItem:(Int)->ItemStack?
     ){
-        CHEST.state.setValue(ChestBlock.FACING,facing.finalDirection.toMcDirection()) setTo pos.finalPos
-        val entity = world.getBlockEntity(pos.finalPos.blockPos) as ChestBlockEntity
+        val finalPos = pos.finalPos
+        if(!finalPos.inBox) return
+        CHEST.state.setValue(ChestBlock.FACING,facing.finalDirection.toMcDirection()) setTo finalPos
+        val entity = world.getBlockEntity(finalPos.blockPos) as ChestBlockEntity
         for(i in 0..<entity.containerSize){
             addItem(i)?.let { entity.setItem(i,it) }
         }

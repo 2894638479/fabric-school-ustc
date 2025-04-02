@@ -39,6 +39,7 @@ abstract class MyStruct (
             worldGenLevel,
             config,
             randomSource,
+            boundingBox,
             chunkGenerator
         ).build()
     }

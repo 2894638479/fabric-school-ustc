@@ -19,10 +19,7 @@ class Sakura(config:StructGenConfig):MyStructFixedSize(Companion,config) {
     }
     override fun StructBuildScope.build() {
         val treePoint = Point(5,0,5)
-        rand from mapOf(
-            TreeFeatures.CHERRY to 5f,
-            TreeFeatures.CHERRY_BEES_005 to 1f
-        ) place treePoint
+        TreeFeatures.CHERRY_BEES_005 place treePoint
         for(i in 1..10){
             val pos = Point(rand from 1..9,1,rand from 1..9)
             if(world.getBlockState(pos.getFinalSurfacePos().blockPos).isAir) {

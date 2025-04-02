@@ -9,7 +9,7 @@ import org.schoolustc.structureDsl.match
 import org.schoolustc.structureDsl.struct.MyStruct
 import org.schoolustc.structureDsl.struct.builder.MyStructListBuilder
 import org.schoolustc.structureDsl.structure.StructureBuildScope
-import org.schoolustc.structureDsl.structure.split
+import org.schoolustc.structureDsl.split
 
 class WallListBuilder(
     val direction:Direction2D,

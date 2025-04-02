@@ -1,7 +1,7 @@
 package org.schoolustc.structs.blockbuilder
 
+import org.schoolustc.structs.builder.LeafWallBuilder
 import org.schoolustc.structs.builder.StreetLightBuilder
-import org.schoolustc.structs.listbuilder.LeafWallListBuilder
 import org.schoolustc.structureDsl.Direction2D
 import org.schoolustc.structureDsl.Point
 import org.schoolustc.structureDsl.nextBool
@@ -15,7 +15,7 @@ class NormalBlock(
         val light = mutableListOf<StreetLightBuilder>()
         Direction2D.entries.forEach {
             val wallArea = area.sliceEnd(it,1).sliceStart(it.left,area.length(it.left) - 1)
-            list += LeafWallListBuilder(wallArea,it.left).build(this)
+            list += LeafWallBuilder(it.left,wallArea).build()
             val lightArea = area.slice(it.reverse,1..1).slice(it.left,1..area.length(it.left) - 2)
             lightArea.iterate { x, z ->
                 val distance = if(it in nextToSplitter) 15.0 else 7.0

@@ -6,6 +6,7 @@ import org.schoolustc.structs.Splitter
 import org.schoolustc.structs.Street
 import org.schoolustc.structs.blockbuilder.*
 import org.schoolustc.structs.builder.GateBuilder
+import org.schoolustc.structs.builder.RoadBuilder
 import org.schoolustc.structs.builder.WallCornerBuilder
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.Area2D.Companion.area2D
@@ -34,7 +35,7 @@ class ScaffoldBuilder(
         val splitTime = (log2(innerArea.size.toFloat())).toInt().match { it > 0 }
         var gatePos:Pair<Direction2D,Int>? = null
 
-        val roadBuilders = mutableListOf<RoadListBuilder<*>>()
+        val roadBuilders = mutableListOf<RoadBuilder<*>>()
         fun <T : MyRoadStruct> addRoad(type:MyRoadStructInfo<T>) :Unit? {
             val choices = blockList.flatMap {
                 Direction2D.entries.map { direction -> direction to it }
@@ -48,7 +49,7 @@ class ScaffoldBuilder(
                 if(gatePos == null) gatePos = rand from listOf(direction,direction.reverse) to pos + 1
                 blockList += area2D(block.l,block.w.first..<block.w.first + pos)
                 blockList += area2D(block.l,block.w.first + pos + type.width..block.w.last)
-                roadBuilders += RoadListBuilder(
+                roadBuilders += RoadBuilder(
                     area2D(block.l,block.w.first + pos..<block.w.first + pos + type.width),
                     direction,
                     type
@@ -91,15 +92,11 @@ class ScaffoldBuilder(
             val para = BlockBuilderPara(area,nextWalls,nextSplitter)
             val block = rand from mapOf(
                 { TreeBlock(para,rand from mapOf(
-                    TreeFeatures.OAK to 5,
-//                    TreeFeatures.OAK_BEES_002 to 1,
-//                    TreeFeatures.OAK_BEES_005 to 1,
-//                    TreeFeatures.OAK_BEES_0002 to 1,
-//                    TreeFeatures.JUNGLE_TREE to 2,
-//                    TreeFeatures.JUNGLE_BUSH to 2,
-//                    TreeFeatures.MANGROVE to 2,
-                    TreeFeatures.BIRCH to 3,
-//                    TreeFeatures.BIRCH_BEES_002 to 1
+                    TreeFeatures.OAK_BEES_005 to 5,
+                    TreeFeatures.JUNGLE_TREE to 1,
+                    TreeFeatures.JUNGLE_BUSH to 1,
+                    TreeFeatures.MANGROVE to 2,
+                    TreeFeatures.BIRCH_BEES_005 to 3
                 ))} to 1,
                 {NormalBlock(para)} to 1,
                 {SakuraBlock(para)} to 1,

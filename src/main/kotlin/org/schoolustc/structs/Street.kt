@@ -24,6 +24,7 @@ class Street(
         override val constructor get() = ::Street
     }
     override fun StructBuildScope.build() {
+        AIR fillS Area(0..<6,1..1,0..<length)
         GRAY_CONCRETE fillS Area(0..6,0..0,0..<length)
         WHITE_CONCRETE fillS AreaProg(3..3,0..0,0..<length step 5)
         WHITE_CONCRETE fillS AreaProg(3..3,0..0,1..<length step 5)
