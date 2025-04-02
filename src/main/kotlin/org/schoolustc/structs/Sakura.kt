@@ -2,12 +2,12 @@ package org.schoolustc.structs
 
 import net.minecraft.data.worldgen.features.TreeFeatures
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.world.level.block.Blocks.BLACKSTONE
 import net.minecraft.world.level.block.Blocks.PINK_PETALS
 import net.minecraft.world.level.block.state.properties.BlockStateProperties.FLOWER_AMOUNT
-import net.minecraft.world.level.block.state.properties.IntegerProperty
 import org.schoolustc.structureDsl.*
-import org.schoolustc.structureDsl.struct.*
+import org.schoolustc.structureDsl.struct.MyStructFixedSize
+import org.schoolustc.structureDsl.struct.StructBuildScope
+import org.schoolustc.structureDsl.struct.StructGenConfig
 import org.schoolustc.structureDsl.structure.MyStructFixedSizeInfo
 
 

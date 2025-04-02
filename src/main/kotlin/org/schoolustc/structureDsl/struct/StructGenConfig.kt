@@ -10,6 +10,7 @@ class StructGenConfig(
     val revZ: Boolean,
     val rotate: Boolean
 ){
+    constructor(pos: Point):this(pos,false,false,false)
     companion object{
         fun byDirection(area:Area2D,y:Int,direction:Direction2D,info:MyStructInfo<*>):StructGenConfig{
             val revX:Boolean

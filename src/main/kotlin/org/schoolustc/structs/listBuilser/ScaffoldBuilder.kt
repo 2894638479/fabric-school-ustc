@@ -1,11 +1,10 @@
 package org.schoolustc.structs.listBuilser
 
+import net.minecraft.data.worldgen.features.TreeFeatures
 import org.schoolustc.structs.Road
 import org.schoolustc.structs.Splitter
 import org.schoolustc.structs.Street
-import org.schoolustc.structs.blockBuilder.BuildingBlock
-import org.schoolustc.structs.blockBuilder.NormalBlock
-import org.schoolustc.structs.blockBuilder.SakuraBlock
+import org.schoolustc.structs.blockBuilder.*
 import org.schoolustc.structs.builder.GateBuilder
 import org.schoolustc.structs.builder.WallCornerBuilder
 import org.schoolustc.structureDsl.*
@@ -89,9 +88,25 @@ class ScaffoldBuilder(
             val nextSplitter = Direction2D.entries.filter {
                 roadBuilders.firstOrNull { road ->road.type == Splitter && area.nextTo(road.area) == it } != null
             }
-            if(rand.nextBool(0.3f)) NormalBlock(area,nextWalls,nextSplitter).addToList()
-            else if(rand.nextBool(0.5f)) SakuraBlock(area,nextWalls,nextSplitter).addToList()
-            else BuildingBlock(area,nextWalls,nextSplitter).addToList()
+            val para = BlockBuilderPara(area,nextWalls,nextSplitter)
+            val block = rand from mapOf(
+                { TreeBlock(para,rand from mapOf(
+                    TreeFeatures.OAK to 5,
+//                    TreeFeatures.OAK_BEES_002 to 1,
+//                    TreeFeatures.OAK_BEES_005 to 1,
+//                    TreeFeatures.OAK_BEES_0002 to 1,
+//                    TreeFeatures.JUNGLE_TREE to 2,
+//                    TreeFeatures.JUNGLE_BUSH to 2,
+//                    TreeFeatures.MANGROVE to 2,
+                    TreeFeatures.BIRCH to 3,
+//                    TreeFeatures.BIRCH_BEES_002 to 1
+                ))} to 1,
+                {NormalBlock(para)} to 1,
+                {SakuraBlock(para)} to 1,
+                {BuildingBlock(para)} to 1
+            )
+
+            block().addToList()
         }
         roadBuilders.forEach { it.addToList() }
         wallBuilders.forEach { it.addToList() }

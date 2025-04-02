@@ -2,19 +2,15 @@ package org.schoolustc.structs.blockBuilder
 
 import org.schoolustc.structs.builder.StreetLightBuilder
 import org.schoolustc.structs.listBuilser.LeafWallListBuilder
-import org.schoolustc.structureDsl.Area2D
 import org.schoolustc.structureDsl.Direction2D
 import org.schoolustc.structureDsl.Point
 import org.schoolustc.structureDsl.nextBool
 import org.schoolustc.structureDsl.struct.MyStruct
 import org.schoolustc.structureDsl.structure.StructureBuildScope
-import org.schoolustc.structureDsl.structure.builder.MyStructListBuilder
 
-open class NormalBlock(
-    val area:Area2D,
-    val nextToWalls:List<Direction2D>,
-    val nextToSplitter:List<Direction2D>
-): MyStructListBuilder<MyStruct>() {
+class NormalBlock(
+    para:BlockBuilderPara
+): BlockBuilder(para) {
     override fun StructureBuildScope.build() = mutableListOf<MyStruct>().also { list ->
         val light = mutableListOf<StreetLightBuilder>()
         Direction2D.entries.forEach {

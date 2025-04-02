@@ -7,15 +7,10 @@ import org.schoolustc.structureDsl.from
 import org.schoolustc.structureDsl.nextBool
 import org.schoolustc.structureDsl.struct.MyStruct
 import org.schoolustc.structureDsl.structure.StructureBuildScope
-import org.schoolustc.structureDsl.structure.builder.MyStructListBuilder
 
-class BuildingBlock(
-    val area: Area2D,
-    val nextToWalls:List<Direction2D>,
-    val nextToSplitter:List<Direction2D>
-):MyStructListBuilder<MyStruct>() {
+class BuildingBlock(para: BlockBuilderPara):BlockBuilder(para) {
     override fun StructureBuildScope.build() = mutableListOf<MyStruct>().also { list ->
-        list += NormalBlock(area, nextToWalls, nextToSplitter).build(this)
+        list += NormalBlock(para).build(this)
         val pos = area.middle(::y)
         val area = Area2D(pos.x..pos.x,pos.z..pos.z).expand(5)
         val direction = rand from Direction2D.entries.filter { it !in nextToWalls }
