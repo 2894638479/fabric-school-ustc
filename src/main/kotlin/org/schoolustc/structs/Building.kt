@@ -48,25 +48,25 @@ class Building(
 
         normalChestPoints.forEach {
             chest(it, defaultDirection){
-                (rand from mapOf(
+                rand.from(
                     { ItemStack(DIAMOND,rand from 1..<10) } to 0.15,
                     { ItemStack(GOLD_INGOT,rand from 3..<20) } to 0.3,
                     { ItemStack(IRON_INGOT,rand from 5..<40) } to 0.5,
                     { null } to 6
-                ))()
+                )()
             }
         }
         specialChestPoints.forEach {
             chest(it, defaultDirection){
-                (rand from mapOf(
-                    {ItemStack(rand from mapOf(
+                rand.from(
+                    {ItemStack(rand.from(
                         DIAMOND_BOOTS to 1,
                         DIAMOND_HELMET to 1,
                         DIAMOND_LEGGINGS to 0.7,
                         DIAMOND_CHESTPLATE to 0.5
                     )).apply{enchant(ALL_DAMAGE_PROTECTION , rand from 1..5)}} to 1,
                     { null } to 10
-                ))()
+                )()
             }
         }
     }

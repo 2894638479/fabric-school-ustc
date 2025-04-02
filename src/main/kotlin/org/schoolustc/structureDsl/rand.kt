@@ -33,3 +33,4 @@ infix fun <T,V:Number> RandomSource.from(map:Map<T,V>):T{
     }
     return map.keys.last()
 }
+fun <T,V:Number> RandomSource.from(vararg pairs:Pair<T,V>) = from(pairs.toMap())
