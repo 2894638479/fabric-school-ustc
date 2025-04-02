@@ -4,7 +4,6 @@ import net.fabricmc.api.ModInitializer
 import net.minecraft.resources.ResourceLocation
 import org.schoolustc.structs.*
 import org.schoolustc.structureDsl.struct.MyStructInfo
-import org.schoolustc.structures.School
 import org.slf4j.LoggerFactory
 
 
