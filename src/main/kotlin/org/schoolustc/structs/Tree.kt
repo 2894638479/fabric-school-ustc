@@ -7,7 +7,7 @@ import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.MyStructFixedSize
 import org.schoolustc.structureDsl.struct.StructBuildScope
 import org.schoolustc.structureDsl.struct.StructGenConfig
-import org.schoolustc.structureDsl.structure.MyStructFixedSizeInfo
+import org.schoolustc.structureDsl.struct.MyStructFixedSizeInfo
 
 class Tree(config: StructGenConfig,val treeType: ResourceKey<ConfiguredFeature<*, *>>):MyStructFixedSize(Companion,config) {
     companion object : MyStructFixedSizeInfo<Tree>("tree", Point(11,10,11)){

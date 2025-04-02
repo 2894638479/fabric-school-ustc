@@ -1,6 +1,5 @@
-package org.schoolustc.structs.listBuilser
+package org.schoolustc.structs.listbuilder
 
-import org.schoolustc.structs.OuterWall
 import org.schoolustc.structs.builder.WallBuilder
 import org.schoolustc.structs.builder.WallCornerBuilder
 import org.schoolustc.structureDsl.Area2D
@@ -8,8 +7,8 @@ import org.schoolustc.structureDsl.Area2D.Companion.area2D
 import org.schoolustc.structureDsl.Direction2D
 import org.schoolustc.structureDsl.match
 import org.schoolustc.structureDsl.struct.MyStruct
+import org.schoolustc.structureDsl.struct.builder.MyStructListBuilder
 import org.schoolustc.structureDsl.structure.StructureBuildScope
-import org.schoolustc.structureDsl.structure.builder.MyStructListBuilder
 import org.schoolustc.structureDsl.structure.split
 
 class WallListBuilder(

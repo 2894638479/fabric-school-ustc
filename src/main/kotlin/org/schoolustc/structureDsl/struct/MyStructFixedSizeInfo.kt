@@ -1,8 +1,6 @@
-package org.schoolustc.structureDsl.structure
+package org.schoolustc.structureDsl.struct
 
 import org.schoolustc.structureDsl.Point
-import org.schoolustc.structureDsl.struct.MyStructFixedSize
-import org.schoolustc.structureDsl.struct.MyStructInfo
 
 abstract class MyStructFixedSizeInfo<T:MyStructFixedSize>(id:String, val size: Point):MyStructInfo<T>(id){
     inline val xSize get() = size.x

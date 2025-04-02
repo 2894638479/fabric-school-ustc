@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.state.properties.Half
 import net.minecraft.world.level.block.state.properties.StairsShape
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.*
-import org.schoolustc.structureDsl.structure.MyStructFixedSizeInfo
+import org.schoolustc.structureDsl.struct.MyStructFixedSizeInfo
 
 class Gate(config:StructGenConfig):MyStructFixedSize(Companion,config) {
     companion object : MyStructFixedSizeInfo<Gate>("gate",Point(15,8,4)){

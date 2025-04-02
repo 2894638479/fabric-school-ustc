@@ -2,12 +2,11 @@ package org.schoolustc.structs
 
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.block.Blocks.*
-import net.minecraft.world.level.block.state.properties.WallSide
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.MyStructFixedSize
 import org.schoolustc.structureDsl.struct.StructBuildScope
 import org.schoolustc.structureDsl.struct.StructGenConfig
-import org.schoolustc.structureDsl.structure.MyStructFixedSizeInfo
+import org.schoolustc.structureDsl.struct.MyStructFixedSizeInfo
 
 class StreetLight(config: StructGenConfig):MyStructFixedSize(Companion,config) {
     companion object : MyStructFixedSizeInfo<StreetLight>("streetlight", Point(2,5,1)){

@@ -1,7 +1,7 @@
-package org.schoolustc.structs.blockBuilder
+package org.schoolustc.structs.blockbuilder
 
 import org.schoolustc.structureDsl.struct.MyStruct
-import org.schoolustc.structureDsl.structure.builder.MyStructListBuilder
+import org.schoolustc.structureDsl.struct.builder.MyStructListBuilder
 
 abstract class BlockBuilder(val para: BlockBuilderPara): MyStructListBuilder<MyStruct>() {
     val area get() = para.area

@@ -1,7 +1,6 @@
-package org.schoolustc.structures
+package org.schoolustc
 
-import org.schoolustc.logger
-import org.schoolustc.structs.listBuilser.ScaffoldBuilder
+import org.schoolustc.structs.listbuilder.ScaffoldBuilder
 import org.schoolustc.structureDsl.Point
 import org.schoolustc.structureDsl.structure.MyStructure
 import org.schoolustc.structureDsl.structure.MyStructureInfo

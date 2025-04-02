@@ -1,7 +1,7 @@
-package org.schoolustc.structs.blockBuilder
+package org.schoolustc.structs.blockbuilder
 
 import org.schoolustc.structs.builder.StreetLightBuilder
-import org.schoolustc.structs.listBuilser.LeafWallListBuilder
+import org.schoolustc.structs.listbuilder.LeafWallListBuilder
 import org.schoolustc.structureDsl.Direction2D
 import org.schoolustc.structureDsl.Point
 import org.schoolustc.structureDsl.nextBool

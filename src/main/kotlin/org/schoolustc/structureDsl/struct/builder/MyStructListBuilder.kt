@@ -1,4 +1,4 @@
-package org.schoolustc.structureDsl.structure.builder
+package org.schoolustc.structureDsl.struct.builder
 
 import org.schoolustc.structureDsl.struct.MyStruct
 import org.schoolustc.structureDsl.structure.StructureBuildScope

@@ -1,4 +1,4 @@
-package org.schoolustc.structs.listBuilser
+package org.schoolustc.structs.listbuilder
 
 import org.schoolustc.structs.LeafWall
 import org.schoolustc.structs.builder.LeafWallBuilder
@@ -6,8 +6,8 @@ import org.schoolustc.structureDsl.Area2D
 import org.schoolustc.structureDsl.Area2D.Companion.area2D
 import org.schoolustc.structureDsl.Direction2D
 import org.schoolustc.structureDsl.first
+import org.schoolustc.structureDsl.struct.builder.MyStructListBuilder
 import org.schoolustc.structureDsl.structure.StructureBuildScope
-import org.schoolustc.structureDsl.structure.builder.MyStructListBuilder
 import org.schoolustc.structureDsl.structure.split
 
 class LeafWallListBuilder(

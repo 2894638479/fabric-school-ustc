@@ -1,10 +1,10 @@
-package org.schoolustc.structs.listBuilser
+package org.schoolustc.structs.listbuilder
 
 import net.minecraft.data.worldgen.features.TreeFeatures
 import org.schoolustc.structs.Road
 import org.schoolustc.structs.Splitter
 import org.schoolustc.structs.Street
-import org.schoolustc.structs.blockBuilder.*
+import org.schoolustc.structs.blockbuilder.*
 import org.schoolustc.structs.builder.GateBuilder
 import org.schoolustc.structs.builder.WallCornerBuilder
 import org.schoolustc.structureDsl.*
@@ -13,8 +13,8 @@ import org.schoolustc.structureDsl.struct.MyRoadStruct
 import org.schoolustc.structureDsl.struct.MyRoadStructInfo
 import org.schoolustc.structureDsl.struct.MyStruct
 import org.schoolustc.structureDsl.struct.builder.MyStructBuilder
+import org.schoolustc.structureDsl.struct.builder.MyStructListBuilder
 import org.schoolustc.structureDsl.structure.StructureBuildScope
-import org.schoolustc.structureDsl.structure.builder.MyStructListBuilder
 import kotlin.math.log2
 import kotlin.math.roundToInt
 

@@ -8,7 +8,7 @@ import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.MyStructFixedSize
 import org.schoolustc.structureDsl.struct.StructBuildScope
 import org.schoolustc.structureDsl.struct.StructGenConfig
-import org.schoolustc.structureDsl.structure.MyStructFixedSizeInfo
+import org.schoolustc.structureDsl.struct.MyStructFixedSizeInfo
 
 
 class Sakura(config:StructGenConfig):MyStructFixedSize(Companion,config) {

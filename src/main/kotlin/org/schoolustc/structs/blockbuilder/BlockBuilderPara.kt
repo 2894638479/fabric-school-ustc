@@ -1,4 +1,4 @@
-package org.schoolustc.structs.blockBuilder
+package org.schoolustc.structs.blockbuilder
 
 import org.schoolustc.structureDsl.Area2D
 import org.schoolustc.structureDsl.Direction2D

@@ -1,4 +1,4 @@
-package org.schoolustc.structs.listBuilser
+package org.schoolustc.structs.listbuilder
 
 import org.schoolustc.structs.builder.RoadBuilder
 import org.schoolustc.structureDsl.Area2D
@@ -6,8 +6,8 @@ import org.schoolustc.structureDsl.Direction2D
 import org.schoolustc.structureDsl.match
 import org.schoolustc.structureDsl.struct.MyRoadStruct
 import org.schoolustc.structureDsl.struct.MyRoadStructInfo
+import org.schoolustc.structureDsl.struct.builder.MyStructListBuilder
 import org.schoolustc.structureDsl.structure.StructureBuildScope
-import org.schoolustc.structureDsl.structure.builder.MyStructListBuilder
 
 class RoadListBuilder <T:MyRoadStruct>  (
     val area:Area2D,
