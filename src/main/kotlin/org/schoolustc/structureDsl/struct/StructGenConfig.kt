@@ -22,7 +22,7 @@ class StructGenConfig(
     companion object{
         fun fromIntArray(arr:IntArray):StructGenConfig{
             arr.size.match(4)
-            val point = Point(arr[0],arr[2],arr[2])
+            val point = Point(arr[0],arr[1],arr[2])
             val blInt = arr[3]
             return StructGenConfig(
                 point,
