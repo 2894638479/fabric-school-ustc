@@ -33,9 +33,8 @@ class StructBuildScope(
     val chunkGenerator: ChunkGenerator
 ) {
     private inline val Point.finalPos get() = finalPos(config)
-    private inline val Point.finalSurfacePos get() = finalSurfacePos(config){ x, z ->
-        world.getHeight(Heightmap.Types.WORLD_SURFACE_WG,x,z) - 1
-    }
+    private fun y(x:Int,z:Int) = world.getHeight(Heightmap.Types.WORLD_SURFACE_WG,x,z) - 1
+    private inline val Point.finalSurfacePos get() = finalSurfacePos(config,::y)
     private inline val Point.FinalPoint.inBox get() = inBox(boundingBox)
     private inline val Direction2D.finalDirection get() = applyConfig(config)
     private fun setBlock(finalPos: Point, state:BlockState) = world.setBlock(finalPos.blockPos,state,3)
@@ -46,6 +45,7 @@ class StructBuildScope(
     inline val Block.state get() = defaultBlockState()
 
     infix fun Block.fillRaw(fillable: Fillable) = fillable.fill { state setTo Point.FinalPoint(it.x,it.y,it.z) }
+    infix fun Block.fillRawS(fillable: Fillable) = fillable.fill { state setTo Point.FinalPoint(it.x,it.y + y(it.x,it.z),it.z) }
 
     infix fun Selector<Block>.fill(fillable: Fillable) = fillable.fill { select().state setTo it.finalPos }
     infix fun BlockState.fill(fillable: Fillable) = fillable.fill { this setTo it.finalPos }

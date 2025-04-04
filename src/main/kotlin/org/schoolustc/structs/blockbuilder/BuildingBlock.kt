@@ -1,21 +1,27 @@
 package org.schoolustc.structs.blockbuilder
 
+import net.minecraft.world.level.block.Blocks.DIRT_PATH
+import org.schoolustc.structs.Path
 import org.schoolustc.structs.builder.BuildingBuilder
-import org.schoolustc.structureDsl.Area2D
-import org.schoolustc.structureDsl.Direction2D
-import org.schoolustc.structureDsl.from
-import org.schoolustc.structureDsl.nextBool
+import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.MyStruct
 import org.schoolustc.structureDsl.structure.StructureBuildScope
+import kotlin.math.roundToInt
 
 class BuildingBlock(para: BlockBuilderPara):BlockBuilder(para) {
     override fun StructureBuildScope.build() = mutableListOf<MyStruct>().also { list ->
-        list += NormalBlock(para).build(this)
         val pos = area.middle(::y)
         val area = Area2D(pos.x..pos.x,pos.z..pos.z).expand(5)
         val direction = rand from Direction2D.entries.filter { it !in nextToWalls }
         val height = rand from 1..6
         val flatTop = !(height >= 5 && rand.nextBool(0.3f))
-        list += BuildingBuilder(area,pos.y,direction,height,flatTop).build()
+
+        val path1 = area.sliceEnd(direction,1).slice(direction.left,4..6).offset(direction,1)
+        val path2 = openArea.minBy { (_,area) -> area.distanceToMid(path1) }.value
+        list += BuildingBuilder(area,path1.midY(::y).roundToInt(),direction,height,flatTop).build()
+
+        list += getLights()
+        list += getLeafWalls()
+        list += Path(path1,path2,DIRT_PATH)
     }
 }

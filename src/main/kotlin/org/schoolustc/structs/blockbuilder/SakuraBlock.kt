@@ -8,7 +8,6 @@ import org.schoolustc.structureDsl.structure.StructureBuildScope
 
 class SakuraBlock(para:BlockBuilderPara):BlockBuilder(para) {
     override fun StructureBuildScope.build() = mutableListOf<MyStruct>().also { list ->
-        para.run { list += NormalBlock(para).build(this@build) }
         val area = para.area.padding(2)
         val treeArea = area.padding(3)
         val tries = List(5){
@@ -25,5 +24,7 @@ class SakuraBlock(para:BlockBuilderPara):BlockBuilder(para) {
         }
         val chosen = tries.maxBy { it.size }
         list += chosen.map { it.build() }
+        list += getLights()
+        list += getLeafWalls()
     }
 }

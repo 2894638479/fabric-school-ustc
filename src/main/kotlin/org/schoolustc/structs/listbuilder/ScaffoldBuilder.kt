@@ -89,7 +89,7 @@ class ScaffoldBuilder(
             val nextSplitter = Direction2D.entries.filter {
                 roadBuilders.firstOrNull { road ->road.type == Splitter && area.nextTo(road.area) == it } != null
             }
-            val para = BlockBuilderPara(area,nextWalls,nextSplitter)
+            val para = BlockBuilderPara(area,nextWalls,nextSplitter,this)
             val block = rand from mapOf(
                 { TreeBlock(para,rand from mapOf(
                     TreeFeatures.OAK_BEES_005 to 5,

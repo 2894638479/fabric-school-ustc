@@ -85,5 +85,11 @@ enum class Direction2D {
             3 -> ZMin
             else -> error("unknown Direction2D int: $int")
         }
+        fun fromBool(isX:Boolean,isPlus:Boolean):Direction2D{
+            var result = 0
+            if(!isX) result += 2
+            if(!isPlus) result += 1
+            return fromInt(result)
+        }
     }
 }

@@ -1,5 +1,10 @@
 package org.schoolustc.structureDsl
 
+import java.lang.Math.pow
+import kotlin.math.pow
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
+
 class Area2D(
     val x:IntRange,
     val z:IntRange
@@ -41,6 +46,10 @@ class Area2D(
         if(isPlus) area2D(l.first + index.first..l.first + index.last,w)
         else area2D(l.last - index.last..l.last - index.first,w)
     }
+    fun offset(direction: Direction2D,length: Int) = direction.run {
+        fun Int.off() = if(isPlus) this + length else this - length
+        area2D(l.first.off()..l.last.off(),w)
+    }
     fun expand(count:Int) = Area2D(x.expand(count),z.expand(count))
     fun expand(direction:Direction2D,count:Int) = direction.run {
         if(isPlus) area2D(l.expand(0,count),w)
@@ -68,8 +77,15 @@ class Area2D(
       block(x,z)
     }}}
     fun middle(y:(Int,Int)->Int):Point{
-        val xMid = x.middle
-        val zMid = z.middle
+        val xMid = x.middle.roundToInt()
+        val zMid = z.middle.roundToInt()
         return Point(xMid,y(xMid,zMid),zMid)
+    }
+    fun distanceToMid(other:Area2D) =
+        sqrt((x.middle - other.x.middle).pow(2.0) + (z.middle - other.z.middle).pow(2.0))
+    fun midY(getY:(Int,Int)->Int):Double{
+        var sum = 0
+        iterate { x, z -> sum += getY(x,z) }
+        return sum / size.toDouble()
     }
 }

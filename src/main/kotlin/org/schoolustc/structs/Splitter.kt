@@ -1,9 +1,12 @@
 package org.schoolustc.structs
 
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.world.level.block.Blocks.*
+import net.minecraft.world.level.block.Blocks.SMOOTH_STONE
 import org.schoolustc.structureDsl.*
-import org.schoolustc.structureDsl.struct.*
+import org.schoolustc.structureDsl.struct.MyRoadStruct
+import org.schoolustc.structureDsl.struct.MyRoadStructInfo
+import org.schoolustc.structureDsl.struct.StructBuildScope
+import org.schoolustc.structureDsl.struct.StructGenConfig
 
 class Splitter(
     config: StructGenConfig,
@@ -24,6 +27,6 @@ class Splitter(
         override val constructor get() = ::Splitter
     }
     override fun StructBuildScope.build() {
-        SMOOTH_STONE_SLAB fillS Area(0..0,1..1,0..<length)
+        SMOOTH_STONE fillS Area(0..0,0..0,0..<length)
     }
 }

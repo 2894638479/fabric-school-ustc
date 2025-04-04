@@ -10,7 +10,9 @@ fun IntRange.first(count:Int) = first..<first + count
 fun IntRange.last(count:Int) = last + 1 - count..last
 fun IntRange.expand(count:Int) = first - count..last + count
 fun IntRange.expand(start:Int,end:Int) = first - start..last + end
-inline val IntRange.middle get() = (first + last) / 2
+fun IntRange.padding(count:Int) = expand(-count)
+inline val IntRange.middle get() = (first + last) / 2.0
+inline val Int.range get() = this..this
 
 //较为均匀地分割区间
 fun IntRange.split(maxLength:Int):List<Int>{

@@ -61,5 +61,6 @@ open class Point(
         return "Point{x:$x,y:$y,z:$z}"
     }
     fun inBox(box:BoundingBox) = box.isInside(x,y,z)
+    fun inArea2D(area:Area2D) = x in area.x && z in area.z
 }
 val BlockPos.point get() = Point(x,y,z)
