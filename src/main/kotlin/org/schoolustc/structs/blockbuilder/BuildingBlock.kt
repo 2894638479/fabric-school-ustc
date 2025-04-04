@@ -17,11 +17,14 @@ class BuildingBlock(para: BlockBuilderPara):BlockBuilder(para) {
         val flatTop = !(height >= 5 && rand.nextBool(0.3f))
 
         val path1 = area.sliceEnd(direction,1).slice(direction.left,4..6).offset(direction,1)
-        val path2 = openArea.minBy { (_,area) -> area.distanceToMid(path1) }.value
+        val path1Mid = path1.middle{_,_->0}
+        val path2 = openArea
+            .filter { it.value.middle{_,_->0}.atDirectionOf(direction,path1Mid) }
+            .minByOrNull { (_,area) -> area.distanceToMid(path1) }
         list += BuildingBuilder(area,path1.midY(::y).roundToInt(),direction,height,flatTop).build()
 
         list += getLights()
         list += getLeafWalls()
-        list += Path(path1,path2,DIRT_PATH)
+        if(path2 != null) list += Path(path1,path2.value,direction,path2.key.reverse,DIRT_PATH)
     }
 }

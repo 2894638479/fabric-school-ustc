@@ -11,14 +11,13 @@ import org.schoolustc.structureDsl.struct.MyStructInfo
 import org.schoolustc.structureDsl.struct.StructBuildScope
 import org.schoolustc.structureDsl.struct.StructGenConfig
 import java.lang.Math.pow
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.roundToInt
-import kotlin.math.sqrt
+import kotlin.math.*
 
 class Path(
     val a1: Area2D,
     val a2: Area2D,
+    val d1: Direction2D,
+    val d2: Direction2D,
     val block: Block
 ):MyStruct(Companion, StructGenConfig(getPoint(a1,a2)), getSize(a1, a2)) {
     companion object : MyStructInfo<Path>("grass_path"){
@@ -29,15 +28,15 @@ class Path(
             return Path(
                 Area2D(arr[0]..arr[1],arr[2]..arr[3]),
                 Area2D(arr[4]..arr[5],arr[6]..arr[7]),
-                run {
-                    val str = tag.getString("b")
-                    val location = ResourceLocation.tryParse(str) ?: error("unknown block id $str")
-                    BuiltInRegistries.BLOCK.get(location)
-                }
+                Direction2D.fromInt(tag.getInt("d1")),
+                Direction2D.fromInt(tag.getInt("d2")),
+                tag.getBlock()
             )
         }
         override fun Path.saveTag(tag: CompoundTag) {
             tag.putIntArray("ar", listOf(a1.x1,a1.x2,a1.z1,a1.z2,a2.x1,a2.x2,a2.z1,a2.z2))
+            tag.putInt("d1",d1.toInt())
+            tag.putInt("d2",d2.toInt())
             tag.putString("b",block.descriptionId)
         }
         private fun getPoint(a1: Area2D,a2: Area2D):Point{
@@ -54,31 +53,26 @@ class Path(
                 0,
                 max(a1.z1,a2.z2),
             )
-            return Point(p2.x - p1.x + 1,1,p2.z - p1.z + 1)
+            return Point(p2.x - p1.x + 6,1,p2.z - p1.z + 6)
         }
     }
-
-    override fun StructBuildScope.build() {
-        fun getDirection(a:Area2D,b:Area2D):Direction2D{
-            listOf(Direction2D.XPlus,Direction2D.ZPlus).forEach { it.run {
-                if(a.length == 1){
-                    return Direction2D.fromBool(isX,b.l.middle > a.l.first)
-                }
-            } }
-            error("direction find error")
-        }
+    private fun getPoints():Fillable{
         class Pt(
             val x:Double,
             val z:Double
         ){
-            fun distanceTo(other:Pt) = sqrt(pow(x - other.x,2.0)+ pow(z - other.z,2.0))
+            fun distanceTo(other:Pt) = sqrt((x - other.x).pow(2) + (z - other.z).pow(2))
             fun offset(direction: Direction2D,length:Double) = direction.run {
                 if(isX) Pt(x + if(isPlus) length else -length,z)
                 else Pt(x,z + if(isPlus) length else -length)
             }
+            fun atDirectionOf(direction:Direction2D,other:Pt) = when(direction){
+                Direction2D.XPlus -> x >= other.x
+                Direction2D.XMin -> x <= other.x
+                Direction2D.ZPlus -> z >= other.z
+                Direction2D.ZMin -> z <= other.z
+            }
         }
-        val d1 = getDirection(a1,a2)
-        val d2 = getDirection(a2,a1)
         val p1 = Pt(a1.x.middle,a1.z.middle)
         val p2 = Pt(a2.x.middle,a2.z.middle)
         val w1 = a1.width(d1)
@@ -102,22 +96,28 @@ class Path(
                 for(i in this) block(i)
             }
         }
-        val area = Area2D(
-            min(a1.x1,a2.x1)..max(a1.x2,a2.x2),
-            min(a1.z1,a2.z1)..max(a1.z2,a2.z2)
-        )
         while(t <= 1.0){
             val b = B(t)
             val w = w()/2 - 0.5
+            fun atStart() = t*d < w1+1
+            fun atEnd() = T*d < w2+1
             for(x in (b.x-w).roundToInt()..(b.x+w).roundToInt()){
                 for(z in (b.z-w).roundToInt()..(b.z+w).roundToInt()){
                     val point = Point(x,0,z)
-                    if(point.inArea2D(area)) points += point
+                    val pt = Pt(x.toDouble(),z.toDouble())
+                    if(
+                        (!atStart() || pt.atDirectionOf(d1,p1))
+                        &&(!atEnd() || pt.atDirectionOf(d2,p2))
+                    ) points += point
                 }
             }
             t += step
             T = 1-t
         }
-        DIRT_PATH fillRawS points
+        return points
+    }
+
+    override fun StructBuildScope.build() {
+        DIRT_PATH fillRawS getPoints()
     }
 }

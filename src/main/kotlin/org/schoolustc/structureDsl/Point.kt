@@ -62,5 +62,11 @@ open class Point(
     }
     fun inBox(box:BoundingBox) = box.isInside(x,y,z)
     fun inArea2D(area:Area2D) = x in area.x && z in area.z
+    fun atDirectionOf(direction:Direction2D,other:Point) = when(direction){
+        Direction2D.XPlus -> x > other.x
+        Direction2D.XMin -> x < other.x
+        Direction2D.ZPlus -> z > other.z
+        Direction2D.ZMin -> z < other.z
+    }
 }
 val BlockPos.point get() = Point(x,y,z)

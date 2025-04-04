@@ -1,9 +1,11 @@
 package org.schoolustc.structureDsl
 
 import net.minecraft.core.Registry
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature
 import org.schoolustc.structureDsl.struct.StructGenConfig
 
@@ -48,5 +50,13 @@ fun <T> CompoundTag.getResourceKey(): ResourceKey<T> {
     val featureId = ResourceLocation.tryParse(kl) ?: error("unknown key location:$kl")
     val registryKey = ResourceKey.createRegistryKey<T>(registryId)
     return ResourceKey.create(registryKey, featureId)
+}
+fun CompoundTag.putBlock(block:Block) {
+    putString("b",block.descriptionId)
+}
+fun CompoundTag.getBlock():Block{
+    val str = getString("b")
+    val location = ResourceLocation.tryParse(str) ?: error("unknown block id $str")
+    return BuiltInRegistries.BLOCK.get(location)
 }
 
