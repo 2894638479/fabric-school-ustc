@@ -15,12 +15,12 @@ class LeafWall(
     companion object : MyStructInfo<LeafWall>("leafwall"){
         override val defaultDirection = Direction2D.XPlus
         override fun loadTag(tag: CompoundTag) = LeafWall(
-            tag.getConfig(),
-            tag.getInt("l")
+            tag.read("C"),
+            tag.read("l")
         )
         override fun LeafWall.saveTag(tag: CompoundTag) {
-            tag.putConfig(config)
-            tag.putInt("l",length)
+            tag.write("C",config)
+            tag.write("l",length)
         }
     }
 

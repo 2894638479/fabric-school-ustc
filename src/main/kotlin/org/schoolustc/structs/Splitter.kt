@@ -15,12 +15,12 @@ class Splitter(
     companion object : MyRoadStructInfo<Splitter>("splitter"){
         override val defaultDirection = Direction2D.ZPlus
         override fun loadTag(tag: CompoundTag) = Splitter(
-            tag.getConfig(),
-            tag.getInt("l")
+            tag.read("C"),
+            tag.read("l")
         )
         override fun Splitter.saveTag(tag: CompoundTag) {
-            tag.putConfig(config)
-            tag.putInt("l",length)
+            tag.write("C",config)
+            tag.write("l",length)
         }
         override val period get() = 10
         override val width get() = 1

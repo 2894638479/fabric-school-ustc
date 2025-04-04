@@ -18,14 +18,14 @@ class Building(
 ):MyStructFixedSize(Companion,config) {
     companion object : MyStructFixedSizeInfo<Building>("building", Point(11,100,11)){
         override fun loadTag(tag: CompoundTag) = Building(
-            tag.getConfig(),
-            tag.getInt("h"),
-            tag.getBoolean("f")
+            tag.read("C"),
+            tag.read("h"),
+            tag.read("f")
         )
         override fun Building.saveTag(tag: CompoundTag) {
-            tag.putConfig(config)
-            tag.putInt("h",height)
-            tag.putBoolean("f",flatTop)
+            tag.write("C",config)
+            tag.write("h",height)
+            tag.write("f",flatTop)
         }
         override val defaultDirection = Direction2D.ZPlus
     }

@@ -16,12 +16,12 @@ class OuterWall(
     companion object : MyStructInfo<OuterWall>("wall"){
         override val defaultDirection = Direction2D.XPlus
         override fun loadTag(tag: CompoundTag) = OuterWall(
-            tag.getConfig(),
-            tag.getInt("l")
+            tag.read("C"),
+            tag.read("l")
         )
         override fun OuterWall.saveTag(tag: CompoundTag) {
-            tag.putConfig(config)
-            tag.putInt("l",length)
+            tag.write("C",config)
+            tag.write("l",length)
         }
     }
     override fun StructBuildScope.build() {

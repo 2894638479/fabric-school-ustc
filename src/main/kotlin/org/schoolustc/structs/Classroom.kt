@@ -13,10 +13,10 @@ class Classroom(config: StructGenConfig): MyStructFixedSize(Companion,config){
     ) {
         override val defaultDirection = Direction2D.XPlus
         override fun loadTag(tag: CompoundTag): Classroom {
-            return Classroom(tag.getConfig())
+            return Classroom(tag.read("C"))
         }
         override fun Classroom.saveTag(tag: CompoundTag) {
-            tag.putConfig(config)
+            tag.write("C",config)
         }
     }
     override fun StructBuildScope.build() {

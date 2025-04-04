@@ -10,8 +10,8 @@ import org.schoolustc.structureDsl.struct.MyStructFixedSizeInfo
 
 class StreetLight(config: StructGenConfig):MyStructFixedSize(Companion,config) {
     companion object : MyStructFixedSizeInfo<StreetLight>("streetlight", Point(2,5,1)){
-        override fun loadTag(tag: CompoundTag) = StreetLight(tag.getConfig())
-        override fun StreetLight.saveTag(tag: CompoundTag) = tag.putConfig(config)
+        override fun loadTag(tag: CompoundTag) = StreetLight(tag.read("C"))
+        override fun StreetLight.saveTag(tag: CompoundTag) = tag.write("C",config)
         override val defaultDirection = Direction2D.XPlus
     }
     override fun StructBuildScope.build() {

@@ -11,8 +11,8 @@ import org.schoolustc.structureDsl.struct.MyStructFixedSizeInfo
 class Gate(config:StructGenConfig):MyStructFixedSize(Companion,config) {
     companion object : MyStructFixedSizeInfo<Gate>("gate",Point(15,8,4)){
         override val defaultDirection = Direction2D.ZPlus
-        override fun loadTag(tag: CompoundTag) = Gate(tag.getConfig())
-        override fun Gate.saveTag(tag: CompoundTag) = tag.putConfig(config)
+        override fun loadTag(tag: CompoundTag) = Gate(tag.read("C"))
+        override fun Gate.saveTag(tag: CompoundTag) = tag.write("C",config)
     }
     override fun StructBuildScope.build() {
         CALCITE fill Area(2..3,0..7,1..2)

@@ -12,12 +12,12 @@ class Road(
     companion object : MyRoadStructInfo<Road>("road"){
         override val defaultDirection = Direction2D.ZPlus
         override fun loadTag(tag: CompoundTag) = Road(
-            tag.getConfig(),
-            tag.getInt("l")
+            tag.read("C"),
+            tag.read("l")
         )
         override fun Road.saveTag(tag: CompoundTag) {
-            tag.putConfig(config)
-            tag.putInt("l",length)
+            tag.write("C",config)
+            tag.write("l",length)
         }
         override val width get() = 3
         override val period get() = 10

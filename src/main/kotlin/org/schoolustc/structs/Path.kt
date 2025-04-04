@@ -21,20 +21,20 @@ class Path(
         override val defaultDirection = Direction2D.XPlus
         override fun loadTag(tag: CompoundTag) = tag.run {
             Path(
-                getArea2D("a1"),
-                getArea2D("a2"),
-                getDirection2D("d1"),
-                getDirection2D("d2"),
-                getBlock()
+                read("a1"),
+                read("a2"),
+                read("d1"),
+                read("d2"),
+                read("b")
             )
         }
 
         override fun Path.saveTag(tag: CompoundTag) = tag.run {
-            putArea2D(a1,"a1")
-            putArea2D(a2,"a2")
-            putDirection2D(d1,"d1")
-            putDirection2D(d2,"d2")
-            putBlock(block)
+            write("a1",a1)
+            write("a2",a2)
+            write("d1",d1)
+            write("d2",d2)
+            write("b",block)
         }
         private fun getPoint(a1: Area2D,a2: Area2D):Point{
             return Point(

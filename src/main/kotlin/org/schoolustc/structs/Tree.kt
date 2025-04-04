@@ -12,10 +12,10 @@ import org.schoolustc.structureDsl.struct.MyStructFixedSizeInfo
 class Tree(config: StructGenConfig,val treeType: ResourceKey<ConfiguredFeature<*, *>>):MyStructFixedSize(Companion,config) {
     companion object : MyStructFixedSizeInfo<Tree>("tree", Point(11,10,11)){
         override val defaultDirection = Direction2D.XPlus
-        override fun loadTag(tag: CompoundTag) = Tree(tag.getConfig(),tag.getResourceKey())
+        override fun loadTag(tag: CompoundTag) = Tree(tag.read("C"),tag.getResourceKey("K"))
         override fun Tree.saveTag(tag: CompoundTag)  {
-            tag.putConfig(config)
-            tag.putResourceKey(treeType)
+            tag.write("C",config)
+            tag.putResourceKey("K",treeType)
         }
     }
 

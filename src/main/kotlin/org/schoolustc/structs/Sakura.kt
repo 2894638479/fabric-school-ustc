@@ -13,8 +13,8 @@ import org.schoolustc.structureDsl.struct.MyStructFixedSizeInfo
 
 class Sakura(config:StructGenConfig):MyStructFixedSize(Companion,config) {
     companion object : MyStructFixedSizeInfo<Sakura>("sakura", Point(11,20,11)) {
-        override fun loadTag(tag: CompoundTag) = Sakura(tag.getConfig())
-        override fun Sakura.saveTag(tag: CompoundTag) = tag.putConfig(config)
+        override fun loadTag(tag: CompoundTag) = Sakura(tag.read("C"))
+        override fun Sakura.saveTag(tag: CompoundTag) = tag.write("C",config)
         override val defaultDirection = Direction2D.XPlus
     }
     override fun StructBuildScope.build() {
