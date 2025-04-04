@@ -1,8 +1,6 @@
 package org.schoolustc.structs
 
-import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks.DIRT_PATH
 import org.schoolustc.structureDsl.*
@@ -10,7 +8,6 @@ import org.schoolustc.structureDsl.struct.MyStruct
 import org.schoolustc.structureDsl.struct.MyStructInfo
 import org.schoolustc.structureDsl.struct.StructBuildScope
 import org.schoolustc.structureDsl.struct.StructGenConfig
-import java.lang.Math.pow
 import kotlin.math.*
 
 class Path(
@@ -22,22 +19,22 @@ class Path(
 ):MyStruct(Companion, StructGenConfig(getPoint(a1,a2)), getSize(a1, a2)) {
     companion object : MyStructInfo<Path>("grass_path"){
         override val defaultDirection = Direction2D.XPlus
-        override fun loadTag(tag: CompoundTag): Path {
-            val arr = tag.getIntArray("ar")
-            arr.size.match(8)
-            return Path(
-                Area2D(arr[0]..arr[1],arr[2]..arr[3]),
-                Area2D(arr[4]..arr[5],arr[6]..arr[7]),
-                Direction2D.fromInt(tag.getInt("d1")),
-                Direction2D.fromInt(tag.getInt("d2")),
-                tag.getBlock()
+        override fun loadTag(tag: CompoundTag) = tag.run {
+            Path(
+                getArea2D("a1"),
+                getArea2D("a2"),
+                getDirection2D("d1"),
+                getDirection2D("d2"),
+                getBlock()
             )
         }
-        override fun Path.saveTag(tag: CompoundTag) {
-            tag.putIntArray("ar", listOf(a1.x1,a1.x2,a1.z1,a1.z2,a2.x1,a2.x2,a2.z1,a2.z2))
-            tag.putInt("d1",d1.toInt())
-            tag.putInt("d2",d2.toInt())
-            tag.putString("b",block.descriptionId)
+
+        override fun Path.saveTag(tag: CompoundTag) = tag.run {
+            putArea2D(a1,"a1")
+            putArea2D(a2,"a2")
+            putDirection2D(d1,"d1")
+            putDirection2D(d2,"d2")
+            putBlock(block)
         }
         private fun getPoint(a1: Area2D,a2: Area2D):Point{
             return Point(
