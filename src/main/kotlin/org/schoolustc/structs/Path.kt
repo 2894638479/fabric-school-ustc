@@ -13,8 +13,8 @@ import kotlin.math.*
 class Path(
     val a1: Area2D,
     val a2: Area2D,
-    val d1: Direction2D,
-    val d2: Direction2D,
+    val d1: Orientation2D,
+    val d2: Orientation2D,
     val block: Block
 ):MyStruct(Companion, StructGenConfig(getPoint(a1,a2)), getSize(a1, a2)) {
     companion object : MyStructInfo<Path>("grass_path"){
@@ -53,21 +53,24 @@ class Path(
             return Point(p2.x - p1.x + 6,1,p2.z - p1.z + 6)
         }
     }
-    private fun getPoints():Fillable{
+    private fun getPoints():Set<Point>{
         class Pt(
             val x:Double,
             val z:Double
         ){
             fun distanceTo(other:Pt) = sqrt((x - other.x).pow(2) + (z - other.z).pow(2))
-            fun offset(direction: Direction2D,length:Double) = direction.run {
-                if(isX) Pt(x + if(isPlus) length else -length,z)
-                else Pt(x,z + if(isPlus) length else -length)
+            fun offset(orientation: Orientation2D,length:Double):Pt{
+                val rad = orientation.rad
+                return Pt(
+                    x + cos(rad) * length,
+                    z - sin(rad) * length
+                )
             }
-            fun atDirectionOf(direction:Direction2D,other:Pt) = when(direction){
-                Direction2D.XPlus -> x >= other.x
-                Direction2D.XMin -> x <= other.x
-                Direction2D.ZPlus -> z >= other.z
-                Direction2D.ZMin -> z <= other.z
+            fun atOrientationOf(orientation: Orientation2D,other:Pt):Boolean{
+                val rad = orientation.rad
+                val rx = cos(rad)
+                val rz = - sin(rad)
+                return (rx*(x - other.x) + rz*(z - other.z)) > 0
             }
         }
         val p1 = Pt(a1.x.middle,a1.z.middle)
@@ -88,11 +91,7 @@ class Path(
         var T = 1.0
         fun w() = T*w1 + t*w2
         val step = 1.0 / (d)
-        val points = object : LinkedHashSet<Point>(),Fillable{
-            override fun fill(block: (Point) -> Unit) {
-                for(i in this) block(i)
-            }
-        }
+        val points = mutableSetOf<Point>()
         while(t <= 1.0){
             val b = B(t)
             val w = w()/2 - 0.5
@@ -103,8 +102,8 @@ class Path(
                     val point = Point(x,0,z)
                     val pt = Pt(x.toDouble(),z.toDouble())
                     if(
-                        (!atStart() || pt.atDirectionOf(d1,p1))
-                        &&(!atEnd() || pt.atDirectionOf(d2,p2))
+                        (!atStart() || pt.atOrientationOf(d1,p1) || point.inArea2D(a1))
+                        &&(!atEnd() || pt.atOrientationOf(d2,p2) || point.inArea2D(a2))
                     ) points += point
                 }
             }
@@ -115,6 +114,6 @@ class Path(
     }
 
     override fun StructBuildScope.build() {
-        DIRT_PATH fillRawS getPoints()
+        DIRT_PATH fillRawS Fillable(getPoints()::forEach)
     }
 }

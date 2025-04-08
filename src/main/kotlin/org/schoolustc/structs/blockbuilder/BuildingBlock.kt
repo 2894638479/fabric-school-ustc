@@ -25,6 +25,12 @@ class BuildingBlock(para: BlockBuilderPara):BlockBuilder(para) {
 
         list += getLights()
         list += getLeafWalls()
-        if(path2 != null) list += Path(path1,path2.value,direction,path2.key.reverse,DIRT_PATH)
+        if(path2 != null) list += Path(
+            path1,
+            path2.value,
+            direction.toOrientation(),
+            path2.key.reverse.toOrientation(),
+            DIRT_PATH
+        )
     }
 }

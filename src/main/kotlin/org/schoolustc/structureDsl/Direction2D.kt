@@ -77,6 +77,14 @@ enum class Direction2D {
         ZPlus -> org.schoolustc.structureDsl.Direction.ZPlus
         ZMin -> org.schoolustc.structureDsl.Direction.ZMin
     }
+    fun toOrientation() = Orientation2D(
+        when(this){
+            XPlus -> 0.0
+            XMin -> 180.0
+            ZPlus -> 270.0
+            ZMin -> 90.0
+        }
+    )
     companion object {
         fun fromInt(int: Int) = when(int){
             0 -> XPlus

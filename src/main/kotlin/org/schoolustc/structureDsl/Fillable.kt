@@ -1,5 +1,5 @@
 package org.schoolustc.structureDsl
 
-interface Fillable {
+fun interface Fillable {
     fun fill(block:(Point)->Unit)
 }

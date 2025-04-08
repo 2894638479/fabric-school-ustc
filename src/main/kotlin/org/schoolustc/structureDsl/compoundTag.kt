@@ -27,6 +27,7 @@ inline fun <reified T : Any> CompoundTag.write(key:String,t:T,) = when(T::class)
     Block::class -> putBlock(key,t as Block)
     Area2D::class -> putArea2D(key,t as Area2D)
     Direction2D::class -> putDirection2D(key,t as Direction2D)
+    Orientation2D::class -> putOrientation2D(key,t as Orientation2D)
     else -> error("not supported type: ${T::class}")
 }
 
@@ -43,6 +44,7 @@ inline fun <reified T : Any> CompoundTag.read(key:String):T = when(T::class){
     Block::class -> getBlock(key) as T
     Area2D::class -> getArea2D(key) as T
     Direction2D::class -> getDirection2D(key) as T
+    Orientation2D::class -> getOrientation2D(key) as T
     else -> error("not supported type: ${T::class}")
 }
 
@@ -85,4 +87,6 @@ fun CompoundTag.getArea2D(key:String):Area2D{
 }
 fun CompoundTag.putDirection2D(key:String,direction:Direction2D) = putInt(key,direction.toInt())
 fun CompoundTag.getDirection2D(key:String) = Direction2D.fromInt(getInt(key))
+fun CompoundTag.putOrientation2D(key: String,orientation:Orientation2D) = putDouble(key,orientation.value)
+fun CompoundTag.getOrientation2D(key: String) = Orientation2D(getDouble(key))
 

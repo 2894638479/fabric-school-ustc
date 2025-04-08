@@ -1,9 +1,7 @@
 package org.schoolustc.structureDsl
 
 import java.lang.Math.pow
-import kotlin.math.pow
-import kotlin.math.roundToInt
-import kotlin.math.sqrt
+import kotlin.math.*
 
 class Area2D(
     val x:IntRange,
@@ -88,4 +86,11 @@ class Area2D(
         iterate { x, z -> sum += getY(x,z) }
         return sum / size.toDouble()
     }
+    fun width(orientation:Orientation2D):Double{
+        val rad = orientation.rad
+        val sin = sin(rad).absoluteValue
+        val cos = cos(rad).absoluteValue
+        return sin * x.length + cos * z.length
+    }
+    fun length(orientation: Orientation2D) = width(orientation.left(90.0))
 }
