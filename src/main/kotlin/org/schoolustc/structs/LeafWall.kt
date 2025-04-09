@@ -33,6 +33,6 @@ class LeafWall(
                 FLOWERING_AZALEA_LEAVES to 2f
             )
         }
-        Selector { leaves().leafState(true) } fillS Area(0..<length,1..1,0..0)
+        { leaves().leafState(true) } fillS Area(0..<length,1..1,0..0)
     }
 }
