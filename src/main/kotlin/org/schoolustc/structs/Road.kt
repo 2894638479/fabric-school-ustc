@@ -24,6 +24,6 @@ class Road(
         override val constructor get() = ::Road
     }
     override fun StructBuildScope.build() {
-        DIRT_PATH fillS Area(0..2,0..0,0..<length)
+        DIRT_PATH fillSurf Area(0..2,0..0,0..<length)
     }
 }

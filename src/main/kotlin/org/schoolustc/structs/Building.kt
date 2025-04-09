@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items.*
 import net.minecraft.world.item.enchantment.Enchantments.ALL_DAMAGE_PROTECTION
+import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.Blocks.AIR
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.MyStructFixedSize
@@ -31,7 +32,7 @@ class Building(
     }
 
     override fun StructBuildScope.build() {
-        infix fun String.putA(y:Int) = putA(Point(0,y,0))
+        infix fun String.putA(y:Int) = putAir(Point(0,y,0))
         infix fun String.put(y:Int) = put(Point(0,y,0))
         val topestHeight = if(flatTop) 1 else 12
         val normalChestPoints = List(height + 2){Point(5,it * 4 + 1,5)}
@@ -45,6 +46,17 @@ class Building(
         "building_top" putA height*4 + 4
         val topest = if(flatTop) "building_topest_flat" else "building_topest"
         topest putA height*4 + 8
+
+        val baseShape = Shape2D(fixedArea.toArea2D()).apply {
+            delPoint(10,0)
+            delPoint(9,0)
+            delPoint(10,1)
+            delPoint(0,10)
+            delPoint(1,10)
+            delPoint(0,9)
+        }
+
+        Blocks.WHITE_CONCRETE fillUnder baseShape
 
         normalChestPoints.forEach {
             chest(it, defaultDirection){

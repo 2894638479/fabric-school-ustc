@@ -73,7 +73,7 @@ class Tree(config: StructGenConfig,val key: ResourceKey<ConfiguredFeature<*, *>>
                 pos = pos.offset(Direction.YPlus,1)
             }
 
-            randState() fillS pos
+            randState() fillSurf pos
         }
     }
 }

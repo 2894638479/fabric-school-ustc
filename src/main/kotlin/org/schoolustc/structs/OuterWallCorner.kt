@@ -13,8 +13,8 @@ class OuterWallCorner(config: StructGenConfig): MyStructFixedSize(Companion,conf
         override fun OuterWallCorner.saveTag(tag: CompoundTag) = tag.write("C",config)
     }
     override fun StructBuildScope.build() {
-        STONE_BRICKS fillS Area(0..0,0..3,0..0)
+        STONE_BRICKS fillSurf Area(0..0,0..3,0..0)
         val lantern = if(randBool(0.9f)) LANTERN else SOUL_LANTERN
-        lantern fillS Point(0,4,0)
+        lantern fillSurf Point(0,4,0)
     }
 }

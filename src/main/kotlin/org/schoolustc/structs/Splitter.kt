@@ -27,6 +27,6 @@ class Splitter(
         override val constructor get() = ::Splitter
     }
     override fun StructBuildScope.build() {
-        SMOOTH_STONE fillS Area(0..0,0..0,0..<length)
+        SMOOTH_STONE fillSurf Area(0..0,0..0,0..<length)
     }
 }

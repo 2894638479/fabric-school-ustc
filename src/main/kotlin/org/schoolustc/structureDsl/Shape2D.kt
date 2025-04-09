@@ -2,9 +2,16 @@ package org.schoolustc.structureDsl
 
 import java.util.*
 
-class Shape2D : Sequence<Point> {
+class Shape2D(area2D: Area2D? = null) : Sequence<Point> {
     private val map = TreeMap<Int,MutableList<IntRange>>()
     private fun row(x:Int) = map[x] ?: mutableListOf<IntRange>().apply { map[x] = this }
+    init{
+        area2D?.run {
+            for (xx in x){
+                map[xx] = mutableListOf(z)
+            }
+        }
+    }
     fun addPoint(x:Int,z:Int){
         val row = row(x)
         for (i in row.indices) {

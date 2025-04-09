@@ -45,7 +45,7 @@ class StructBuildScope(
     inline val Block.state get() = defaultBlockState()
 
     infix fun Block.fillRaw(points: Sequence<Point>) = points.forEach { state setTo Point.FinalPoint(it.x,it.y,it.z) }
-    infix fun Block.fillRawS(points: Sequence<Point>) = points.forEach { state setTo Point.FinalPoint(it.x,it.y + y(it.x,it.z),it.z) }
+    infix fun Block.fillRawSurf(points: Sequence<Point>) = points.forEach { state setTo Point.FinalPoint(it.x,it.y + y(it.x,it.z),it.z) }
 
     infix fun (()->Block).fill(points: Sequence<Point>) = points.forEach { invoke().state setTo it.finalPos }
     infix fun BlockState.fill(points: Sequence<Point>) = points.forEach { this setTo it.finalPos }
@@ -76,9 +76,9 @@ class StructBuildScope(
     inline val Block.connectedX get() = state.connected(Direction2D.XMin,Direction2D.XPlus)
     inline val Block.connectedZ get() = state.connected(Direction2D.ZMin,Direction2D.ZPlus)
     //将y轴转化为相对于世界表面的坐标
-    infix fun Block.fillS(points: Sequence<Point>) = points.forEach { state setTo it.finalSurfacePos }
-    infix fun BlockState.fillS(points: Sequence<Point>) = points.forEach { this setTo it.finalSurfacePos }
-    infix fun (()->BlockState).fillS(points: Sequence<Point>) = points.forEach { invoke() setTo it.finalSurfacePos }
+    infix fun Block.fillSurf(points: Sequence<Point>) = points.forEach { state setTo it.finalSurfacePos }
+    infix fun BlockState.fillSurf(points: Sequence<Point>) = points.forEach { this setTo it.finalSurfacePos }
+    infix fun (()->BlockState).fillSurf(points: Sequence<Point>) = points.forEach { invoke() setTo it.finalSurfacePos }
 
     private fun getNbtStruct(name:String):StructureTemplate?{
         return (world.server ?: return null)
@@ -107,7 +107,7 @@ class StructBuildScope(
     //放置nbt
     infix fun String.put(startPos: Point) = putNbtStruct(this,startPos,true)
     //不过滤空气
-    infix fun String.putA(startPos: Point) = putNbtStruct(this,startPos,false)
+    infix fun String.putAir(startPos: Point) = putNbtStruct(this,startPos,false)
 
     fun randBool(trueChance:Float) = rand.nextFloat() < trueChance
     fun Block.stairState(facing:Direction2D,shape:StairsShape = StairsShape.STRAIGHT,half: Half = Half.BOTTOM) =
@@ -144,6 +144,18 @@ class StructBuildScope(
             addItem(i)?.let { entity.setItem(i,it) }
         }
     }
+
+    infix fun (()->BlockState).fillUnder(points:Sequence<Point>){
+        points.forEach {
+            fun Point.FinalPoint.next() = run { Point.FinalPoint(x,y-1,z) }
+            var finalPos = it.finalPos.next()
+            while (world.getBlockState(finalPos.blockPos).isAir){
+                invoke() setTo finalPos
+                finalPos = finalPos.next()
+            }
+        }
+    }
+    infix fun Block.fillUnder(points: Sequence<Point>) = {state} fillUnder points
 }
 
 
