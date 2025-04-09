@@ -114,6 +114,6 @@ class Path(
     }
 
     override fun StructBuildScope.build() {
-        DIRT_PATH fillRawS Fillable(getPoints()::forEach)
+        DIRT_PATH fillRawS Shape2D().apply { getPoints().forEach { addPoint(it.x,it.z) } }
     }
 }

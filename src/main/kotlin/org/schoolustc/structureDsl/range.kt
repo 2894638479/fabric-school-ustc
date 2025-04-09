@@ -5,6 +5,12 @@ infix fun IntRange.overlap(other:IntRange) = last in other || first in other || 
 infix fun IntRange.contains(i:Int) = i in this
 infix fun IntRange.contains(other:IntRange) = other.first in this && other.last in this
 infix fun IntRange.nextTo(other:IntRange) = last + 1 == other.first || first - 1 == other.last
+infix fun IntRange.nextTo(other:Int) = last + 1 == other || first - 1 == other
+fun IntRange.add(i:Int): IntRange?{
+    if(last + 1 == i) return first..last+1
+    if(first - 1 == i) return first - 1..last
+    return null
+}
 fun IntProgression.toRange() = first..last
 fun IntRange.first(count:Int) = first..<first + count
 fun IntRange.last(count:Int) = last + 1 - count..last
