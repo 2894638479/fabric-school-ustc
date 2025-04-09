@@ -9,33 +9,51 @@ import org.schoolustc.structureDsl.Area2D.Companion.area2D
 import org.schoolustc.structureDsl.struct.MyStruct
 import org.schoolustc.structureDsl.struct.builder.MyStructListBuilder
 import org.schoolustc.structureDsl.structure.StructureBuildScope
+import kotlin.math.absoluteValue
 
 abstract class BlockBuilder(val para: BlockBuilderPara): MyStructListBuilder<MyStruct>() {
     val area get() = para.area
     val nextToWalls get() = para.nextToWalls
     val nextToSplitter get() = para.nextToSplitter
-    val openArea = Direction2D.entries.filter { it !in nextToWalls }.associateWith {
-        val pos = para.scope.rand from area.l(it.left).padding(area.length(it.left) / 4)
-        it.run { area2D(area.bound(this).range,pos-1..pos+1) }
+    fun Pair<Direction2D, IntRange>.toOpenArea() = first.run { area2D(area.bound(this).range,second) }
+    val openRange = Direction2D.entries.filter { it !in nextToWalls }.flatMap { d ->
+        val rand = para.scope.rand
+        val range = area.l(d.left)
+        List(5){
+            mutableListOf(rand from range.padding(range.length/4)).apply {
+                for(i in 1..range.length/12 - 1){
+                    val r = rand from range
+                    if(
+                        r in range.padding(7)
+                        && firstOrNull { (r - it).absoluteValue <= 12 } == null
+                    ) {
+                        add(r)
+                    }
+                }
+            }
+        }.maxBy { it.size }.map { d to it-1..it+1 }
     }
     open fun getLeafWalls():List<LeafWall> = mutableListOf<LeafWall>().also{ list ->
-        Direction2D.entries.forEach {
-            openArea[it]?.let { area1 ->
-                it.run {
-                    val wallArea1 = area2D(area.bound(it).range,area.w.first..<area1.w.first)
-                    val wallArea2 = area2D(area.bound(it).range,area1.w.last+1..area.w.last)
-                    list += LeafWallBuilder(it.left,wallArea1).build()
-                    list += LeafWallBuilder(it.left,wallArea2).build()
-                }
-            } ?: run {
-                val wallArea = area.sliceEnd(it, 1).sliceStart(it.left, area.length(it.left) - 1)
-                list += LeafWallBuilder(it.left, wallArea).build()
+        Direction2D.entries.forEach { d ->
+            mutableListOf(d.run { area.w.first+1..area.w.last }).apply {
+                openRange.forEach { if(it.first == d){
+                    val range = it.second
+                    val toSplit = first { range overlap it }
+                    val s1 = toSplit.first..range.first - 1
+                    val s2 = range.last + 1..toSplit.last
+                    remove(toSplit)
+                    add(s1)
+                    add(s2)
+                } }
+            }.forEach {
+                val wallArea = d.run { area2D(area.bound(this).range,it) }
+                list += LeafWallBuilder(d.left, wallArea).build()
             }
         }
     }
     open fun StructureBuildScope.getLights():List<StreetLight> {
         val light = mutableListOf<StreetLightBuilder>()
-        val filterAreas = openArea.map { (direction,area) -> area.offset(direction,-1) }
+        val filterAreas = openRange.map { it.toOpenArea().offset(it.first,-1) }
         Direction2D.entries.forEach {
             val lightArea = area.slice(it.reverse, 1..1).slice(it.left, 1..area.length(it.left) - 2)
             lightArea.iterate { x, z ->

@@ -49,8 +49,8 @@ class Tree(config: StructGenConfig,val key: ResourceKey<ConfiguredFeature<*, *>>
     }
 
     override fun StructBuildScope.build() {
-        val success =  key place Point(5,0,5)
-        if (success && treeType == TreeType.CHERRY) placeCherryFlower()
+        val success = key place Point(5,0,5)
+        if (success != false && treeType == TreeType.CHERRY) placeCherryFlower()
     }
 
     private fun StructBuildScope.placeCherryFlower(){

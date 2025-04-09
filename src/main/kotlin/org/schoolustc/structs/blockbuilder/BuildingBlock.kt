@@ -18,18 +18,19 @@ class BuildingBlock(para: BlockBuilderPara):BlockBuilder(para) {
 
         val path1 = area.sliceEnd(direction,1).slice(direction.left,4..6).offset(direction,1)
         val path1Mid = path1.middle{_,_->0}
-        val path2 = openArea
-            .filter { it.value.middle{_,_->0}.atDirectionOf(direction,path1Mid) }
-            .minByOrNull { (_,area) -> area.distanceToMid(path1) }
+        val path2 = openRange
+            .map { it.first to it.toOpenArea() }
+            .filter { it.second.middle{_,_->0}.atDirectionOf(direction,path1Mid) }
+            .minByOrNull { it.second.distanceToMid(path1) }
         list += BuildingBuilder(area,path1.midY(::y).roundToInt(),direction,height,flatTop).build()
 
         list += getLights()
         list += getLeafWalls()
         if(path2 != null) list += Path(
             path1,
-            path2.value,
+            path2.second,
             direction.toOrientation(),
-            path2.key.reverse.toOrientation(),
+            path2.first.reverse.toOrientation(),
             DIRT_PATH
         )
     }

@@ -117,7 +117,7 @@ class StructBuildScope(
             .setValue(HALF,half)
     fun Block.leafState(persist:Boolean) = state.setValue(PERSISTENT,persist)
 
-    infix fun ResourceKey<ConfiguredFeature<*, *>>.place(pos:Point) = world
+    infix fun ResourceKey<ConfiguredFeature<*, *>>.place(pos:Point):Boolean? = world
         .level
         .registryAccess()
         .registryOrThrow(Registries.CONFIGURED_FEATURE)
@@ -128,7 +128,7 @@ class StructBuildScope(
             world,
             chunkGenerator,
             rand,
-            pos.finalPos.apply { if (!inBox) return false }.blockPos,
+            pos.finalPos.apply { if (!inBox) return null }.blockPos,
         ) ?: error("tree place error")
 
     fun chest(
