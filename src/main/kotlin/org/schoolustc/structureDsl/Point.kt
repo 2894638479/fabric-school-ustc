@@ -10,7 +10,7 @@ open class Point(
     val x:Int,
     val y:Int,
     val z:Int
-):Fillable{
+):Sequence<Point>{
     class FinalPoint(x:Int,y: Int,z: Int):Point(x,y,z)
     val blockPos get() = BlockPos(x,y,z)
     fun finalPos(config: StructGenConfig):FinalPoint{
@@ -35,7 +35,12 @@ open class Point(
         y + other.y,
         z + other.z
     )
-    override fun fill(block: (Point) -> Unit) = block(this)
+
+    override fun iterator() = object : Iterator<Point> {
+        private var point:Point? = this@Point
+        override fun hasNext(): Boolean = point != null
+        override fun next() = point?.apply { point = null } ?: throw NoSuchElementException()
+    }
     fun offset(direction:Direction,count:Int = 1):Point{
         var x = x
         var y = y

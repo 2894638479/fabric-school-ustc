@@ -104,7 +104,7 @@ class Path(
                     if(
                         (!atStart() || pt.atOrientationOf(d1,p1) || point.inArea2D(a1))
                         &&(!atEnd() || pt.atOrientationOf(d2,p2) || point.inArea2D(a2))
-                    ) points += point
+                    ) points.add(point)
                 }
             }
             t += step

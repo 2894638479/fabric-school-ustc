@@ -44,12 +44,12 @@ class StructBuildScope(
     @JvmName("finalSurfacePosGetter") fun Point.getFinalSurfacePos() = finalSurfacePos
     inline val Block.state get() = defaultBlockState()
 
-    infix fun Block.fillRaw(fillable: Fillable) = fillable.fill { state setTo Point.FinalPoint(it.x,it.y,it.z) }
-    infix fun Block.fillRawS(fillable: Fillable) = fillable.fill { state setTo Point.FinalPoint(it.x,it.y + y(it.x,it.z),it.z) }
+    infix fun Block.fillRaw(points: Sequence<Point>) = points.forEach { state setTo Point.FinalPoint(it.x,it.y,it.z) }
+    infix fun Block.fillRawS(points: Sequence<Point>) = points.forEach { state setTo Point.FinalPoint(it.x,it.y + y(it.x,it.z),it.z) }
 
-    infix fun Selector<Block>.fill(fillable: Fillable) = fillable.fill { select().state setTo it.finalPos }
-    infix fun BlockState.fill(fillable: Fillable) = fillable.fill { this setTo it.finalPos }
-    infix fun Block.fill(fillable: Fillable) = fillable.fill { state setTo it.finalPos }
+    infix fun Selector<Block>.fill(points: Sequence<Point>) = points.forEach { select().state setTo it.finalPos }
+    infix fun BlockState.fill(points: Sequence<Point>) = points.forEach { this setTo it.finalPos }
+    infix fun Block.fill(points: Sequence<Point>) = points.forEach { state setTo it.finalPos }
     infix fun Selector<Block>.fillWall(area: Area){
         val p1 = area.getP1()
         val p2 = area.getP2()
@@ -76,9 +76,9 @@ class StructBuildScope(
     inline val Block.connectedX get() = state.connected(Direction2D.XMin,Direction2D.XPlus)
     inline val Block.connectedZ get() = state.connected(Direction2D.ZMin,Direction2D.ZPlus)
     //将y轴转化为相对于世界表面的坐标
-    infix fun Block.fillS(fillable: Fillable) = fillable.fill { state setTo it.finalSurfacePos }
-    infix fun BlockState.fillS(fillable: Fillable) = fillable.fill { this setTo it.finalSurfacePos }
-    infix fun Selector<BlockState>.fillS(fillable: Fillable) = fillable.fill { select() setTo it.finalSurfacePos }
+    infix fun Block.fillS(points: Sequence<Point>) = points.forEach { state setTo it.finalSurfacePos }
+    infix fun BlockState.fillS(points: Sequence<Point>) = points.forEach { this setTo it.finalSurfacePos }
+    infix fun Selector<BlockState>.fillS(points: Sequence<Point>) = points.forEach { select() setTo it.finalSurfacePos }
 
     private fun getNbtStruct(name:String):StructureTemplate?{
         return (world.server ?: return null)

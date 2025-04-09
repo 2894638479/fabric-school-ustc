@@ -1,8 +1,8 @@
 package org.schoolustc.structureDsl
 
-import java.util.TreeMap
+import java.util.*
 
-class Shape2D : Fillable {
+class Shape2D : Sequence<Point> {
     private val map = TreeMap<Int,MutableList<IntRange>>()
     private fun row(x:Int) = map[x] ?: mutableListOf<IntRange>().apply { map[x] = this }
     fun addPoint(x:Int,z:Int){
@@ -33,9 +33,10 @@ class Shape2D : Fillable {
         }
     }
     var y = 0
-    override fun fill(block: (Point) -> Unit) {
-        map.forEach { (t, u) -> u.forEach { it.forEach { block(Point(t,y,it)) } } }
+    private val seq = sequence {
+        map.forEach { (t, u) -> u.forEach { it.forEach { yield(Point(t,y,it)) } } }
     }
+    override fun iterator() = seq.iterator()
     infix fun overlaps(other:Shape2D):Boolean{
         val xIterator = map.navigableKeySet().iterator()
         val otherXIterator = other.map.navigableKeySet().iterator()
@@ -64,10 +65,9 @@ class Shape2D : Fillable {
         while (i < thisRanges.size && j < otherRanges.size) {
             val a = thisRanges[i]
             val b = otherRanges[j]
-
             when {
-                a.endInclusive < b.start -> i++
-                b.endInclusive < a.start -> j++
+                a.last < b.first -> i++
+                b.last < a.first -> j++
                 else -> return true
             }
         }
