@@ -9,9 +9,10 @@ import org.schoolustc.structureDsl.struct.builder.MyStructBuilder
 
 class TreeBuilder(
     val pos:Point,
-    val type: ResourceKey<ConfiguredFeature<*, *>>
+    val key: ResourceKey<ConfiguredFeature<*, *>>,
+    val type:Tree.TreeType
 ):MyStructBuilder<Tree> {
     override fun build(): Tree {
-        return Tree(StructGenConfig(Point(pos.x - 5,pos.y,pos.z - 5)),type)
+        return Tree(StructGenConfig(Point(pos.x - 5,pos.y,pos.z - 5)),key,type)
     }
 }

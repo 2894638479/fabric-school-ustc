@@ -4,6 +4,7 @@ import net.minecraft.data.worldgen.features.TreeFeatures
 import org.schoolustc.structs.Road
 import org.schoolustc.structs.Splitter
 import org.schoolustc.structs.Street
+import org.schoolustc.structs.Tree
 import org.schoolustc.structs.blockbuilder.*
 import org.schoolustc.structs.builder.GateBuilder
 import org.schoolustc.structs.builder.RoadBuilder
@@ -91,15 +92,29 @@ class ScaffoldBuilder(
             }
             val para = BlockBuilderPara(area,nextWalls,nextSplitter,this)
             val block = rand from mapOf(
-                { TreeBlock(para,rand from mapOf(
-                    TreeFeatures.OAK_BEES_005 to 5,
-                    TreeFeatures.JUNGLE_TREE to 1,
-                    TreeFeatures.JUNGLE_BUSH to 1,
-                    TreeFeatures.MANGROVE to 2,
-                    TreeFeatures.BIRCH_BEES_005 to 3
-                ))} to 1,
+                {
+                    val type = rand from mapOf(
+                        {
+                            rand from mapOf(
+                                TreeFeatures.OAK_BEES_005 to Tree.TreeType.SMALL to 3,
+                                TreeFeatures.FANCY_OAK_BEES to Tree.TreeType.BIG to 2,
+                                TreeFeatures.FANCY_OAK to Tree.TreeType.BIG to 1,
+                            )
+                        } to 5,
+                        {
+                            rand from mapOf(
+                                TreeFeatures.JUNGLE_TREE to Tree.TreeType.SMALL to 1,
+                                TreeFeatures.JUNGLE_BUSH to Tree.TreeType.SMALL to 1
+                            )
+                        } to 3,
+                        { TreeFeatures.JUNGLE_BUSH to Tree.TreeType.SMALL } to 3,
+                        { TreeFeatures.MANGROVE to Tree.TreeType.SMALL } to 2,
+                        { TreeFeatures.BIRCH_BEES_005 to Tree.TreeType.SMALL } to 2,
+                        { TreeFeatures.CHERRY_BEES_005 to Tree.TreeType.CHERRY } to 10,
+                    )
+                    TreeBlock(para,type)
+                } to 1,
                 {NormalBlock(para)} to 1,
-                {SakuraBlock(para)} to 1,
                 {BuildingBlock(para)} to 1
             )
 

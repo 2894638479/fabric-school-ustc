@@ -129,7 +129,7 @@ class StructBuildScope(
             chunkGenerator,
             rand,
             pos.finalPos.apply { if (!inBox) return false }.blockPos,
-        )
+        ) ?: error("tree place error")
 
     fun chest(
         pos:Point,

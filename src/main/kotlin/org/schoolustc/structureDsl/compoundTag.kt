@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.block.Block
+import org.schoolustc.structs.Tree
 import org.schoolustc.structureDsl.struct.StructGenConfig
 
 
@@ -28,6 +29,7 @@ inline fun <reified T : Any> CompoundTag.write(key:String,t:T,) = when(T::class)
     Area2D::class -> putArea2D(key,t as Area2D)
     Direction2D::class -> putDirection2D(key,t as Direction2D)
     Orientation2D::class -> putOrientation2D(key,t as Orientation2D)
+    Tree.TreeType::class -> putTreeType(key,t as Tree.TreeType)
     else -> error("not supported type: ${T::class}")
 }
 
@@ -45,6 +47,7 @@ inline fun <reified T : Any> CompoundTag.read(key:String):T = when(T::class){
     Area2D::class -> getArea2D(key) as T
     Direction2D::class -> getDirection2D(key) as T
     Orientation2D::class -> getOrientation2D(key) as T
+    Tree.TreeType::class -> getTreeType(key) as T
     else -> error("not supported type: ${T::class}")
 }
 
@@ -89,4 +92,6 @@ fun CompoundTag.putDirection2D(key:String,direction:Direction2D) = putInt(key,di
 fun CompoundTag.getDirection2D(key:String) = Direction2D.fromInt(getInt(key))
 fun CompoundTag.putOrientation2D(key: String,orientation:Orientation2D) = putDouble(key,orientation.value)
 fun CompoundTag.getOrientation2D(key: String) = Orientation2D(getDouble(key))
+fun CompoundTag.putTreeType(key:String,type:Tree.TreeType) = putInt(key,type.toInt())
+fun CompoundTag.getTreeType(key: String) = Tree.TreeType.fromInt(getInt(key))
 
