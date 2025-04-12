@@ -11,6 +11,7 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox
 import net.minecraft.world.level.levelgen.structure.StructurePiece
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType
+import org.schoolustc.Profiler
 import org.schoolustc.structureDsl.Area
 import org.schoolustc.structureDsl.Point
 
@@ -35,13 +36,16 @@ abstract class MyStruct (
         chunkPos: ChunkPos,
         blockPos: BlockPos
     ) {
-        StructBuildScope(
+        fun build() = StructBuildScope(
             worldGenLevel,
             config,
             randomSource,
             boundingBox,
             chunkGenerator
         ).build()
+        Profiler.task("structure ${info.id}",500){
+            build()
+        }
     }
     abstract fun StructBuildScope.build()
 

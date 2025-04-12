@@ -11,9 +11,13 @@ class School(settings:StructureSettings): MyStructure(Companion,settings) {
 
     override fun StructureBuildScope.build(pos:Point) {
         val area = randArea(pos.x,pos.z,108..143)
-        try {
-            ScaffoldBuilder(area).run { this@build.build() }.addToPieces()
-        } catch (e:Exception){e.printStackTrace()}
+        Profiler.task("build school",5000) {
+            try {
+                ScaffoldBuilder(area).run { this@build.build() }.addToPieces()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     override fun GenerationContext.findPoint() = Point(chunkPos.middleBlockX,100,chunkPos.middleBlockZ)
