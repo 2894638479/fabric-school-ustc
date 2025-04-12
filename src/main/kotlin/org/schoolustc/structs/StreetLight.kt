@@ -24,9 +24,11 @@ class StreetLight(config: StructGenConfig):MyStructFixedSize(Companion,config) {
             SEA_LANTERN to 5f,
             GLOWSTONE to 1f
         )
-        wall fill Area(0..0,0..3,0..0)
-        wall.state.connected(Direction2D.XPlus) fill Point(0,4,0)
-        wall.state.connected(Direction2D.XMin) fill Point(1,4,0)
-        light.state fill Point(1,3,0)
+        inRelativeView {
+            wall fill Area(0..0,0..3,0..0)
+            wall.state.connected(Direction2D.XPlus) fill Point(0,4,0)
+            wall.state.connected(Direction2D.XMin) fill Point(1,4,0)
+            light.state fill Point(1,3,0)
+        }
     }
 }

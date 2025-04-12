@@ -26,16 +26,19 @@ class OuterWall(
     }
     override fun StructBuildScope.build() {
         val state = IRON_BARS.connectedX
-        STONE_BRICKS fillSurf Area(0..<length,0..1,0..0)
-        state fillSurf Area(0..<length,2..3,0..0)
+
+        inSurfView {
+            STONE_BRICKS fill Area(0..<length,0..1,0..0)
+            state fill Area(0..<length,2..3,0..0)
+        }
 
         //填补高度差带来的漏洞
-        val h = (0..<length).map { Point(it,0,0).getFinalSurfacePos() }
-        for(i in 1..<length){
-            if(h[i].y < h[i-1].y) state fillSurf Point(i,4,0)
-        }
-        for(i in 0..<length-1){
-            if(h[i].y < h[i+1].y) state fillSurf Point(i,4,0)
-        }
+//        val h = (0..<length).map { Point(it,0,0).getFinalSurfacePos() }
+//        for(i in 1..<length){
+//            if(h[i].y < h[i-1].y) state fillSurf Point(i,4,0)
+//        }
+//        for(i in 0..<length-1){
+//            if(h[i].y < h[i+1].y) state fillSurf Point(i,4,0)
+//        }
     }
 }

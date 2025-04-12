@@ -26,7 +26,7 @@ class Splitter(
         override val width get() = 1
         override val constructor get() = ::Splitter
     }
-    override fun StructBuildScope.build() {
-        SMOOTH_STONE fillSurf Area(0..0,0..0,0..<length)
+    override fun StructBuildScope.build() = inSurfView {
+        SMOOTH_STONE fill Area(0..0,0..0,0..<length)
     }
 }

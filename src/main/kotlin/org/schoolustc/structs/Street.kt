@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.block.Blocks.*
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.*
+import kotlin.math.min
 
 class Street(
     config: StructGenConfig,
@@ -23,11 +24,14 @@ class Street(
         override val period get() = 10
         override val constructor get() = ::Street
     }
-    override fun StructBuildScope.build() {
-        AIR fillSurf Area(0..6,1..2,0..<length)
-        GRAY_CONCRETE fillSurf Area(0..6,0..0,0..<length)
-        WHITE_CONCRETE fillSurf AreaProg(3..3,0..0,0..<length step 5)
-        WHITE_CONCRETE fillSurf AreaProg(3..3,0..0,1..<length step 5)
-        WHITE_CONCRETE fillSurf AreaProg(3..3,0..0,2..<length step 5)
+    override fun StructBuildScope.build() = inSurfView {
+        AIR fill Area(0..6,1..2,0..<length)
+        GRAY_CONCRETE fill Area(0..6,0..0,0..<length)
+        val first = length - length%5
+        for(i in 0..<first step 5){
+            WHITE_CONCRETE fill Area(3..3,0..0,i..i+2)
+        }
+        val last = length - first
+        WHITE_CONCRETE fill Area(3..3,0..0,first..first + min(last,2))
     }
 }

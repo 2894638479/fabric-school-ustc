@@ -2,8 +2,7 @@ package org.schoolustc.structs
 
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.resources.ResourceKey
-import net.minecraft.world.level.block.Blocks.GRASS
-import net.minecraft.world.level.block.Blocks.PINK_PETALS
+import net.minecraft.world.level.block.Blocks.*
 import net.minecraft.world.level.block.state.properties.BlockStateProperties.FLOWER_AMOUNT
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature
 import org.schoolustc.structureDsl.*
@@ -49,16 +48,21 @@ class Tree(config: StructGenConfig,val key: ResourceKey<ConfiguredFeature<*, *>>
     }
 
     override fun StructBuildScope.build() {
-        val success = key place Point(5,0,5)
-        if (success != false && treeType == TreeType.CHERRY) placeCherryFlower()
+        var y = 0
+        var success:Boolean?
+        inRelativeView {
+            do {
+                success = key plant Point(5,y,5)
+                y++
+            } while(success == false && y < 4)
+            if(success == false) RED_WOOL fill Point(5,0,5)
+        }
+        if (treeType == TreeType.CHERRY) placeCherryFlower()
     }
 
-    private fun StructBuildScope.placeCherryFlower(){
+    private fun StructBuildScope.placeCherryFlower() = inSurfView {
         for(i in 1..16){
             var pos = Point(rand from 1..9,1,rand from 1..9)
-            fun predication(pos:Point) = world.getBlockState(pos.getFinalSurfacePos().blockPos).run {
-                isAir || `is`(GRASS) || `is`(PINK_PETALS)
-            }
             fun randState() = PINK_PETALS.state.setValue(
                 FLOWER_AMOUNT,
                 rand from mapOf(
@@ -69,11 +73,11 @@ class Tree(config: StructGenConfig,val key: ResourceKey<ConfiguredFeature<*, *>>
                 )
             )
 
-            while(!predication(pos)){
+            while(!block(pos).run { isAir || `is`(GRASS) || `is`(PINK_PETALS) }){
                 pos = pos.offset(Direction.YPlus,1)
             }
 
-            randState() fillSurf pos
+            randState() fill pos
         }
     }
 }

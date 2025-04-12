@@ -7,10 +7,10 @@ import kotlin.math.min
 
 
 class Area(
-    x:IntRange,
-    y:IntRange,
-    z:IntRange
-): AreaProg(x,y,z) {
+    val x:IntRange,
+    val y:IntRange,
+    val z:IntRange
+): Sequence<Point>{
     inline val x1 get() = x.first
     inline val x2 get() = x.last
     inline val y1 get() = y.first
@@ -36,7 +36,7 @@ class Area(
             max(p1.z,p2.z),
         )
     }
-    fun toArea2D() = Area2D(x.toRange(),z.toRange())
+    fun toArea2D() = Area2D(x,z)
     fun isEmpty() = x.isEmpty() || y.isEmpty() || z.isEmpty()
     fun ifEmpty(block:()->Unit) = apply { if(isEmpty()) block() }
     override fun toString(): String {
@@ -45,4 +45,11 @@ class Area(
                 "z:$z1..$z2"
     }
     fun checkNotEmpty() = ifEmpty { error("empty area: $this") }
+    operator fun contains(point: Point) = point.x in x && point.y in y && point.z in z
+    private val seq = sequence {
+        for(i in x){for (j in y){for (k in z){
+            yield(Point(i,j,k))
+        }}}
+    }
+    override fun iterator() = seq.iterator()
 }

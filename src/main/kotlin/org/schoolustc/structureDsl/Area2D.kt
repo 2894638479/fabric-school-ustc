@@ -93,4 +93,5 @@ class Area2D(
         return sin * x.length + cos * z.length
     }
     fun length(orientation: Orientation2D) = width(orientation.left(90.0))
+    operator fun contains(point:Point) = point.x in x && point.z in z
 }

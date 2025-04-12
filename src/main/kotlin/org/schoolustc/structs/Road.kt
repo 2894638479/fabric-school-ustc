@@ -23,7 +23,7 @@ class Road(
         override val period get() = 10
         override val constructor get() = ::Road
     }
-    override fun StructBuildScope.build() {
-        DIRT_PATH fillSurf Area(0..2,0..0,0..<length)
+    override fun StructBuildScope.build() = inSurfView {
+        DIRT_PATH fill Area(0..2,0..0,0..<length)
     }
 }

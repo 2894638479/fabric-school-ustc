@@ -113,7 +113,7 @@ class Path(
         return points
     }
 
-    override fun StructBuildScope.build() {
-        DIRT_PATH fillRawSurf Shape2D().apply { getPoints().forEach { addPoint(it.x,it.z) } }
+    override fun StructBuildScope.build() = inRawSurfView {
+        DIRT_PATH fill Shape2D().apply { getPoints().forEach { addPoint(it.x,it.z) } }
     }
 }

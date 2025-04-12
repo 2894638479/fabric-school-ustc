@@ -17,6 +17,7 @@ fun IntRange.last(count:Int) = last + 1 - count..last
 fun IntRange.expand(count:Int) = first - count..last + count
 fun IntRange.expand(start:Int,end:Int) = first - start..last + end
 fun IntRange.padding(count:Int) = expand(-count)
+fun IntRange.offset(count: Int) = first+count..last+count
 inline val IntRange.middle get() = (first + last) / 2.0
 inline val Int.range get() = this..this
 

@@ -15,22 +15,24 @@ class Gate(config:StructGenConfig):MyStructFixedSize(Companion,config) {
         override fun Gate.saveTag(tag: CompoundTag) = tag.write("C",config)
     }
     override fun StructBuildScope.build() {
-        CALCITE fill Area(2..3,0..7,1..2)
-        CALCITE fill Area(11..12,0..7,1..2)
-        CALCITE fill Area(4..10,6..7,1..2)
-        CALCITE fill Area(1..1,7..7,1..2)
-        CALCITE fill Area(13..13,6..7,1..2)
-        fun state(facing:Direction2D,shape: StairsShape = StairsShape.STRAIGHT) =
-            POLISHED_DIORITE_STAIRS.stairState(facing,shape,Half.TOP)
-        state(Direction2D.ZPlus) fill Area(1..13,7..7,0..0)
-        state(Direction2D.ZMin) fill Area(1..13,7..7,3..3)
-        state(Direction2D.XPlus) fill Area(0..0,7..7,1..2)
-        state(Direction2D.XMin) fill Area(14..14,7..7,1..2)
-        state(Direction2D.XPlus) fill Area(1..1,6..6,1..2)
-        state(Direction2D.XMin) fill Area(13..13,6..6,1..2)
-        state(Direction2D.XPlus,StairsShape.OUTER_RIGHT) fill Point(0,7,0)
-        state(Direction2D.XPlus,StairsShape.OUTER_LEFT) fill Point(0,7,3)
-        state(Direction2D.XMin,StairsShape.OUTER_RIGHT) fill Point(14,7,3)
-        state(Direction2D.XMin,StairsShape.OUTER_LEFT) fill Point(14,7,0)
+        inRelativeView {
+            CALCITE fill Area(2..3, 0..7, 1..2)
+            CALCITE fill Area(11..12, 0..7, 1..2)
+            CALCITE fill Area(4..10, 6..7, 1..2)
+            CALCITE fill Area(1..1, 7..7, 1..2)
+            CALCITE fill Area(13..13, 6..7, 1..2)
+            fun state(facing: Direction2D, shape: StairsShape = StairsShape.STRAIGHT) =
+                POLISHED_DIORITE_STAIRS.stairState(facing, shape, Half.TOP)
+            state(Direction2D.ZPlus) fill Area(1..13, 7..7, 0..0)
+            state(Direction2D.ZMin) fill Area(1..13, 7..7, 3..3)
+            state(Direction2D.XPlus) fill Area(0..0, 7..7, 1..2)
+            state(Direction2D.XMin) fill Area(14..14, 7..7, 1..2)
+            state(Direction2D.XPlus) fill Area(1..1, 6..6, 1..2)
+            state(Direction2D.XMin) fill Area(13..13, 6..6, 1..2)
+            state(Direction2D.XPlus, StairsShape.OUTER_RIGHT) fill Point(0, 7, 0)
+            state(Direction2D.XPlus, StairsShape.OUTER_LEFT) fill Point(0, 7, 3)
+            state(Direction2D.XMin, StairsShape.OUTER_RIGHT) fill Point(14, 7, 3)
+            state(Direction2D.XMin, StairsShape.OUTER_LEFT) fill Point(14, 7, 0)
+        }
     }
 }

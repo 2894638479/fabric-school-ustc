@@ -44,6 +44,10 @@ class Shape2D(area2D: Area2D? = null) : Sequence<Point> {
         map.forEach { (t, u) -> u.forEach { it.forEach { yield(Point(t,y,it)) } } }
     }
     override fun iterator() = seq.iterator()
+    operator fun contains(point: Point):Boolean{
+        map[point.x]?.forEach { if(point.y in it) return true }
+        return false
+    }
     infix fun overlaps(other:Shape2D):Boolean{
         val xIterator = map.navigableKeySet().iterator()
         val otherXIterator = other.map.navigableKeySet().iterator()

@@ -33,6 +33,9 @@ class LeafWall(
                 FLOWERING_AZALEA_LEAVES to 2f
             )
         }
-        { leaves().leafState(true) } fillSurf Area(0..<length,1..1,0..0)
+
+        inSurfView {
+            { leaves().leafState(true) } fill Area(0..<length,1..1,0..0)
+        }
     }
 }

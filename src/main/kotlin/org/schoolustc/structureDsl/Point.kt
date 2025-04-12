@@ -6,41 +6,25 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox
 import org.schoolustc.structureDsl.struct.StructGenConfig
 import kotlin.math.sqrt
 
-open class Point(
+class Point(
     val x:Int,
     val y:Int,
     val z:Int
-):Sequence<Point>{
-    class FinalPoint(x:Int,y: Int,z: Int):Point(x,y,z)
+) {
     val blockPos get() = BlockPos(x,y,z)
-    fun finalPos(config: StructGenConfig):FinalPoint{
+    inline fun finalPos(config: StructGenConfig,y:(Int,Int)->Int = { _,_-> this.y + config.pos.y }):Point{
         val xAdd = if (config.revX) - x else x
         val zAdd = if (config.revZ) - z else z
-        return FinalPoint(
-            config.pos.x + if (config.rotate) zAdd else xAdd,
-            config.pos.y + y,
-            config.pos.z + if (config.rotate) xAdd else zAdd
-        )
-    }
-    fun finalSurfacePos(config:StructGenConfig,getY:(Int, Int)->Int):FinalPoint{
-        val finalPos = finalPos(config)
-        return FinalPoint(
-            finalPos.x,
-            y + getY(finalPos.x,finalPos.z),
-            finalPos.z
-        )
+        val finalX = config.pos.x + if (config.rotate) zAdd else xAdd
+        val finalZ = config.pos.z + if (config.rotate) xAdd else zAdd
+        val finalY = y(finalX,finalZ)
+        return Point(finalX, finalY, finalZ)
     }
     operator fun plus(other:Point) = Point(
         x + other.x,
         y + other.y,
         z + other.z
     )
-
-    override fun iterator() = object : Iterator<Point> {
-        private var point:Point? = this@Point
-        override fun hasNext(): Boolean = point != null
-        override fun next() = point?.apply { point = null } ?: throw NoSuchElementException()
-    }
     fun offset(direction:Direction,count:Int = 1):Point{
         var x = x
         var y = y

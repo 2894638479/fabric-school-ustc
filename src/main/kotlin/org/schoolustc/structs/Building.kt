@@ -31,8 +31,8 @@ class Building(
         override val defaultDirection = Direction2D.ZPlus
     }
 
-    override fun StructBuildScope.build() {
-        infix fun String.putA(y:Int) = putAir(Point(0,y,0))
+    override fun StructBuildScope.build() = inRelativeView {
+        infix fun String.putA(y:Int) = putA(Point(0,y,0))
         infix fun String.put(y:Int) = put(Point(0,y,0))
         val topestHeight = if(flatTop) 1 else 12
         val normalChestPoints = List(height + 2){Point(5,it * 4 + 1,5)}
