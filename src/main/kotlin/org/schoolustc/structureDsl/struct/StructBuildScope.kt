@@ -33,14 +33,6 @@ class StructBuildScope(
     val boundingBox: BoundingBox,
     val chunkGenerator: ChunkGenerator
 ) {
-
-    private inline val Point.finalPos get() = finalPos(config){ _,_ -> config.pos.y + y }
-    private fun y(x:Int,z:Int) = world.getHeight(Heightmap.Types.WORLD_SURFACE_WG,x,z) - 1
-    private inline val Point.finalSurfacePos get() = finalPos(config,::y)
-    private inline val Direction2D.finalDirection get() = applyConfig(config)
-    @JvmName("finalSurfacePosGetter") fun Point.getFinalSurfacePos() = finalSurfacePos
-    inline val Block.state get() = defaultBlockState()
-
     abstract class View(val scope:StructBuildScope) {
         protected val pos = scope.config.pos
         private val bound = scope.boundingBox.run { Area2D(minX()..maxX(),minZ()..maxZ()) }
@@ -48,10 +40,11 @@ class StructBuildScope(
         protected abstract fun Point.finalY():Int
         protected abstract fun Direction2D.final():Direction2D
         private infix fun BlockState.setTo(finalPos: Point) = scope.world.setBlock(finalPos.blockPos,this,3)
-        protected fun surfHeight(x:Int,z: Int) = scope.world.getHeight(Heightmap.Types.WORLD_SURFACE_WG,x,z) - 1
+        protected fun surfHeight(finalX:Int,finalZ: Int) = scope.world.getHeight(Heightmap.Types.WORLD_SURFACE_WG,finalX,finalZ) - 1
+        fun height(x:Int,z:Int) = Point(x,0,z).final().let { surfHeight(it.x,it.z) }
         fun block(pos:Point) = scope.world.getBlockState(pos.final().blockPos)
 
-        private inline val Block.state get() = defaultBlockState()
+        inline val Block.state get() = defaultBlockState()
 
         infix fun BlockState.fill(point:Point) { this setTo point.final().apply { if(this !in bound) return } }
         infix fun Block.fill(point:Point) = state fill point
@@ -101,14 +94,15 @@ class StructBuildScope(
         fun chest(
             pos:Point,
             facing:Direction2D,
-            addItem:(Int)->ItemStack?
+            chance:Double,
+            addItem:(Int)->ItemStack
         ){
             val finalPos = pos.final()
             if(finalPos !in bound) return
             CHEST.state.setValue(ChestBlock.FACING,facing.final().toMcDirection()) setTo finalPos
             val entity = scope.world.getBlockEntity(finalPos.blockPos) as ChestBlockEntity
             for(i in 0..<entity.containerSize){
-                addItem(i)?.let { entity.setItem(i,it) }
+                if(scope.rand.nextBool(chance)) addItem(i)?.let { entity.setItem(i,it) }
             }
         }
         private fun Area.finalXZ():Area{
@@ -158,6 +152,27 @@ class StructBuildScope(
             }
             return state
         }
+        fun BlockState.connected(vararg direction:Direction2D):BlockState {
+            var result = this
+            for (d in direction){
+                result = result.setValue(d.final().toMcProperty(),true)
+            }
+            return result
+        }
+        fun BlockState.connected(wallSide: WallSide,vararg direction:Direction2D):BlockState {
+            var result = this
+            for (d in direction){
+                result = result.setValue(d.final().toMcWallProperty(),wallSide)
+            }
+            return result
+        }
+
+        fun Block.stairState(facing:Direction2D,shape:StairsShape = StairsShape.STRAIGHT,half: Half = Half.BOTTOM) =
+            state
+                .setValue(StairBlock.FACING,facing.final().toMcDirection())
+                .setValue(STAIRS_SHAPE,shape)
+                .setValue(HALF,half)
+        fun Block.leafState(persist:Boolean) = state.setValue(PERSISTENT,persist)
     }
 
     class RelativeView(scope: StructBuildScope): View(scope){
@@ -185,31 +200,6 @@ class StructBuildScope(
     inline fun inSurfView(task:SurfView.()->Unit) = SurfView(this).task()
     inline fun inRawView(task:RawView.()->Unit) = RawView(this).task()
     inline fun inRawSurfView(task:RawSurfView.()->Unit) = RawSurfView(this).task()
-
-
-    fun BlockState.connected(vararg direction:Direction2D):BlockState {
-        var result = this
-        for (d in direction){
-            result = result.setValue(d.finalDirection.toMcProperty(),true)
-        }
-        return result
-    }
-    fun BlockState.connected(wallSide: WallSide,vararg direction:Direction2D):BlockState {
-        var result = this
-        for (d in direction){
-            result = result.setValue(d.finalDirection.toMcWallProperty(),wallSide)
-        }
-        return result
-    }
-    inline val Block.connectedX get() = state.connected(Direction2D.XMin,Direction2D.XPlus)
-    inline val Block.connectedZ get() = state.connected(Direction2D.ZMin,Direction2D.ZPlus)
-
-    fun Block.stairState(facing:Direction2D,shape:StairsShape = StairsShape.STRAIGHT,half: Half = Half.BOTTOM) =
-        state
-            .setValue(StairBlock.FACING,facing.finalDirection.toMcDirection())
-            .setValue(STAIRS_SHAPE,shape)
-            .setValue(HALF,half)
-    fun Block.leafState(persist:Boolean) = state.setValue(PERSISTENT,persist)
 }
 
 
