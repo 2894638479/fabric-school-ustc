@@ -7,14 +7,16 @@ import net.minecraft.world.level.block.state.properties.StairsShape
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.*
 import org.schoolustc.structureDsl.struct.MyStructFixedSizeInfo
+import org.schoolustc.structureDsl.struct.scope.StructBuildScopeWithConfig
+import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
-class Gate(config:StructGenConfig):MyStructFixedSize(Companion,config) {
+class Gate(config: StructGenConfig):MyStructFixedSize(Companion,config) {
     companion object : MyStructFixedSizeInfo<Gate>("gate",Point(15,8,4)){
         override val defaultDirection = Direction2D.ZPlus
         override fun loadTag(tag: CompoundTag) = Gate(tag.read("C"))
         override fun Gate.saveTag(tag: CompoundTag) = tag.write("C",config)
     }
-    override fun StructBuildScope.build() {
+    override fun StructBuildScopeWithConfig.build() {
         inRelativeView {
             CALCITE fill Area(2..3, 0..7, 1..2)
             CALCITE fill Area(11..12, 0..7, 1..2)

@@ -4,15 +4,15 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.block.Blocks.IRON_BARS
 import net.minecraft.world.level.block.Blocks.STONE_BRICKS
 import org.schoolustc.structureDsl.*
-import org.schoolustc.structureDsl.struct.MyStruct
 import org.schoolustc.structureDsl.struct.MyStructInfo
-import org.schoolustc.structureDsl.struct.StructBuildScope
-import org.schoolustc.structureDsl.struct.StructGenConfig
+import org.schoolustc.structureDsl.struct.MyStructWithConfig
+import org.schoolustc.structureDsl.struct.scope.StructBuildScopeWithConfig
+import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
 class OuterWall(
     config: StructGenConfig,
     val length:Int
-): MyStruct(Companion,config,Point(length,4,1)) {
+): MyStructWithConfig(Companion,Point(length,4,1),config) {
     companion object : MyStructInfo<OuterWall>("wall"){
         override val defaultDirection = Direction2D.XPlus
         override fun loadTag(tag: CompoundTag) = OuterWall(
@@ -24,7 +24,7 @@ class OuterWall(
             tag.write("l",length)
         }
     }
-    override fun StructBuildScope.build() {
+    override fun StructBuildScopeWithConfig.build() {
         inSurfView {
             val state = IRON_BARS.state.connected(Direction2D.XPlus,Direction2D.XMin)
             STONE_BRICKS fill Area(0..<length,0..1,0..0)

@@ -2,7 +2,7 @@ package org.schoolustc.structs.builder
 
 import org.schoolustc.structs.OuterWallCorner
 import org.schoolustc.structureDsl.Point
-import org.schoolustc.structureDsl.struct.StructGenConfig
+import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 import org.schoolustc.structureDsl.struct.builder.MyStructBuilder
 
 class WallCornerBuilder(

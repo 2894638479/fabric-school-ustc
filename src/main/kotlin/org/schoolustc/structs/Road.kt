@@ -4,6 +4,8 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.block.Blocks.*
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.*
+import org.schoolustc.structureDsl.struct.scope.StructBuildScopeWithConfig
+import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
 class Road(
     config: StructGenConfig,
@@ -23,7 +25,7 @@ class Road(
         override val period get() = 10
         override val constructor get() = ::Road
     }
-    override fun StructBuildScope.build() = inSurfView {
+    override fun StructBuildScopeWithConfig.build() = inSurfView {
         DIRT_PATH fill Area(0..2,0..0,0..<length)
     }
 }

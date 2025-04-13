@@ -13,21 +13,15 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType
 import org.schoolustc.Profiler
 import org.schoolustc.structureDsl.Area
-import org.schoolustc.structureDsl.Point
+import org.schoolustc.structureDsl.struct.scope.StructBuildScope
 
 abstract class MyStruct (
     val info: MyStructInfo<*>,
-    val config: StructGenConfig,
-    val size: Point
-): StructurePiece(info.type,0,Area(
-    0..<size.x,
-    0..<size.y,
-    0..<size.z
-).checkNotEmpty().boundingBox(config)) {
-    inline val xSize get() = size.x
-    inline val ySize get() = size.y
-    inline val zSize get() = size.z
-    final override fun postProcess(
+    val box: Area
+): StructurePiece(info.type,0,box.checkNotEmpty().toBoundingBox()) {
+    open val profileName get() = "structure ${info.id}"
+    open val profileTimeOutMs get() = 500L
+    override fun postProcess(
         worldGenLevel: WorldGenLevel,
         structureManager: StructureManager,
         chunkGenerator: ChunkGenerator,
@@ -36,15 +30,8 @@ abstract class MyStruct (
         chunkPos: ChunkPos,
         blockPos: BlockPos
     ) {
-        fun build() = StructBuildScope(
-            worldGenLevel,
-            config,
-            randomSource,
-            boundingBox,
-            chunkGenerator
-        ).build()
-        Profiler.task("structure ${info.id}",500){
-            build()
+        Profiler.task(profileName,profileTimeOutMs){
+            StructBuildScope(worldGenLevel,randomSource,boundingBox,chunkGenerator).build()
         }
     }
     abstract fun StructBuildScope.build()

@@ -4,7 +4,7 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature
 import org.schoolustc.structs.Tree
 import org.schoolustc.structureDsl.Point
-import org.schoolustc.structureDsl.struct.StructGenConfig
+import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 import org.schoolustc.structureDsl.struct.builder.MyStructBuilder
 
 class TreeBuilder(

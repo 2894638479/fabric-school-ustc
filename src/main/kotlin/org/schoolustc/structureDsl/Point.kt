@@ -3,7 +3,7 @@ package org.schoolustc.structureDsl
 import com.google.common.math.IntMath.pow
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.levelgen.structure.BoundingBox
-import org.schoolustc.structureDsl.struct.StructGenConfig
+import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 import kotlin.math.sqrt
 
 class Point(
@@ -12,13 +12,12 @@ class Point(
     val z:Int
 ) {
     val blockPos get() = BlockPos(x,y,z)
-    inline fun finalPos(config: StructGenConfig,y:(Int,Int)->Int = { _,_-> this.y + config.pos.y }):Point{
+    fun finalXZ(config: StructGenConfig):Point{
         val xAdd = if (config.revX) - x else x
         val zAdd = if (config.revZ) - z else z
         val finalX = config.pos.x + if (config.rotate) zAdd else xAdd
         val finalZ = config.pos.z + if (config.rotate) xAdd else zAdd
-        val finalY = y(finalX,finalZ)
-        return Point(finalX, finalY, finalZ)
+        return Point(finalX, y, finalZ)
     }
     operator fun plus(other:Point) = Point(
         x + other.x,
@@ -57,5 +56,11 @@ class Point(
         Direction2D.ZPlus -> z > other.z
         Direction2D.ZMin -> z < other.z
     }
+
+    override fun hashCode(): Int {
+        var result = x
+        result = 31 * result + y
+        result = 31 * result + z
+        return result
+    }
 }
-val BlockPos.point get() = Point(x,y,z)

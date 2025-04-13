@@ -4,13 +4,8 @@ import net.minecraft.world.level.levelgen.Heightmap
 import net.minecraft.world.level.levelgen.structure.Structure.GenerationContext
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder
 import org.schoolustc.structureDsl.Area2D
-import org.schoolustc.structureDsl.Point
-import org.schoolustc.structureDsl.nextBool
 import org.schoolustc.structureDsl.nextInt
 import org.schoolustc.structureDsl.struct.MyStruct
-import org.schoolustc.structureDsl.struct.StructGenConfig
-import org.schoolustc.structs.*
-import kotlin.math.log2
 
 class StructureBuildScope(
     private val context:GenerationContext,

@@ -8,9 +8,9 @@ import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.Blocks.AIR
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.MyStructFixedSize
-import org.schoolustc.structureDsl.struct.StructBuildScope
-import org.schoolustc.structureDsl.struct.StructGenConfig
 import org.schoolustc.structureDsl.struct.MyStructFixedSizeInfo
+import org.schoolustc.structureDsl.struct.scope.StructBuildScopeWithConfig
+import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
 class Building(
     config: StructGenConfig,
@@ -31,7 +31,7 @@ class Building(
         override val defaultDirection = Direction2D.ZPlus
     }
 
-    override fun StructBuildScope.build() = inRelativeView {
+    override fun StructBuildScopeWithConfig.build() = inRelativeView {
         infix fun String.putA(y:Int) = putA(Point(0,y,0))
         infix fun String.put(y:Int) = put(Point(0,y,0))
         val normalChestPoints = List(height + 2){Point(5,it * 4 + 1,5)}

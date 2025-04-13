@@ -4,9 +4,9 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.block.Blocks.*
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.MyStructFixedSize
-import org.schoolustc.structureDsl.struct.StructBuildScope
-import org.schoolustc.structureDsl.struct.StructGenConfig
 import org.schoolustc.structureDsl.struct.MyStructFixedSizeInfo
+import org.schoolustc.structureDsl.struct.scope.StructBuildScopeWithConfig
+import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
 class StreetLight(config: StructGenConfig):MyStructFixedSize(Companion,config) {
     companion object : MyStructFixedSizeInfo<StreetLight>("streetlight", Point(2,5,1)){
@@ -14,7 +14,7 @@ class StreetLight(config: StructGenConfig):MyStructFixedSize(Companion,config) {
         override fun StreetLight.saveTag(tag: CompoundTag) = tag.write("C",config)
         override val defaultDirection = Direction2D.XPlus
     }
-    override fun StructBuildScope.build() {
+    override fun StructBuildScopeWithConfig.build() {
         val wall = rand from mapOf(
             ACACIA_FENCE to 1f,
             OAK_FENCE to 5f,

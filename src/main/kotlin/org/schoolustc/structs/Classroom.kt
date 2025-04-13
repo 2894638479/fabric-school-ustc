@@ -5,6 +5,8 @@ import net.minecraft.world.level.block.Blocks.*
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.*
 import org.schoolustc.structureDsl.struct.MyStructFixedSizeInfo
+import org.schoolustc.structureDsl.struct.scope.StructBuildScopeWithConfig
+import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
 class Classroom(config: StructGenConfig): MyStructFixedSize(Companion,config){
     companion object : MyStructFixedSizeInfo<Classroom>(
@@ -19,7 +21,7 @@ class Classroom(config: StructGenConfig): MyStructFixedSize(Companion,config){
             tag.write("C",config)
         }
     }
-    override fun StructBuildScope.build() {
+    override fun StructBuildScopeWithConfig.build() {
     }
 }
 

@@ -1,9 +1,7 @@
 package org.schoolustc.structureDsl
 
 import net.minecraft.world.level.levelgen.structure.BoundingBox
-import org.schoolustc.structureDsl.struct.StructGenConfig
-import kotlin.math.max
-import kotlin.math.min
+import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
 
 class Area(
@@ -24,18 +22,6 @@ class Area(
         Direction.YPlus,Direction.YMin -> y.length
         Direction.ZPlus,Direction.ZMin -> z.length
     }
-    fun boundingBox(config: StructGenConfig): BoundingBox {
-        val p1 = getP1().finalPos(config)
-        val p2 = getP2().finalPos(config)
-        return BoundingBox(
-            min(p1.x,p2.x),
-            min(p1.y,p2.y),
-            min(p1.z,p2.z),
-            max(p1.x,p2.x),
-            max(p1.y,p2.y),
-            max(p1.z,p2.z),
-        )
-    }
     fun toArea2D() = Area2D(x,z)
     fun isEmpty() = x.isEmpty() || y.isEmpty() || z.isEmpty()
     fun ifEmpty(block:()->Unit) = apply { if(isEmpty()) block() }
@@ -52,4 +38,9 @@ class Area(
         }}}
     }
     override fun iterator() = seq.iterator()
+    fun applyConfig(config: StructGenConfig) = toArea2D().applyConfig(config).toArea(y)
+    fun toBoundingBox(extendY:Boolean = true) = BoundingBox(
+        x1,if(extendY) Int.MIN_VALUE else y1,z1,
+        x2,if(extendY) Int.MAX_VALUE else y2,z2
+    )
 }

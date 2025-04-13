@@ -1,9 +1,10 @@
-package org.schoolustc.structureDsl.struct
+package org.schoolustc.structureDsl.struct.scope
 
 import org.schoolustc.structureDsl.Area2D
 import org.schoolustc.structureDsl.Direction2D
 import org.schoolustc.structureDsl.Point
 import org.schoolustc.structureDsl.match
+import org.schoolustc.structureDsl.struct.MyStructInfo
 
 class StructGenConfig(
     val pos: Point,
@@ -20,7 +21,7 @@ class StructGenConfig(
         return intArrayOf(pos.x,pos.y,pos.z,blInt)
     }
     companion object{
-        fun fromIntArray(arr:IntArray):StructGenConfig{
+        fun fromIntArray(arr:IntArray): StructGenConfig {
             arr.size.match(4)
             val point = Point(arr[0],arr[1],arr[2])
             val blInt = arr[3]
@@ -31,7 +32,7 @@ class StructGenConfig(
                 blInt and 4 != 0
             )
         }
-        fun byDirection(area:Area2D,y:Int,direction:Direction2D,info:MyStructInfo<*>):StructGenConfig{
+        fun byDirection(area:Area2D,y:Int,direction:Direction2D,info: MyStructInfo<*>): StructGenConfig {
             val revX:Boolean
             val revZ:Boolean
             val rotate:Boolean

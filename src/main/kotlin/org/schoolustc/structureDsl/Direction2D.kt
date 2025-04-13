@@ -2,7 +2,7 @@ package org.schoolustc.structureDsl
 
 import net.minecraft.core.Direction
 import net.minecraft.world.level.block.state.properties.BlockStateProperties.*
-import org.schoolustc.structureDsl.struct.StructGenConfig
+import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
 enum class Direction2D {
     XPlus,XMin,ZPlus,ZMin;
@@ -40,7 +40,7 @@ enum class Direction2D {
     inline val Area2D.l get() = l(this@Direction2D)
     infix fun parallel(other:Direction2D) = isX == other.isX
     infix fun vertical(other:Direction2D) = isX == other.isZ
-    fun applyConfig(config:StructGenConfig): Direction2D {
+    fun applyConfig(config: StructGenConfig): Direction2D {
         var d = this
         if(config.revX && d.isX) d = d.reverse
         if(config.revZ && d.isZ) d = d.reverse

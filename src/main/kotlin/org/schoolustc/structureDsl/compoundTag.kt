@@ -6,7 +6,7 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.block.Block
 import org.schoolustc.structs.Tree
-import org.schoolustc.structureDsl.struct.StructGenConfig
+import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
 
 /*

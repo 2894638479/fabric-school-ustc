@@ -5,7 +5,7 @@ import org.schoolustc.structureDsl.Direction2D
 import org.schoolustc.structureDsl.match
 import org.schoolustc.structureDsl.struct.MyRoadStruct
 import org.schoolustc.structureDsl.struct.MyRoadStructInfo
-import org.schoolustc.structureDsl.struct.StructGenConfig
+import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 import org.schoolustc.structureDsl.struct.builder.MyStructBuilder
 
 class RoadBuilder <T:MyRoadStruct>  (

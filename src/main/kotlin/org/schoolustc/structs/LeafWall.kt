@@ -3,15 +3,15 @@ package org.schoolustc.structs
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.block.Blocks.*
 import org.schoolustc.structureDsl.*
-import org.schoolustc.structureDsl.struct.MyStruct
 import org.schoolustc.structureDsl.struct.MyStructInfo
-import org.schoolustc.structureDsl.struct.StructBuildScope
-import org.schoolustc.structureDsl.struct.StructGenConfig
+import org.schoolustc.structureDsl.struct.MyStructWithConfig
+import org.schoolustc.structureDsl.struct.scope.StructBuildScopeWithConfig
+import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
 class LeafWall(
-    config:StructGenConfig,
+    config: StructGenConfig,
     val length:Int
-):MyStruct(Companion,config, Point(length,1,1)) {
+):MyStructWithConfig(Companion, Point(length,1,1),config) {
     companion object : MyStructInfo<LeafWall>("leafwall"){
         override val defaultDirection = Direction2D.XPlus
         override fun loadTag(tag: CompoundTag) = LeafWall(
@@ -24,7 +24,7 @@ class LeafWall(
         }
     }
 
-    override fun StructBuildScope.build() {
+    override fun StructBuildScopeWithConfig.build() {
         val leaves = {
             rand from mapOf(
                 OAK_LEAVES to 3f,

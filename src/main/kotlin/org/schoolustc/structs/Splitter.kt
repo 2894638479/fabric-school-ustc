@@ -5,8 +5,8 @@ import net.minecraft.world.level.block.Blocks.SMOOTH_STONE
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.MyRoadStruct
 import org.schoolustc.structureDsl.struct.MyRoadStructInfo
-import org.schoolustc.structureDsl.struct.StructBuildScope
-import org.schoolustc.structureDsl.struct.StructGenConfig
+import org.schoolustc.structureDsl.struct.scope.StructBuildScopeWithConfig
+import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
 class Splitter(
     config: StructGenConfig,
@@ -26,7 +26,7 @@ class Splitter(
         override val width get() = 1
         override val constructor get() = ::Splitter
     }
-    override fun StructBuildScope.build() = inSurfView {
+    override fun StructBuildScopeWithConfig.build() = inSurfView {
         SMOOTH_STONE fill Area(0..0,0..0,0..<length)
     }
 }

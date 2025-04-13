@@ -1,6 +1,6 @@
 package org.schoolustc.structureDsl
 
-import java.lang.Math.pow
+import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 import kotlin.math.*
 
 class Area2D(
@@ -55,6 +55,7 @@ class Area2D(
     }
     infix fun overlap(other:Area2D) = x overlap other.x && z overlap other.z
     infix fun contains(other: Area2D) = x contains other.x && z contains other.z
+    fun contains(x:Int,z:Int) = x in this.x && z in this.z
     infix fun nextTo(other:Area2D):Direction2D?{
         if(z overlap other.z) {
             if(x1 - 1 == other.x2) return Direction2D.XMin
@@ -94,4 +95,16 @@ class Area2D(
     }
     fun length(orientation: Orientation2D) = width(orientation.left(90.0))
     operator fun contains(point:Point) = point.x in x && point.z in z
+    fun toArea(y:IntRange) = Area(x,y,z)
+    fun applyConfig(config: StructGenConfig):Area2D {
+        val xAdd = if(config.revX) -x.last..-x.first else x
+        val zAdd = if(config.revZ) -z.last..-z.first else z
+        val finalX = (if (config.rotate) zAdd else xAdd).offset(config.pos.x)
+        val finalZ = (if (config.rotate) xAdd else zAdd).offset(config.pos.z)
+        return Area2D(finalX,finalZ)
+    }
+    operator fun plus(other:Area2D) = Area2D(
+        min(x1,other.x1)..max(x2,other.x2),
+        min(z1,other.z1)..max(z2,other.z2)
+    )
 }

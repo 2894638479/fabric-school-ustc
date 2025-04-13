@@ -8,10 +8,10 @@ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.MyStructFixedSize
 import org.schoolustc.structureDsl.struct.MyStructFixedSizeInfo
-import org.schoolustc.structureDsl.struct.StructBuildScope
-import org.schoolustc.structureDsl.struct.StructGenConfig
+import org.schoolustc.structureDsl.struct.scope.StructBuildScopeWithConfig
+import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
-class Tree(config: StructGenConfig,val key: ResourceKey<ConfiguredFeature<*, *>>,val treeType:TreeType):MyStructFixedSize(Companion,config) {
+class Tree(config: StructGenConfig, val key: ResourceKey<ConfiguredFeature<*, *>>, val treeType:TreeType):MyStructFixedSize(Companion,config) {
     companion object : MyStructFixedSizeInfo<Tree>("tree", Point(11,10,11)){
         override val defaultDirection = Direction2D.XPlus
         override fun loadTag(tag: CompoundTag) = Tree(
@@ -47,7 +47,7 @@ class Tree(config: StructGenConfig,val key: ResourceKey<ConfiguredFeature<*, *>>
         }
     }
 
-    override fun StructBuildScope.build() {
+    override fun StructBuildScopeWithConfig.build() {
         var y = 0
         var success:Boolean?
         inRelativeView {
@@ -60,7 +60,7 @@ class Tree(config: StructGenConfig,val key: ResourceKey<ConfiguredFeature<*, *>>
         if (treeType == TreeType.CHERRY) placeCherryFlower()
     }
 
-    private fun StructBuildScope.placeCherryFlower() = inSurfView {
+    private fun StructBuildScopeWithConfig.placeCherryFlower() = inSurfView {
         for(i in 1..16){
             var pos = Point(rand from 1..9,1,rand from 1..9)
             fun randState() = PINK_PETALS.state.setValue(
