@@ -31,14 +31,5 @@ class TreeBlock(
         }
     }.maxBy { it.size }
 
-    override fun StructureBuildScope.build() = mutableListOf<MyStruct>().also { list ->
-        val area = para.area.padding(2)
-
-
-
-
-        list += trees(area, listOf()).map { it.build() }
-        list += getLights()
-        list += getLeafWalls()
-    }
+    override fun StructureBuildScope.build() = trees(area.padding(2), listOf()).map { it.build() } + getLights() + getLeafWalls()
 }

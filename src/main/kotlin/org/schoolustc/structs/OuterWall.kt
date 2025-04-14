@@ -31,7 +31,7 @@ class OuterWall(
             state fill Area(0..<length,2..3,0..0)
 
             //填补高度差带来的漏洞
-            val h = List(length){ it to height(it,0) }
+            val h = List(length){ it to (height(it,0) ?: return@List null) }.filterNotNull()
             h.zipWithNext { (x1,y1), (x2,y2) ->
                 if(y1 > y2) IRON_BARS.state.connected(Direction2D.XMin) fill Point(x2,4,0)
                 if(y1 < y2) IRON_BARS.state.connected(Direction2D.XPlus) fill Point(x1,4,0)

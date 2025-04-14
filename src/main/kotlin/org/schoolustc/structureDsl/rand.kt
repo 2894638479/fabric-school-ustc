@@ -23,6 +23,16 @@ infix fun <T> RandomSource.from(collection: Collection<T>):T{
     error("random error")
 }
 infix fun RandomSource.from(range:IntProgression) = nextInt(range)
+infix fun RandomSource.from(range:ClosedFloatingPointRange<Double>):Double {
+    val start = range.start
+    val end = range.endInclusive
+    return nextDouble() * (end - start) + start
+}
+infix fun RandomSource.from(range:ClosedFloatingPointRange<Float>):Float{
+    val start = range.start
+    val end = range.endInclusive
+    return nextFloat() * (end - start) + start
+}
 infix fun <T,V:Number> RandomSource.from(map:Map<T,V>):T{
     val sum = map.values.sumOf { it.toDouble() }
     val r = nextFloat() * sum
@@ -34,3 +44,4 @@ infix fun <T,V:Number> RandomSource.from(map:Map<T,V>):T{
     return map.keys.last()
 }
 fun <T,V:Number> RandomSource.from(vararg pairs:Pair<T,V>) = from(pairs.toMap())
+infix fun RandomSource.from(area:Area2D) = from(area.x) to from(area.z)

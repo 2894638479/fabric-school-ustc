@@ -3,6 +3,7 @@ package org.schoolustc.structureDsl
 import com.google.common.math.IntMath.pow
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.levelgen.structure.BoundingBox
+import org.schoolustc.calc.Pt
 import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 import kotlin.math.sqrt
 
@@ -63,4 +64,5 @@ class Point(
         result = 31 * result + z
         return result
     }
+    fun toPt() = Pt(x.toDouble(),z.toDouble())
 }

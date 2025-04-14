@@ -3,44 +3,45 @@ package org.schoolustc.structs
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks.DIRT_PATH
+import org.schoolustc.calc.Bezier
+import org.schoolustc.calc.Pt
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.MyStruct
 import org.schoolustc.structureDsl.struct.MyStructInfo
 import org.schoolustc.structureDsl.struct.scope.StructBuildScope
-import kotlin.math.*
+import kotlin.math.roundToInt
 
 class Path(
-    val a1: Area2D,
-    val a2: Area2D,
+    val p1: Pt,
+    val p2: Pt,
     val d1: Orientation2D,
     val d2: Orientation2D,
-    val block: Block
-):MyStruct(Companion, getBoundingArea(a1, a2, d1, d2).toArea(Int.MIN_VALUE..Int.MAX_VALUE)) {
+    val w: Double = 3.0,
+    val block: Block = DIRT_PATH
+):MyStruct(Companion, getBoundingArea(p1,p2,w, d1, d2).toArea(maxRange)) {
     companion object : MyStructInfo<Path>("grass_path"){
         override val defaultDirection = Direction2D.XPlus
         override fun loadTag(tag: CompoundTag) = tag.run {
             Path(
-                read("a1"),
-                read("a2"),
+                read("p1"),
+                read("p2"),
                 read("d1"),
                 read("d2"),
+                read("w"),
                 read("b")
             )
         }
 
         override fun Path.saveTag(tag: CompoundTag) = tag.run {
-            write("a1",a1)
-            write("a2",a2)
+            write("p1",p1)
+            write("p2",p2)
             write("d1",d1)
             write("d2",d2)
+            write("w",w)
             write("b",block)
         }
 
-        fun getBoundingArea(a1:Area2D,a2:Area2D,d1:Orientation2D,d2:Orientation2D):Area2D{
-            val p1 = Pt(a1.x.middle,a1.z.middle)
-            val p2 = Pt(a2.x.middle,a2.z.middle)
-            val w1 = a1.width(d1)
-            val w2 = a2.width(d2)
+        fun getBoundingArea(p1:Pt,p2:Pt,w:Double,d1:Orientation2D,d2:Orientation2D):Area2D{
             val d = p1.distanceTo(p2)
             val c1 = p1.offset(d1,d/3)
             val c2 = p2.offset(d2,d/3)
@@ -48,50 +49,12 @@ class Path(
             return Area2D(
                 list.minOf { it.x }.roundToInt()..list.maxOf { it.x }.roundToInt(),
                 list.minOf { it.z }.roundToInt()..list.maxOf { it.z }.roundToInt()
-            ).expand(max(w1,w2).toInt() + 1)
+            ).expand(w.toInt() + 1)
         }
     }
-    private fun getPoints():Shape2D{
-        val p1 = Pt(a1.x.middle,a1.z.middle)
-        val p2 = Pt(a2.x.middle,a2.z.middle)
-        val w1 = a1.width(d1)
-        val w2 = a2.width(d2)
-        val d = p1.distanceTo(p2)
-        val c1 = p1.offset(d1,d/3)
-        val c2 = p2.offset(d2,d/3)
-        fun B(t:Double): Pt {
-            val T = 1-t
-            val TT = T*T
-            val tt = t*t
-            fun f(get: Pt.()->Double) = TT*T*p1.get() + 3*TT*t*c1.get() + 3*T*tt*c2.get() + tt*t*p2.get()
-            return Pt(f{x},f{z})
-        }
-        var t = 0.0
-        var T = 1.0
-        fun w() = T*w1 + t*w2
-        val step = 1.0 / (d)
-        val points = Shape2D()
-        while(t <= 1.0){
-            val b = B(t)
-            val w = w()/2 - 0.5
-            fun atStart() = t*d < w1+1
-            fun atEnd() = T*d < w2+1
-            for(x in (b.x-w).roundToInt()..(b.x+w).roundToInt()){
-                for(z in (b.z-w).roundToInt()..(b.z+w).roundToInt()){
-                    val pt = Pt(x.toDouble(),z.toDouble())
-                    if(
-                        (!atStart() || pt.atOrientationOf(d1,p1) || a1.contains(x,z))
-                        &&(!atEnd() || pt.atOrientationOf(d2,p2) || a2.contains(x,z))
-                    ) points.addPoint(x,z)
-                }
-            }
-            t += step
-            T = 1-t
-        }
-        return points
-    }
-
+    val bezier = Bezier.byOrientation(p1,p2,d1,d2)
+    val points = bezier.getNearPoints(w)
     override fun StructBuildScope.build() = inRawSurfView {
-        DIRT_PATH fill getPoints()
+        DIRT_PATH fill points
     }
 }

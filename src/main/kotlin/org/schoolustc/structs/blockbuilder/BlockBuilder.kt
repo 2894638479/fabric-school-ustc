@@ -2,6 +2,7 @@ package org.schoolustc.structs.blockbuilder
 
 import org.schoolustc.structs.LeafWall
 import org.schoolustc.structs.StreetLight
+import org.schoolustc.structs.blockbuilder.OpenRangeBuilder.Companion.toOpenArea
 import org.schoolustc.structs.builder.LeafWallBuilder
 import org.schoolustc.structs.builder.StreetLightBuilder
 import org.schoolustc.structureDsl.*
@@ -15,24 +16,8 @@ abstract class BlockBuilder(val para: BlockBuilderPara): MyStructListBuilder<MyS
     val area get() = para.area
     val nextToWalls get() = para.nextToWalls
     val nextToSplitter get() = para.nextToSplitter
-    fun Pair<Direction2D, IntRange>.toOpenArea() = first.run { area2D(area.bound(this).range,second) }
-    val openRange = Direction2D.entries.filter { it !in nextToWalls }.flatMap { d ->
-        val rand = para.scope.rand
-        val range = area.l(d.left)
-        List(5){
-            mutableListOf(rand from range.padding(range.length/4)).apply {
-                for(i in 1..range.length/12 - 1){
-                    val r = rand from range
-                    if(
-                        r in range.padding(7)
-                        && firstOrNull { (r - it).absoluteValue <= 12 } == null
-                    ) {
-                        add(r)
-                    }
-                }
-            }
-        }.maxBy { it.size }.map { d to it-1..it+1 }
-    }
+    val openRange = OpenRangeBuilder(area,para.scope.rand) {it !in nextToWalls}.build()
+
     open fun getLeafWalls():List<LeafWall> = mutableListOf<LeafWall>().also{ list ->
         Direction2D.entries.forEach { d ->
             mutableListOf(d.run { area.w.first+1..area.w.last }).apply {
@@ -53,7 +38,7 @@ abstract class BlockBuilder(val para: BlockBuilderPara): MyStructListBuilder<MyS
     }
     open fun StructureBuildScope.getLights():List<StreetLight> {
         val light = mutableListOf<StreetLightBuilder>()
-        val filterAreas = openRange.map { it.toOpenArea().offset(it.first,-1) }
+        val filterAreas = openRange.map { it.toOpenArea(area).offset(it.first,-1) }
         Direction2D.entries.forEach {
             val lightArea = area.slice(it.reverse, 1..1).slice(it.left, 1..area.length(it.left) - 2)
             lightArea.iterate { x, z ->

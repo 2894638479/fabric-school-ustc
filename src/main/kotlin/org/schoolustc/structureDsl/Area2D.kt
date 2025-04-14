@@ -1,5 +1,6 @@
 package org.schoolustc.structureDsl
 
+import org.schoolustc.calc.Pt
 import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 import kotlin.math.*
 
@@ -80,6 +81,7 @@ class Area2D(
         val zMid = z.middle.roundToInt()
         return Point(xMid,y(xMid,zMid),zMid)
     }
+    fun middle() = Pt(x.middle,z.middle)
     fun distanceToMid(other:Area2D) =
         sqrt((x.middle - other.x.middle).pow(2.0) + (z.middle - other.z.middle).pow(2.0))
     fun midY(getY:(Int,Int)->Int):Double{

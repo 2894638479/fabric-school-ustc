@@ -16,13 +16,11 @@ open class StructBuildScope(
     class RawView(scope: StructBuildScope): View(scope){
         override fun Point.finalXZ() = this
         override fun Point.finalY() = this
-        override fun Point.final() = this
         override fun Direction2D.final() = this
         override fun Area2D.final() = this
     }
     class RawSurfView(scope: StructBuildScope): View(scope){
         override fun Point.finalXZ() = this
-        override fun Point.final() = finalY()
         override fun Point.finalY() = Point(x,y + surfHeight(x,z),z)
         override fun Direction2D.final() = this
         override fun Area2D.final() = this

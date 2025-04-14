@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.block.Block
+import org.schoolustc.calc.Pt
 import org.schoolustc.structs.Tree
 import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
@@ -30,6 +31,7 @@ inline fun <reified T : Any> CompoundTag.write(key:String,t:T,) = when(T::class)
     Direction2D::class -> putDirection2D(key,t as Direction2D)
     Orientation2D::class -> putOrientation2D(key,t as Orientation2D)
     Tree.TreeType::class -> putTreeType(key,t as Tree.TreeType)
+    Pt::class -> putPt(key,t as Pt)
     else -> error("not supported type: ${T::class}")
 }
 
@@ -48,15 +50,12 @@ inline fun <reified T : Any> CompoundTag.read(key:String):T = when(T::class){
     Direction2D::class -> getDirection2D(key) as T
     Orientation2D::class -> getOrientation2D(key) as T
     Tree.TreeType::class -> getTreeType(key) as T
+    Pt::class -> getPt(key) as T
     else -> error("not supported type: ${T::class}")
 }
 
 
-fun CompoundTag.putConfig(key:String,config: StructGenConfig){
-    putIntArray(key,config.toIntArray())
-    val a:Int = read("")
-}
-
+fun CompoundTag.putConfig(key:String,config: StructGenConfig) = putIntArray(key,config.toIntArray())
 fun CompoundTag.getConfig(key:String) = StructGenConfig.fromIntArray(getIntArray(key))
 
 fun <T> CompoundTag.putResourceKey(key:String,k:ResourceKey<T>) {
@@ -94,4 +93,6 @@ fun CompoundTag.putOrientation2D(key: String,orientation:Orientation2D) = putDou
 fun CompoundTag.getOrientation2D(key: String) = Orientation2D(getDouble(key))
 fun CompoundTag.putTreeType(key:String,type:Tree.TreeType) = putInt(key,type.toInt())
 fun CompoundTag.getTreeType(key: String) = Tree.TreeType.fromInt(getInt(key))
+fun CompoundTag.putPt(key: String,pt: Pt) = putLongArray(key, longArrayOf(pt.x.toRawBits(),pt.z.toRawBits()))
+fun CompoundTag.getPt(key: String) = getLongArray(key).match { it.size == 2 }.also { Pt(Double.fromBits(it[0]),Double.fromBits(it[1])) }
 

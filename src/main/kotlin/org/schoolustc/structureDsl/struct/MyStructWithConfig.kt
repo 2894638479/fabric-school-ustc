@@ -32,7 +32,7 @@ abstract class MyStructWithConfig(
         chunkPos: ChunkPos,
         blockPos: BlockPos
     ) {
-        Profiler.task(profileName,profileTimeOutMs){
+        Profiler.task(info.profileName,info.profileTimeOutMs){
             StructBuildScopeWithConfig(config,worldGenLevel,randomSource,boundingBox,chunkGenerator).build()
         }
     }

@@ -20,6 +20,8 @@ fun IntRange.padding(count:Int) = expand(-count)
 fun IntRange.offset(count: Int) = first+count..last+count
 inline val IntRange.middle get() = (first + last) / 2.0
 inline val Int.range get() = this..this
+val maxRange = Int.MIN_VALUE..Int.MAX_VALUE
+fun IntRange.toDouble() = first.toDouble()..last().toDouble()
 
 //较为均匀地分割区间
 fun IntRange.split(maxLength:Int):List<Int>{

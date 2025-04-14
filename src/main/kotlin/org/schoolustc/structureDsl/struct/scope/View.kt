@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.Blocks.AIR
 import net.minecraft.world.level.block.ChestBlock
 import net.minecraft.world.level.block.StairBlock
 import net.minecraft.world.level.block.entity.ChestBlockEntity
@@ -26,18 +27,24 @@ abstract class View(val scope: StructBuildScope) {
     private val bound = scope.boundingBox.run { Area2D(minX()..maxX(), minZ()..maxZ()) }
     protected abstract fun Point.finalXZ(): Point
     protected abstract fun Point.finalY(): Point
-    protected open fun Point.final() = finalXZ().finalY()
+    private fun Point.final() = finalXZ().run { if(this in bound) finalY() else null }
     protected abstract fun Direction2D.final(): Direction2D
     protected abstract fun Area2D.final(): Area2D
     private fun Area.finalXZ() = toArea2D().final().toArea(y)
     private infix fun BlockState.setTo(finalPos: Point) = scope.world.setBlock(finalPos.blockPos,this,3)
     protected fun surfHeight(finalX:Int,finalZ: Int) = scope.world.getHeight(Heightmap.Types.WORLD_SURFACE_WG,finalX,finalZ) - 1
-    fun height(x:Int,z:Int) = Point(x, 0, z).final().let { surfHeight(it.x,it.z) }
-    fun block(pos: Point) = scope.world.getBlockState(pos.final().blockPos)
+    fun height(x:Int,z:Int):Int? {
+        return try {
+            Point(x, 0, z).finalXZ().let { surfHeight(it.x, it.z) }
+        } catch (_:Throwable){
+            null
+        }
+    }
+    fun block(pos: Point) = scope.world.getBlockState(pos.final()?.blockPos ?: run{ return AIR.state } )
 
     inline val Block.state get() = defaultBlockState()
 
-    infix fun BlockState.fill(point: Point) { this setTo point.final().apply { if(this !in bound) return } }
+    infix fun BlockState.fill(point: Point) { this setTo (point.final()?.apply { if(this !in bound) return } ?: return) }
     infix fun Block.fill(point: Point) = state fill point
 
     infix fun BlockState.fill(area: Area) { area.finalXZ().cut()?.forEach { this setTo it.finalY() } }
@@ -56,7 +63,7 @@ abstract class View(val scope: StructBuildScope) {
     infix fun (()-> BlockState).fillUnder(points:Sequence<Point>){
         points.forEach {
             fun Point.next() = run { Point(x, y - 1, z) }
-            var finalPos = it.final().next()
+            var finalPos = it.final()?.next() ?: return
             while (scope.world.getBlockState(finalPos.blockPos).isAir){
                 invoke() setTo finalPos
                 finalPos = finalPos.next()
@@ -80,7 +87,7 @@ abstract class View(val scope: StructBuildScope) {
             scope.world,
             scope.chunkGenerator,
             scope.rand,
-            pos.final().also { if (it !in bound) return null }.blockPos,
+            pos.final()?.blockPos ?: run { return null },
         ) ?: error("tree place error")
     fun chest(
         pos: Point,
@@ -88,8 +95,7 @@ abstract class View(val scope: StructBuildScope) {
         chance:Double,
         addItem:(Int)-> ItemStack
     ){
-        val finalPos = pos.final()
-        if(finalPos !in bound) return
+        val finalPos = pos.final() ?: return
         Blocks.CHEST.state.setValue(ChestBlock.FACING,facing.final().toMcDirection()) setTo finalPos
         val entity = scope.world.getBlockEntity(finalPos.blockPos) as ChestBlockEntity
         for(i in 0..<entity.containerSize){
@@ -121,7 +127,7 @@ abstract class View(val scope: StructBuildScope) {
             it.blocks().forEach {
                 if(!(filterAir && it.state.isAir)){
                     val finalPos = it.pos.run{Point(x,y,z)}.plus(startPos).final()
-                    if(finalPos in bound) it.state.final() setTo finalPos
+                    it.state.final() setTo (finalPos ?: return)
                 }
             }
         }

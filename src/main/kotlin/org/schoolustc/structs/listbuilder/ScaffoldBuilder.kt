@@ -1,10 +1,7 @@
 package org.schoolustc.structs.listbuilder
 
 import net.minecraft.data.worldgen.features.TreeFeatures
-import org.schoolustc.structs.Road
-import org.schoolustc.structs.Splitter
-import org.schoolustc.structs.Street
-import org.schoolustc.structs.Tree
+import org.schoolustc.structs.*
 import org.schoolustc.structs.blockbuilder.*
 import org.schoolustc.structs.builder.GateBuilder
 import org.schoolustc.structs.builder.RoadBuilder
@@ -117,8 +114,9 @@ class ScaffoldBuilder(
                 {NormalBlock(para)} to 1,
                 {BuildingBlock(para)} to 1
             )
+            list.add(Park(rand.nextLong(),area))
+//            block().addToList()
 
-            block().addToList()
         }
         roadBuilders.forEach { it.addToList() }
         wallBuilders.forEach { it.addToList() }

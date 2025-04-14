@@ -5,7 +5,7 @@ infix fun Int.match(other:Int):Int {
     return this
 }
 
-fun Int.match(condition:(Int)->Boolean):Int {
-    if (!condition(this)) error("int not match condition")
+fun <T> T.match(condition:(T)->Boolean):T {
+    if (!condition(this)) error("not match condition")
     return this
 }
