@@ -32,6 +32,7 @@ class Area2D(
         Direction2D.ZPlus -> z2
         Direction2D.ZMin -> z1
     }
+    fun range(direction: Direction2D) = if(direction.isX) x else z
     fun l(direction: Direction2D) = if(direction.isX) x else z
     fun w(direction: Direction2D) = if(direction.isX) z else x
     fun width(direction: Direction2D) = w(direction).length

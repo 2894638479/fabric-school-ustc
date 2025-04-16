@@ -33,4 +33,9 @@ class Pt(
             && area.z1 < z
             && area.z2 > z
     fun toPoint(y:Int) = Point(x.roundToInt(),y,z.roundToInt())
+    inline fun toPoint(y:(Int,Int)->Int):Point{
+        val x = x.roundToInt()
+        val z = z.roundToInt()
+        return Point(x,y(x,z),z)
+    }
 }

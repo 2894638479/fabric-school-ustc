@@ -33,7 +33,7 @@ abstract class MyStructWithConfig(
         blockPos: BlockPos
     ) {
         Profiler.task(info.profileName,info.profileTimeOutMs){
-            StructBuildScopeWithConfig(config,worldGenLevel,randomSource,boundingBox,chunkGenerator).build()
+            StructBuildScopeWithConfig(config,worldGenLevel,customRandomSource ?: randomSource,boundingBox,chunkGenerator).build()
         }
     }
     final override fun StructBuildScope.build() {}

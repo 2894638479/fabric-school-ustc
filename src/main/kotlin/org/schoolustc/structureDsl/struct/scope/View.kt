@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.entity.ChestBlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.block.state.properties.Half
+import net.minecraft.world.level.block.state.properties.SlabType
 import net.minecraft.world.level.block.state.properties.StairsShape
 import net.minecraft.world.level.block.state.properties.WallSide
 import net.minecraft.world.level.levelgen.Heightmap
@@ -75,20 +76,22 @@ abstract class View(val scope: StructBuildScope) {
     infix fun String.put(startPos: Point) = putNbtStruct(this,startPos,true)
     infix fun String.putA(startPos: Point) = putNbtStruct(this,startPos,false)
 
-    infix fun ResourceKey<ConfiguredFeature<*, *>>.plant(pos: Point):Boolean? = scope
-        .world
-        .level
-        .registryAccess()
-        .registryOrThrow(Registries.CONFIGURED_FEATURE)
-        .getHolder(this)
-        .orElse(null)
-        ?.value()
-        ?.place(
-            scope.world,
-            scope.chunkGenerator,
-            scope.rand,
-            pos.final()?.blockPos ?: run { return null },
-        ) ?: error("tree place error")
+    infix fun ResourceKey<ConfiguredFeature<*, *>>.plant(pos: Point):Boolean? {
+        val feature = scope.world.level.registryAccess()
+            .registryOrThrow(Registries.CONFIGURED_FEATURE)
+            .getHolder(this).orElse(null)
+            ?.value() ?: error("tree place error")
+        return try {
+            feature.place(
+                scope.world,
+                scope.chunkGenerator,
+                scope.rand,
+                pos.final()?.blockPos ?: run { return null },
+            )
+        } catch (_:Throwable) {
+            false
+        }
+    }
     fun chest(
         pos: Point,
         facing: Direction2D,
@@ -127,7 +130,7 @@ abstract class View(val scope: StructBuildScope) {
             it.blocks().forEach {
                 if(!(filterAir && it.state.isAir)){
                     val finalPos = it.pos.run{Point(x,y,z)}.plus(startPos).final()
-                    it.state.final() setTo (finalPos ?: return)
+                    if(finalPos != null) it.state.final() setTo finalPos
                 }
             }
         }
@@ -162,4 +165,5 @@ abstract class View(val scope: StructBuildScope) {
             .setValue(BlockStateProperties.STAIRS_SHAPE,shape)
             .setValue(BlockStateProperties.HALF,half)
     fun Block.leafState(persist:Boolean) = state.setValue(BlockStateProperties.PERSISTENT,persist)
+    fun Block.slabState(type:SlabType) = state.setValue(BlockStateProperties.SLAB_TYPE,type)
 }

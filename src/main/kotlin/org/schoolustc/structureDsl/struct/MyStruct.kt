@@ -19,6 +19,7 @@ abstract class MyStruct (
     val info: MyStructInfo<*>,
     val box: Area
 ): StructurePiece(info.type,0,box.checkNotEmpty().toBoundingBox()) {
+    open val customRandomSource:RandomSource? get() = null
     override fun postProcess(
         worldGenLevel: WorldGenLevel,
         structureManager: StructureManager,
@@ -29,7 +30,7 @@ abstract class MyStruct (
         blockPos: BlockPos
     ) {
         Profiler.task(info.profileName,info.profileTimeOutMs){
-            StructBuildScope(worldGenLevel,randomSource,boundingBox,chunkGenerator).build()
+            StructBuildScope(worldGenLevel,customRandomSource ?: randomSource,boundingBox,chunkGenerator).build()
         }
     }
     abstract fun StructBuildScope.build()
