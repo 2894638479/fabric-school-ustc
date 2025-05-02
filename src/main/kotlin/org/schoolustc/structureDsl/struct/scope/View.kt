@@ -1,6 +1,5 @@
 package org.schoolustc.structureDsl.struct.scope
 
-import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.ItemStack
@@ -12,6 +11,7 @@ import net.minecraft.world.level.block.StairBlock
 import net.minecraft.world.level.block.entity.ChestBlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf
 import net.minecraft.world.level.block.state.properties.Half
 import net.minecraft.world.level.block.state.properties.SlabType
 import net.minecraft.world.level.block.state.properties.StairsShape
@@ -166,4 +166,5 @@ abstract class View(val scope: StructBuildScope) {
             .setValue(BlockStateProperties.HALF,half)
     fun Block.leafState(persist:Boolean) = state.setValue(BlockStateProperties.PERSISTENT,persist)
     fun Block.slabState(type:SlabType) = state.setValue(BlockStateProperties.SLAB_TYPE,type)
+    fun Block.doublePlantState(half:DoubleBlockHalf) = state.setValue(BlockStateProperties.DOUBLE_BLOCK_HALF,half)
 }

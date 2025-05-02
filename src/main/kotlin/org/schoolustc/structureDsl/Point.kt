@@ -39,6 +39,9 @@ class Point(
         }
         return Point(x,y,z)
     }
+    fun offsetX(count:Int) = Point(x+count,y,z)
+    fun offsetY(count:Int) = Point(x,y+count,z)
+    fun offsetZ(count:Int) = Point(x,y,z+count)
     fun distanceTo(other: Point) = sqrt((pow(x-other.x,2) + pow(y-other.y,2) + pow(z-other.z,2)).toDouble())
     override fun equals(other: Any?): Boolean {
         return (other as? Point)?.let {

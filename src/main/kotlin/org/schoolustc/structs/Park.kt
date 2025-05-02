@@ -4,6 +4,7 @@ import net.minecraft.data.worldgen.features.TreeFeatures
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.util.RandomSource
 import net.minecraft.world.level.block.Blocks.*
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf
 import net.minecraft.world.level.block.state.properties.Half
 import net.minecraft.world.level.block.state.properties.SlabType
 import net.minecraft.world.level.levelgen.LegacyRandomSource
@@ -117,7 +118,7 @@ class Park(val seed:Long,val area:Area2D):MyStruct(Companion,area.toArea(maxRang
                 tree.forEach { Tree(it).build() }
             }
         }
-        class Pavilion(pos:Pt):Item(pos){
+        open class Pavilion(pos:Pt):Item(pos){
             override val r = 5.0
             override fun build() {
                 inRawView {
@@ -129,6 +130,39 @@ class Park(val seed:Long,val area:Area2D):MyStruct(Companion,area.toArea(maxRang
                 }
             }
             val area = Area2D(pos.x.toInt().range.expand(2),pos.z.toInt().range.expand(2))
+        }
+        class MushroomPavilion(pos:Pt):Pavilion(pos){
+            override fun build() {
+                inRawView {
+                    val x = pos.x.roundToInt()
+                    val z = pos.z.roundToInt()
+                    val y = height(x,z) ?: return
+                    val pos = Point(x,y,z)
+                    AIR fill area.toArea(y..y+3)
+                    DIRT_PATH fill area.toArea(y.range)
+                    Direction2D.entries.forEach{
+                        if(rand.nextBool(0.5f)){
+                            val stairPos = pos.offset(it.toDirection(),2).offsetY(1)
+                            OAK_STAIRS.stairState(it) fill stairPos
+                        }
+                    }
+                    MYCELIUM fill pos
+                    val mushroomPos = pos.offsetY(1)
+                    val res = TreeFeatures.HUGE_BROWN_MUSHROOM plant mushroomPos
+                    if(res == false) {
+                        val res2 = TreeFeatures.HUGE_RED_MUSHROOM plant mushroomPos
+                        if(res2 == false) RED_MUSHROOM fill mushroomPos
+                    }
+                    if(rand.nextBool(0.3)) (2..10).firstOrNull {
+                        val detectPos = mushroomPos.offsetY(it)
+                        block(detectPos).`is`(BROWN_MUSHROOM_BLOCK)
+                    }?.let {
+                        val area = Area(x.range.expand(2),(y+it+2).range,z.range.expand(2))
+                        TALL_GRASS.doublePlantState(DoubleBlockHalf.LOWER) fill area
+                        TALL_GRASS.doublePlantState(DoubleBlockHalf.UPPER) fill area.let { Area(it.x,it.y.offset(1),it.z) }
+                    }
+                }
+            }
         }
         class Shrub(pos:Pt):Item(pos){
             override val r = 2.5
@@ -182,7 +216,7 @@ class Park(val seed:Long,val area:Area2D):MyStruct(Companion,area.toArea(maxRang
             val pos = rand from area.padding(7)
             val pt = Pt(pos.first.toDouble(),pos.second.toDouble())
             if(pavilions.firstOrNull { it.pos.distanceTo(pt) < 6 } == null)
-            pavilions += Pavilion(pt)
+            pavilions += if(rand.nextBool(0.5)) Pavilion(pt) else MushroomPavilion(pt)
         }
         items += pavilions
         pavilions.forEach { pav ->
