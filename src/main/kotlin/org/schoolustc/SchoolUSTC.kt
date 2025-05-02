@@ -1,8 +1,15 @@
 package org.schoolustc
 
 import net.fabricmc.api.ModInitializer
+import net.minecraft.core.Registry
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.core.registries.Registries
+import net.minecraft.data.worldgen.features.FeatureUtils
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature
+import net.minecraft.world.level.levelgen.feature.configurations.HugeMushroomFeatureConfiguration
 import org.schoolustc.structs.*
+import org.schoolustc.structs.feature.BrownMushroomGrassFeature
 import org.schoolustc.structureDsl.struct.MyStructInfo
 import org.slf4j.LoggerFactory
 
@@ -17,5 +24,7 @@ object SchoolUSTC : ModInitializer {
 	override fun onInitialize() {
 		School.register()
 		structs.forEach { it.register() }
+		BrownMushroomGrassFeature.key.run { logger.info(toString()) }
+		Registry.register(BuiltInRegistries.FEATURE,BrownMushroomGrassFeature.id,BrownMushroomGrassFeature(HugeMushroomFeatureConfiguration.CODEC))
 	}
 }

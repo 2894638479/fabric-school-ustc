@@ -80,7 +80,7 @@ abstract class View(val scope: StructBuildScope) {
         val feature = scope.world.level.registryAccess()
             .registryOrThrow(Registries.CONFIGURED_FEATURE)
             .getHolder(this).orElse(null)
-            ?.value() ?: error("tree place error")
+            ?.value() ?: error("feature plant error")
         return try {
             feature.place(
                 scope.world,
