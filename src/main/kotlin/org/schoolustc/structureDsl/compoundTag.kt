@@ -94,5 +94,5 @@ fun CompoundTag.getOrientation2D(key: String) = Orientation2D(getDouble(key))
 fun CompoundTag.putTreeType(key:String,type:Tree.TreeType) = putInt(key,type.toInt())
 fun CompoundTag.getTreeType(key: String) = Tree.TreeType.fromInt(getInt(key))
 fun CompoundTag.putPt(key: String,pt: Pt) = putLongArray(key, longArrayOf(pt.x.toRawBits(),pt.z.toRawBits()))
-fun CompoundTag.getPt(key: String) = getLongArray(key).match { it.size == 2 }.also { Pt(Double.fromBits(it[0]),Double.fromBits(it[1])) }
+fun CompoundTag.getPt(key: String) = getLongArray(key).match { it.size == 2 }.let { Pt(Double.fromBits(it[0]),Double.fromBits(it[1])) }
 

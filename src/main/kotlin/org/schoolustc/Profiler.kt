@@ -12,7 +12,7 @@ object Profiler {
         val d = timeOutMs.toDuration(DurationUnit.MILLISECONDS)
         scope.launch {
             delay(timeOutMs)
-            if(!finished) logger.warn("Profiler: $name timed out at $d")
+            if(!finished) logger.info("Profiler: $name timed out at $d")
         }
         val result : T
         val t = measureTime {

@@ -31,6 +31,8 @@ class Park(val seed:Long,val area:Area2D):MyStruct(Companion,area.toArea(maxRang
             tag.write("s",seed)
             tag.write("a",area)
         }
+
+        override val profileTimeOutMs = 10L
     }
 
     private abstract class Item(val pos: Pt){

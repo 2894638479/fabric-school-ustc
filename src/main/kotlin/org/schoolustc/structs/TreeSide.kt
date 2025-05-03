@@ -11,9 +11,9 @@ import org.schoolustc.structureDsl.struct.MyStructFixedWidthInfo
 import org.schoolustc.structureDsl.struct.scope.StructBuildScopeWithConfig
 import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
-class CherrySide(config: StructGenConfig,length:Int): MyStructFixedWidth(Companion,config,length) {
-    companion object : MyStructFixedWidthInfo<CherrySide>("cherry_side",3){
-        override val constructor = ::CherrySide
+class TreeSide(config: StructGenConfig, length:Int): MyStructFixedWidth(Companion,config,length) {
+    companion object : MyStructFixedWidthInfo<TreeSide>("tree_side",3){
+        override val constructor = ::TreeSide
         override val defaultDirection = Direction2D.ZPlus
         override val profileTimeOutMs = 10L
     }
@@ -23,9 +23,13 @@ class CherrySide(config: StructGenConfig,length:Int): MyStructFixedWidth(Compani
             SMOOTH_STONE_SLAB fill Area(0..2,1..1,0..<length)
             for(z in 2..<length - 3 step 8){
                 DIRT fill Point(1,1,z)
-                val res = TreeFeatures.CHERRY_BEES_005 plant Point(1,2,z)
+                val treePos = Point(1,2,z)
+                val res = TreeFeatures.FANCY_OAK_BEES_005 plant treePos
                 if(res == false) {
-                    CHERRY_SAPLING fill Point(1,2,z)
+                    val res2 = TreeFeatures.OAK_BEES_005 plant treePos
+                    if(res2 == false) {
+                        OAK_SAPLING fill treePos
+                    }
                 }
             }
         }
