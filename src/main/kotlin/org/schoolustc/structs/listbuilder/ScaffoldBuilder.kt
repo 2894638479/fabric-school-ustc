@@ -118,6 +118,7 @@ class ScaffoldBuilder(
                 {NormalBlock(para)} to 1,
                 {BuildingBlock(para)} to 1,
                 {ParkBlock(para)} to 1,
+                {WhitePavilionBlock(para)} to 1,
             )
             blockBuilders += blockBuilder()
         }

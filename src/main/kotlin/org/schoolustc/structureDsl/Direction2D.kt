@@ -1,6 +1,8 @@
 package org.schoolustc.structureDsl
 
 import net.minecraft.core.Direction
+import net.minecraft.core.Direction.*
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.block.state.properties.BlockStateProperties.*
 import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
@@ -56,10 +58,10 @@ enum class Direction2D {
         ZMin -> Direction.NORTH
     }
     fun toMcProperty() = when(this){
-        XPlus -> EAST
-        XMin -> WEST
-        ZPlus -> SOUTH
-        ZMin -> NORTH
+        XPlus -> BlockStateProperties.EAST
+        XMin -> BlockStateProperties.WEST
+        ZPlus -> BlockStateProperties.SOUTH
+        ZMin -> BlockStateProperties.NORTH
     }
     fun toMcWallProperty() = when(this){
         XPlus -> EAST_WALL
@@ -100,6 +102,13 @@ enum class Direction2D {
             if(!isX) result += 2
             if(!isPlus) result += 1
             return fromInt(result)
+        }
+        fun fromMcDirection(direction: Direction) = when(direction){
+            Direction.EAST -> XPlus
+            Direction.WEST -> XMin
+            Direction.SOUTH -> ZPlus
+            Direction.NORTH -> ZMin
+            else -> null
         }
     }
 }
