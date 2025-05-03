@@ -18,8 +18,8 @@ class Gate(config: StructGenConfig):MyStructFixedSize(Companion,config) {
     }
     override fun StructBuildScopeWithConfig.build() {
         inRelativeView {
-            CALCITE fill Area(2..3, 0..7, 1..2)
-            CALCITE fill Area(11..12, 0..7, 1..2)
+            CALCITE fillUnder Area(2..3, 8..8, 1..2)
+            CALCITE fillUnder Area(11..12, 8..8, 1..2)
             CALCITE fill Area(4..10, 6..7, 1..2)
             CALCITE fill Area(1..1, 7..7, 1..2)
             CALCITE fill Area(13..13, 6..7, 1..2)

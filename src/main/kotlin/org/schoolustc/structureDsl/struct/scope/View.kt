@@ -10,12 +10,7 @@ import net.minecraft.world.level.block.ChestBlock
 import net.minecraft.world.level.block.StairBlock
 import net.minecraft.world.level.block.entity.ChestBlockEntity
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.block.state.properties.BlockStateProperties
-import net.minecraft.world.level.block.state.properties.DoubleBlockHalf
-import net.minecraft.world.level.block.state.properties.Half
-import net.minecraft.world.level.block.state.properties.SlabType
-import net.minecraft.world.level.block.state.properties.StairsShape
-import net.minecraft.world.level.block.state.properties.WallSide
+import net.minecraft.world.level.block.state.properties.*
 import net.minecraft.world.level.levelgen.Heightmap
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate
@@ -64,8 +59,9 @@ abstract class View(val scope: StructBuildScope) {
     infix fun (()-> BlockState).fillUnder(points:Sequence<Point>){
         points.forEach {
             fun Point.next() = run { Point(x, y - 1, z) }
-            var finalPos = it.final()?.next() ?: return
-            while (finalPos.blockPos.let{scope.world.getBlockState(it).isSolidRender(scope.world.level,it)}){
+            var finalPos = it.final()?.next() ?: return@forEach
+            while (!scope.world.getBlockState(finalPos.blockPos).isSolidRender(scope.world.level,finalPos.blockPos)){
+                if(finalPos.y <= scope.world.level.minBuildHeight) break
                 invoke() setTo finalPos
                 finalPos = finalPos.next()
             }

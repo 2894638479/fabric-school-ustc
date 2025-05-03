@@ -53,7 +53,7 @@ class ScaffoldBuilder(
             val area = block.area
             direction.run {
                 val pos = rand.nextInt(minBlockSize + block.sideWidth(left.min)..area.width - minBlockSize - fullWidth - block.sideWidth(left.plus))
-                if(gatePos == null) gatePos = rand from listOf(direction,direction.reverse) to pos + 1
+                if(gatePos == null) gatePos = rand from listOf(direction,direction.reverse) to pos + 1 + sideWidth
                 blockList += Block(area2D(area.l,area.w.first..<area.w.first + pos + sideWidth)) {
                     if(it == left.plus) side else block.side(it)
                 }

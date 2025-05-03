@@ -15,8 +15,6 @@ class Area(
     inline val y2 get() = y.last
     inline val z1 get() = z.first
     inline val z2 get() = z.last
-    fun getP1() = Point(x.first,y.first,z.first)
-    fun getP2() = Point(x.last,y.last,z.last)
     fun length(direction:Direction) = when(direction){
         Direction.XPlus,Direction.XMin -> x.length
         Direction.YPlus,Direction.YMin -> y.length

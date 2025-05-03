@@ -22,6 +22,7 @@ val structs = listOf<MyStructInfo<*>>(
 )
 object SchoolUSTC : ModInitializer {
 	override fun onInitialize() {
+		logger.info("$id loading")
 		School.register()
 		BrownMushroomGrassFeature.register()
 		structs.forEach { it.register() }
