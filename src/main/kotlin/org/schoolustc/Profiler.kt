@@ -18,7 +18,7 @@ object Profiler {
         val t = measureTime {
             result = block()
         }
-        logger.info("Profiler: $name finished at $t")
+//        logger.info("Profiler: $name finished at $t")
         finished = true
         result
     }

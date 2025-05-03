@@ -1,27 +1,15 @@
 package org.schoolustc.structs.builder
 
 import org.schoolustc.structureDsl.Area2D
-import org.schoolustc.structureDsl.Area2D.Companion.area2D
 import org.schoolustc.structureDsl.Direction2D
-import org.schoolustc.structureDsl.match
-import org.schoolustc.structureDsl.struct.MyRoadStruct
-import org.schoolustc.structureDsl.struct.MyRoadStructInfo
-import org.schoolustc.structureDsl.struct.scope.StructGenConfig
-import org.schoolustc.structureDsl.struct.builder.MyStructBuilder
+import org.schoolustc.structureDsl.struct.MyStructFixedWidth
+import org.schoolustc.structureDsl.struct.MyStructFixedWidthInfo
 
-class RoadBuilder <T:MyRoadStruct>  (
-    area:Area2D,
-    val direction: Direction2D,
-    val type: MyRoadStructInfo<T>
-): MyStructBuilder<T> {
-    var area:Area2D = area
-        private set
-    fun extend(direction: Direction2D,count:Int){
-        area = area.expand(direction,count)
-    }
-    override fun build() = direction.run {
-        area.width.match(type.width)
-        val config = StructGenConfig.byDirection(area,0,direction,type)
-        type.constructor(config,area.length)
-    }
+class RoadBuilder <T:MyStructFixedWidth,V:MyStructFixedWidth> (
+    area: Area2D,
+    direction: Direction2D,
+    type: MyStructFixedWidthInfo<T>,
+    val side:MyStructFixedWidthInfo<V>?
+) : FixedWidthBuilder<T>(area,direction,type) {
+
 }

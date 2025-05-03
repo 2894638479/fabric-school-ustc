@@ -21,5 +21,5 @@ abstract class MyStructInfo <T: MyStruct>(
         Registry.register(BuiltInRegistries.STRUCTURE_PIECE, fullId(id), type)
     }
     open val profileName get() = "struct $id"
-    open val profileTimeOutMs get() = 500L
+    open val profileTimeOutMs get() = 4L
 }

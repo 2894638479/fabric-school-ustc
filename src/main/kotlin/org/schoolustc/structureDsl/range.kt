@@ -11,6 +11,14 @@ fun IntRange.add(i:Int): IntRange?{
     if(first - 1 == i) return first - 1..last
     return null
 }
+fun IntRange.filter(other:IntRange):List<IntRange>{
+    if(other.contains(this)) return listOf()
+    if(!overlap(other)) return listOf(this)
+    if(contains(other)) return listOf(first..other.first - 1,other.last + 1..last).filter { !it.isEmpty() }
+    if(first in other) return listOf(other.last+1..last)
+    if(last in other) return listOf(first..other.first-1)
+    error("IntRange filter logic error")
+}
 fun IntProgression.toRange() = first..last
 fun IntRange.first(count:Int) = first..<first + count
 fun IntRange.last(count:Int) = last + 1 - count..last

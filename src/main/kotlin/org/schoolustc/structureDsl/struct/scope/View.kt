@@ -65,7 +65,7 @@ abstract class View(val scope: StructBuildScope) {
         points.forEach {
             fun Point.next() = run { Point(x, y - 1, z) }
             var finalPos = it.final()?.next() ?: return
-            while (scope.world.getBlockState(finalPos.blockPos).isAir){
+            while (finalPos.blockPos.let{scope.world.getBlockState(it).isSolidRender(scope.world.level,it)}){
                 invoke() setTo finalPos
                 finalPos = finalPos.next()
             }

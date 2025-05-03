@@ -10,19 +10,10 @@ import kotlin.math.min
 
 class Street(
     config: StructGenConfig,
-    val length : Int
-): MyRoadStruct(Companion,config,Point(7,1,length)) {
-    companion object : MyRoadStructInfo<Street>("street"){
+    length : Int
+): MyStructFixedWidth(Companion,config,length) {
+    companion object : MyStructFixedWidthInfo<Street>("street",7){
         override val defaultDirection = Direction2D.ZPlus
-        override fun loadTag(tag: CompoundTag) = Street(
-            tag.read("C"),
-            tag.read("l")
-        )
-        override fun Street.saveTag(tag: CompoundTag) {
-            tag.write("C",config)
-            tag.write("l",length)
-        }
-        override val width get() = 7
         override val constructor get() = ::Street
     }
     override fun StructBuildScopeWithConfig.build() = inSurfView {

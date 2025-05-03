@@ -9,19 +9,10 @@ import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
 class Road(
     config: StructGenConfig,
-    val length : Int
-): MyRoadStruct(Companion,config, Point(3,1,length)) {
-    companion object : MyRoadStructInfo<Road>("road"){
+    length : Int
+): MyStructFixedWidth(Companion,config, length) {
+    companion object : MyStructFixedWidthInfo<Road>("road",3){
         override val defaultDirection = Direction2D.ZPlus
-        override fun loadTag(tag: CompoundTag) = Road(
-            tag.read("C"),
-            tag.read("l")
-        )
-        override fun Road.saveTag(tag: CompoundTag) {
-            tag.write("C",config)
-            tag.write("l",length)
-        }
-        override val width get() = 3
         override val constructor get() = ::Road
     }
     override fun StructBuildScopeWithConfig.build() = inSurfView {

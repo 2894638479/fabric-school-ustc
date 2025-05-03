@@ -4,6 +4,8 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.block.Blocks.IRON_BARS
 import net.minecraft.world.level.block.Blocks.STONE_BRICKS
 import org.schoolustc.structureDsl.*
+import org.schoolustc.structureDsl.struct.MyStructFixedWidth
+import org.schoolustc.structureDsl.struct.MyStructFixedWidthInfo
 import org.schoolustc.structureDsl.struct.MyStructInfo
 import org.schoolustc.structureDsl.struct.MyStructWithConfig
 import org.schoolustc.structureDsl.struct.scope.StructBuildScopeWithConfig
@@ -11,18 +13,11 @@ import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
 class OuterWall(
     config: StructGenConfig,
-    val length:Int
-): MyStructWithConfig(Companion,Point(length,4,1),config) {
-    companion object : MyStructInfo<OuterWall>("wall"){
+    length:Int
+): MyStructFixedWidth(Companion,config,length) {
+    companion object : MyStructFixedWidthInfo<OuterWall>("wall",1){
         override val defaultDirection = Direction2D.XPlus
-        override fun loadTag(tag: CompoundTag) = OuterWall(
-            tag.read("C"),
-            tag.read("l")
-        )
-        override fun OuterWall.saveTag(tag: CompoundTag) {
-            tag.write("C",config)
-            tag.write("l",length)
-        }
+        override val constructor = ::OuterWall
     }
     override fun StructBuildScopeWithConfig.build() {
         inSurfView {

@@ -34,6 +34,8 @@ enum class Direction2D {
         ZPlus -> XMin
         ZMin -> XPlus
     }
+    val plus get() = if(isX) XPlus else ZPlus
+    val min get() = if(isX) XMin else ZMin
     inline val Area2D.width get() = width(this@Direction2D)
     inline val Area2D.length get() = length(this@Direction2D)
     inline val Area2D.w get() = w(this@Direction2D)

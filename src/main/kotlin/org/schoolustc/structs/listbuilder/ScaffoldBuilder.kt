@@ -1,15 +1,15 @@
 package org.schoolustc.structs.listbuilder
 
-import net.minecraft.data.worldgen.features.TreeFeatures
 import org.schoolustc.structs.*
 import org.schoolustc.structs.blockbuilder.*
 import org.schoolustc.structs.builder.GateBuilder
+import org.schoolustc.structs.builder.FixedWidthBuilder
 import org.schoolustc.structs.builder.RoadBuilder
 import org.schoolustc.structs.builder.WallCornerBuilder
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.Area2D.Companion.area2D
-import org.schoolustc.structureDsl.struct.MyRoadStruct
-import org.schoolustc.structureDsl.struct.MyRoadStructInfo
+import org.schoolustc.structureDsl.struct.MyStructFixedWidth
+import org.schoolustc.structureDsl.struct.MyStructFixedWidthInfo
 import org.schoolustc.structureDsl.struct.MyStruct
 import org.schoolustc.structureDsl.struct.builder.MyStructBuilder
 import org.schoolustc.structureDsl.struct.builder.MyStructListBuilder
@@ -29,38 +29,51 @@ class ScaffoldBuilder(
             list.add(this.build())
         }
         val innerArea = area.padding(1)
-        val blockList = mutableListOf(innerArea)
+        class Block(
+            val area:Area2D,
+            val side:(Direction2D)->MyStructFixedWidthInfo<*>?
+        ){
+            fun sideWidth(d:Direction2D) = side(d)?.width ?: 0
+        }
+        val blockList = mutableListOf(Block(innerArea){null})
         val splitTime = (log2(innerArea.size.toFloat())).toInt().match { it > 0 }
         var gatePos:Pair<Direction2D,Int>? = null
 
-        val roadBuilders = mutableListOf<RoadBuilder<*>>()
-        fun <T : MyRoadStruct> addRoad(type:MyRoadStructInfo<T>) :Unit? {
+        val roadBuilders = mutableListOf<RoadBuilder<*,*>>()
+        fun <T:MyStructFixedWidth,V:MyStructFixedWidth> addRoad(type:MyStructFixedWidthInfo<T>, side:MyStructFixedWidthInfo<V>?) :Unit? {
+            val sideWidth = side?.width ?: 0
+            val fullWidth = type.width + 2*sideWidth
             val choices = blockList.flatMap {
                 Direction2D.entries.map { direction -> direction to it }
             }.filter { (direction,block)-> direction.run {
-                block.width >= type.width + 2 * minBlockSize
+                block.area.width - block.sideWidth(left) - block.sideWidth(right) >= fullWidth + 2 * minBlockSize
             } }.ifEmpty { return null }
-            val (direction,block) = rand from choices
+            val (direction, block) = rand from choices
             blockList.remove(block)
+            val area = block.area
             direction.run {
-                val pos = rand.nextInt(minBlockSize..block.width - minBlockSize - type.width)
+                val pos = rand.nextInt(minBlockSize + block.sideWidth(left.min)..area.width - minBlockSize - fullWidth - block.sideWidth(left.plus))
                 if(gatePos == null) gatePos = rand from listOf(direction,direction.reverse) to pos + 1
-                blockList += area2D(block.l,block.w.first..<block.w.first + pos)
-                blockList += area2D(block.l,block.w.first + pos + type.width..block.w.last)
+                blockList += Block(area2D(area.l,area.w.first..<area.w.first + pos + sideWidth)) {
+                    if(it == left.plus) side else block.side(it)
+                }
+                blockList += Block(area2D(area.l,area.w.first + pos + fullWidth - sideWidth..area.w.last)) {
+                    if(it == left.min) side else block.side(it)
+                }
                 roadBuilders += RoadBuilder(
-                    area2D(block.l,block.w.first + pos..<block.w.first + pos + type.width),
-                    direction,
-                    type
+                    area2D(area.l,area.w.first + pos + sideWidth..<area.w.first + pos + type.width + sideWidth),
+                    direction, type,side
                 )
             }
             return Unit
         }
+        fun <T:MyStructFixedWidth> addRoad(type:MyStructFixedWidthInfo<T>) = addRoad<T,MyStructFixedWidth>(type,null)
 
 
         val streetMark = rand.nextInt(splitTime / 4..splitTime / 2).match { it > 0 }
         val roadMark = rand.nextInt(splitTime * 3 / 4..splitTime)
         for(i in 0..<splitTime){
-            if(i < streetMark) addRoad(CherryStreet) ?: break
+            if(i < streetMark) addRoad(Street,CherrySide) ?: break
             else if(i < roadMark) addRoad(Road) ?: break
             else addRoad(Splitter) ?: break
         }
@@ -80,7 +93,16 @@ class ScaffoldBuilder(
             fun add(x:Int,z:Int) { wallCornerBuilders += WallCornerBuilder(x, z) }
             add(x1,z1);add(x2,z1);add(x1,z2);add(x2,z2)
         }
-        blockList.forEach { area ->
+
+        val blockBuilders = mutableListOf<BlockBuilder>()
+        val roadSideBuilders = mutableListOf<FixedWidthBuilder<*>>()
+        blockList.forEach { block ->
+            var area = block.area
+            for(d in Direction2D.entries){
+                val side = block.side(d) ?: continue
+                roadSideBuilders += FixedWidthBuilder(area.sliceEnd(d,side.width),d.right,side)
+                area = area.padding(side.width,d)
+            }
             val nextWalls = Direction2D.entries.filter {
                 area.nextTo(this@ScaffoldBuilder.area.sliceEnd(it,1)) != null
             }
@@ -88,15 +110,18 @@ class ScaffoldBuilder(
                 roadBuilders.firstOrNull { road ->road.type == Splitter && area.nextTo(road.area) == it } != null
             }
             val para = BlockBuilderPara(area,nextWalls,nextSplitter,this)
-            val block = rand from mapOf(
+            val blockBuilder = rand from mapOf(
                 {NormalBlock(para)} to 1,
                 {BuildingBlock(para)} to 1,
                 {ParkBlock(para)} to 1,
             )
-            block().addToList()
+            blockBuilders += blockBuilder()
         }
+
         roadBuilders.forEach { it.addToList() }
         wallBuilders.forEach { it.addToList() }
         wallCornerBuilders.forEach { it.addToList() }
+        roadSideBuilders.forEach { it.addToList() }
+        blockBuilders.forEach { it.addToList() }
     }
 }
