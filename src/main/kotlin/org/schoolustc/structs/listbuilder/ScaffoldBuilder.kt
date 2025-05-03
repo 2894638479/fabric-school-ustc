@@ -60,7 +60,7 @@ class ScaffoldBuilder(
         val streetMark = rand.nextInt(splitTime / 4..splitTime / 2).match { it > 0 }
         val roadMark = rand.nextInt(splitTime * 3 / 4..splitTime)
         for(i in 0..<splitTime){
-            if(i < streetMark) addRoad(Street) ?: break
+            if(i < streetMark) addRoad(CherryStreet) ?: break
             else if(i < roadMark) addRoad(Road) ?: break
             else addRoad(Splitter) ?: break
         }
@@ -89,34 +89,11 @@ class ScaffoldBuilder(
             }
             val para = BlockBuilderPara(area,nextWalls,nextSplitter,this)
             val block = rand from mapOf(
-                {
-                    val type = rand from mapOf(
-                        {
-                            rand from mapOf(
-                                TreeFeatures.OAK_BEES_005 to Tree.TreeType.SMALL to 3,
-                                TreeFeatures.FANCY_OAK_BEES to Tree.TreeType.BIG to 2,
-                                TreeFeatures.FANCY_OAK to Tree.TreeType.BIG to 1,
-                            )
-                        } to 5,
-                        {
-                            rand from mapOf(
-                                TreeFeatures.JUNGLE_TREE to Tree.TreeType.SMALL to 1,
-                                TreeFeatures.JUNGLE_BUSH to Tree.TreeType.SMALL to 1
-                            )
-                        } to 3,
-                        { TreeFeatures.JUNGLE_BUSH to Tree.TreeType.SMALL } to 3,
-                        { TreeFeatures.MANGROVE to Tree.TreeType.SMALL } to 2,
-                        { TreeFeatures.BIRCH_BEES_005 to Tree.TreeType.SMALL } to 2,
-                        { TreeFeatures.CHERRY_BEES_005 to Tree.TreeType.CHERRY } to 10,
-                    )
-                    TreeBlock(para,type)
-                } to 1,
                 {NormalBlock(para)} to 1,
-                {BuildingBlock(para)} to 1
+                {BuildingBlock(para)} to 1,
+                {ParkBlock(para)} to 1,
             )
-            list.add(Park(rand.nextLong(),area))
-//            block().addToList()
-
+            block().addToList()
         }
         roadBuilders.forEach { it.addToList() }
         wallBuilders.forEach { it.addToList() }

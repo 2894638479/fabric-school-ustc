@@ -22,7 +22,6 @@ class Splitter(
             tag.write("C",config)
             tag.write("l",length)
         }
-        override val period get() = 10
         override val width get() = 1
         override val constructor get() = ::Splitter
     }

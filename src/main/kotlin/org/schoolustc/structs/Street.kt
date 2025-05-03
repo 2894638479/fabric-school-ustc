@@ -23,7 +23,6 @@ class Street(
             tag.write("l",length)
         }
         override val width get() = 7
-        override val period get() = 10
         override val constructor get() = ::Street
     }
     override fun StructBuildScopeWithConfig.build() = inSurfView {

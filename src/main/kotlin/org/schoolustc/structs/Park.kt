@@ -155,14 +155,6 @@ class Park(val seed:Long,val area:Area2D):MyStruct(Companion,area.toArea(maxRang
                         val res2 = TreeFeatures.HUGE_RED_MUSHROOM plant mushroomPos
                         if(res2 == false) RED_MUSHROOM fill mushroomPos
                     }
-//                    if(rand.nextBool(0.3)) (2..10).firstOrNull {
-//                        val detectPos = mushroomPos.offsetY(it)
-//                        block(detectPos).`is`(BROWN_MUSHROOM_BLOCK)
-//                    }?.let {
-//                        val area = Area(x.range.expand(2),(y+it+2).range,z.range.expand(2))
-//                        TALL_GRASS.doublePlantState(DoubleBlockHalf.LOWER) fill area
-//                        TALL_GRASS.doublePlantState(DoubleBlockHalf.UPPER) fill area.let { Area(it.x,it.y.offset(1),it.z) }
-//                    }
                 }
             }
         }

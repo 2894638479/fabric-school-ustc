@@ -22,7 +22,6 @@ class Road(
             tag.write("l",length)
         }
         override val width get() = 3
-        override val period get() = 10
         override val constructor get() = ::Road
     }
     override fun StructBuildScopeWithConfig.build() = inSurfView {

@@ -18,13 +18,12 @@ const val id = "school-ustc"
 fun fullId(str: String) = ResourceLocation(id,str)
 val logger = LoggerFactory.getLogger(id)
 val structs = listOf<MyStructInfo<*>>(
-	Classroom,Gate,LeafWall,OuterWall,OuterWallCorner,Road,Splitter,Street,StreetLight,Building,Tree,Path,Park
+	Classroom,Gate,LeafWall,OuterWall,OuterWallCorner,Road,Splitter,Street,StreetLight,Building,Tree,Path,Park,CherryStreet
 )
 object SchoolUSTC : ModInitializer {
 	override fun onInitialize() {
 		School.register()
+		BrownMushroomGrassFeature.register()
 		structs.forEach { it.register() }
-		BrownMushroomGrassFeature.key.run { logger.info(toString()) }
-		Registry.register(BuiltInRegistries.FEATURE,BrownMushroomGrassFeature.id,BrownMushroomGrassFeature(HugeMushroomFeatureConfiguration.CODEC))
 	}
 }

@@ -2,6 +2,8 @@ package org.schoolustc.structs.feature
 
 import com.mojang.serialization.Codec
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Registry
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.worldgen.features.FeatureUtils
 import net.minecraft.util.RandomSource
 import net.minecraft.world.level.LevelAccessor
@@ -16,6 +18,9 @@ class BrownMushroomGrassFeature(codec: Codec<HugeMushroomFeatureConfiguration>) 
     companion object{
         val id = fullId("huge_brown_mushroom_grass")
         val key = FeatureUtils.createKey(id.toString())
+        fun register() {
+            Registry.register(BuiltInRegistries.FEATURE, id,BrownMushroomGrassFeature(HugeMushroomFeatureConfiguration.CODEC))
+        }
     }
     override fun makeCap(
         levelAccessor: LevelAccessor,
