@@ -13,7 +13,7 @@ class Classroom(config: StructGenConfig): MyStructFixedSize(Companion,config){
         "classroom",
         Point(8,5,12)
     ) {
-        override val defaultDirection = Direction2D.ZPlus
+        override val defaultDirection = Direction2D.XPlus
         override fun loadTag(tag: CompoundTag): Classroom {
             return Classroom(tag.read("C"))
         }
@@ -40,9 +40,9 @@ class Classroom(config: StructGenConfig): MyStructFixedSize(Companion,config){
 
             floor fill Area(1..xSize - 2,0.range,1..zSize - 2)
             light fill Point(2,0,2)
-            light fill Point(2,0,xSize - 3)
-            light fill Point(zSize - 3,0,2)
-            light fill Point(zSize - 3,0,xSize - 3)
+            light fill Point(2,0,zSize - 3)
+            light fill Point(xSize - 3,0,2)
+            light fill Point(xSize - 3,0,zSize - 3)
             light fill Area((xSize/2).let{it-1..it},0.range,(zSize/2).let { it-1..it })
         }
     }

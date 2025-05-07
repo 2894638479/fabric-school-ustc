@@ -41,7 +41,9 @@ class HallwayCrossing(
             wall fill Area(0.range,0..4,zRange)
             wall fill Area(4.range,0..4,zRange)
             floor fill Area(1..3,0.range,zRange)
-            for(i in 2..length-3 step 4){
+            AIR fill Area(0.range,1..4,door-1..door+1)
+            AIR fill Area(4.range,1..4,door-1..door+1)
+            for(i in 2..length-2 step 4){
                 light fill Point(2,0,i)
             }
             val glass = GLASS_PANE.state.connected(Direction2D.ZPlus,Direction2D.ZMin)

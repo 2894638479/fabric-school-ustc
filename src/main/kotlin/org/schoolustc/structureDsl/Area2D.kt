@@ -56,7 +56,7 @@ class Area2D(
         else area2D(l.expand(count,0),w)
     }
     infix fun overlap(other:Area2D) = x overlap other.x && z overlap other.z
-    infix fun contains(other: Area2D) = x contains other.x && z contains other.z
+    infix operator fun contains(other: Area2D) = x contains other.x && z contains other.z
     fun contains(x:Int,z:Int) = x in this.x && z in this.z
     infix fun nextTo(other:Area2D):Direction2D?{
         if(z overlap other.z) {

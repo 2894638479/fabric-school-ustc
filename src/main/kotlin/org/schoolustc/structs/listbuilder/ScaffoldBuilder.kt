@@ -119,6 +119,7 @@ class ScaffoldBuilder(
                 {BuildingBlock(para)} to 1,
                 {ParkBlock(para)} to 1,
                 {WhitePavilionBlock(para)} to 1,
+                {ClassroomBlockBuilder(para)} to 10
             )
             blockBuilders += blockBuilder()
         }

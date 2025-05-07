@@ -39,7 +39,7 @@ class HallwayCrossingTop(
             AIR fill Area(4.range,1.range,door-1..door+1)
 
             floor fill Area(0..4,0.range,zRange)
-            for(i in 2..length-3 step 4){
+            for(i in 2..length-2 step 4){
                 light fill Point(2,0,i)
             }
         }

@@ -39,6 +39,17 @@ class Point(
         }
         return Point(x,y,z)
     }
+    fun offset(direction:Direction2D,count:Int = 1):Point{
+        var x = x
+        var z = z
+        when(direction){
+            Direction2D.XPlus -> x += count
+            Direction2D.XMin -> x -= count
+            Direction2D.ZPlus -> z += count
+            Direction2D.ZMin -> z -= count
+        }
+        return Point(x,y,z)
+    }
     fun offsetX(count:Int) = Point(x+count,y,z)
     fun offsetY(count:Int) = Point(x,y+count,z)
     fun offsetZ(count:Int) = Point(x,y,z+count)

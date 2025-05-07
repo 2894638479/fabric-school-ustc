@@ -24,6 +24,7 @@ class Stairwell(config: StructGenConfig):MyStructFixedSize(Companion,config) {
         inRelativeView {
             RED_CONCRETE fillWall fixedArea
             AIR fill Area(1..3,1..4,0.range)
+            AIR fill Area(1..3,1..4,zMax.range)
             val glassX = GLASS_PANE.state.connected(Direction2D.XPlus,Direction2D.XMin)
             val glassZ = GLASS_PANE.state.connected(Direction2D.ZPlus,Direction2D.ZMin)
             val glassY = 2..4
