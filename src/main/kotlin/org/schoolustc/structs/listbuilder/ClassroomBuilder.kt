@@ -157,7 +157,6 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource):MyStruc
             begin.apply { calChildren() }
         }
         val chosen = tries.maxByOrNull { it.childCount }
-        logger.info(chosen?.area.toString())
         return chosen?.generateAllChildren(y) ?: listOf()
     }
 }
