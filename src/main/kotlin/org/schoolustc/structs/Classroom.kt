@@ -13,7 +13,7 @@ class Classroom(config: StructGenConfig): MyStructFixedSize(Companion,config){
         "classroom",
         Point(8,5,12)
     ) {
-        override val defaultDirection = Direction2D.XPlus
+        override val defaultDirection = Direction2D.ZPlus
         override fun loadTag(tag: CompoundTag): Classroom {
             return Classroom(tag.read("C"))
         }
@@ -22,6 +22,29 @@ class Classroom(config: StructGenConfig): MyStructFixedSize(Companion,config){
         }
     }
     override fun StructBuildScopeWithConfig.build() {
+        val light = SEA_LANTERN
+        val floor = SMOOTH_STONE
+        inRelativeView {
+            RED_CONCRETE fillWall fixedArea
+
+            AIR fill Area(xMax.range,1..<ySize,2..4)
+
+            val glassX = GLASS_PANE.state.connected(Direction2D.XPlus,Direction2D.XMin)
+            val glassZ = GLASS_PANE.state.connected(Direction2D.ZPlus,Direction2D.ZMin)
+            val glassY = 2..<ySize
+            glassZ fill Area(0.range,glassY,2..4)
+            glassZ fill Area(0.range,glassY,7..9)
+            glassZ fill Area(xMax.range,glassY,7..9)
+            glassX fill Area(2..3,glassY,0.range)
+            glassX fill Area(2..3,glassY,zMax.range)
+
+            floor fill Area(1..xSize - 2,0.range,1..zSize - 2)
+            light fill Point(2,0,2)
+            light fill Point(2,0,xSize - 3)
+            light fill Point(zSize - 3,0,2)
+            light fill Point(zSize - 3,0,xSize - 3)
+            light fill Area((xSize/2).let{it-1..it},0.range,(zSize/2).let { it-1..it })
+        }
     }
 }
 

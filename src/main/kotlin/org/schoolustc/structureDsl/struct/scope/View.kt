@@ -56,6 +56,14 @@ abstract class View(val scope: StructBuildScope) {
     infix fun (()-> BlockState).fill(shape: Shape2D) { shape.forEach { if (it in bound) invoke() fill it } }
     infix fun (()-> Block).fill(shape: Shape2D) { shape.forEach { if (it in bound) invoke() fill it } }
 
+    infix fun Block.fillWall(area:Area) = state fillWall area
+    infix fun BlockState.fillWall(area: Area) = {this} fillWall area
+    infix fun (()->BlockState).fillWall(area:Area) = area.run {
+        fill(Area(x,y,z1.range))
+        fill(Area(x,y,z2.range))
+        fill(Area(x1.range,y,z.padding(1)))
+        fill(Area(x2.range,y,z.padding(1)))
+    }
 
     infix fun (()-> BlockState).fillUnder(points:Sequence<Point>){
         points.forEach {
