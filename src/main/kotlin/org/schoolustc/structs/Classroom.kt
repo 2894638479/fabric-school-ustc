@@ -35,8 +35,8 @@ class Classroom(config: StructGenConfig): MyStructFixedSize(Companion,config){
             glassZ fill Area(0.range,glassY,2..4)
             glassZ fill Area(0.range,glassY,7..9)
             glassZ fill Area(xMax.range,glassY,7..9)
-            glassX fill Area(2..3,glassY,0.range)
-            glassX fill Area(2..3,glassY,zMax.range)
+            glassX fill Area(3..4,glassY,0.range)
+            glassX fill Area(3..4,glassY,zMax.range)
 
             floor fill Area(1..xSize - 2,0.range,1..zSize - 2)
             light fill Point(2,0,2)

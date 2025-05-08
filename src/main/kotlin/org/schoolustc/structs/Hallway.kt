@@ -35,7 +35,7 @@ class Hallway(config: StructGenConfig,val length:Int):MyStructWithConfig(Compani
                 light fill Point(2,0,i)
             }
             val glass = GLASS_PANE.state.connected(Direction2D.ZPlus,Direction2D.ZMin)
-            for(i in 2..<length - 3 step 4){
+            for(i in 1..length - 3 step 4){
                 glass fill Area(0.range,2..4,i..i+1)
                 glass fill Area(4.range,2..4,i..i+1)
             }
