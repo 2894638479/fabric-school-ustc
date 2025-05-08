@@ -35,10 +35,16 @@ class HallwayCrossingTop(
             val zRange = 0..<length
             wall fill Area(0.range,1.range,zRange)
             wall fill Area(4.range,1.range,zRange)
-            AIR fill Area(0.range,1.range,door-1..door+1)
-            AIR fill Area(4.range,1.range,door-1..door+1)
+            floor fill Area(1..3,0.range,zRange)
+            RED_CONCRETE fill Area(0.range,0.range,zRange)
+            RED_CONCRETE fill Area(4.range,0.range,zRange)
 
-            floor fill Area(0..4,0.range,zRange)
+            val doorZ = door - 1..door + 1
+            AIR fill Area(0.range,1.range, doorZ)
+            AIR fill Area(4.range,1.range, doorZ)
+            floor fill Area(0.range,0.range, doorZ)
+            floor fill Area(4.range,0.range, doorZ)
+
             for(i in 2..length-2 step 4){
                 light fill Point(2,0,i)
             }

@@ -1,10 +1,7 @@
 package org.schoolustc.structs.listbuilder
 
 import net.minecraft.util.RandomSource
-import org.schoolustc.structs.Classroom
-import org.schoolustc.structs.Hallway
-import org.schoolustc.structs.HallwayCrossing
-import org.schoolustc.structs.Stairwell
+import org.schoolustc.structs.*
 import org.schoolustc.structs.listbuilder.ClassroomBuilder.HallwayCrossingBase.Companion.hallwayCrossingBase
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.MyStruct
@@ -22,7 +19,9 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource):MyStruc
         abstract val doors: List<Door>
         abstract val score:Double
         abstract fun generateByHeight(y:Int):MyStruct
+        abstract fun generateTopByHeight(y:Int):MyStruct
         protected fun Direction2D.revIf(boolean: Boolean) = if(boolean) reverse else this
+        val doorConnected get() = doors.mapNotNull { it.connect }
         val childSequence = sequence {
             suspend fun SequenceScope<Base>.iterateDoorConnected(base:Base){
                 base.doors.forEach {
@@ -34,13 +33,29 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource):MyStruc
             }
             iterateDoorConnected(this@Base)
         }
+        val childSequenceWithParent = sequence {
+            suspend fun SequenceScope<Pair<Base,Base>>.iterateDoorConnected(base:Base){
+                base.doors.forEach {
+                    it.connect?.let {
+                        yield(it to base)
+                        iterateDoorConnected(it)
+                    }
+                }
+            }
+            iterateDoorConnected(this@Base)
+        }
         val childAndSelf = sequence {
             yield(this@Base)
             childSequence.forEach { yield(it) }
         }
+        val childAndSelfWithParent = sequence {
+            yield(this@Base to null)
+            childSequenceWithParent.forEach { yield(it) }
+        }
         var layerCount = 0
+        fun generateAllLayer(y:Int) = (0..<layerCount).map{ generateByHeight(y + 5*it) } + generateTopByHeight(y+5*layerCount)
         fun generateAllChildren(y:Int):List<MyStruct>{
-            return childAndSelf.map { it.generateByHeight(y) }.toList()
+            return childAndSelf.map { it.generateAllLayer(y) }.flatten().toList()
         }
         fun overlapChild(area:Area2D):Boolean {
             return childAndSelf.firstOrNull { it.area overlap area } != null
@@ -59,6 +74,11 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource):MyStruc
         override fun generateByHeight(y: Int): MyStruct {
             val config = StructGenConfig.byDirection(area,y,direction.reverse,Classroom)
             return Classroom(config)
+        }
+
+        override fun generateTopByHeight(y: Int): MyStruct {
+            val config = StructGenConfig.byDirection(area,y,direction.reverse,ClassroomTop)
+            return ClassroomTop(config)
         }
     }
     class HallwayBase(val direction:Direction2D,val pos:Point,val rand:RandomSource,depth:Int): Base(depth){
@@ -81,6 +101,11 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource):MyStruc
         override fun generateByHeight(y: Int): MyStruct {
             val config = StructGenConfig.byDirection(area,y,direction,Hallway)
             return Hallway(config,length)
+        }
+
+        override fun generateTopByHeight(y: Int): MyStruct {
+            val config = StructGenConfig.byDirection(area,y,direction,HallwayTop)
+            return HallwayTop(config,length)
         }
     }
     class HallwayCrossingBase(val direction:Direction2D,val pos:Point,val rand:RandomSource,val isBegin:Boolean,depth:Int): Base(depth){
@@ -130,6 +155,11 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource):MyStruc
             val config = StructGenConfig.byDirection(area,y,direction,HallwayCrossing)
             return HallwayCrossing(config,length, door)
         }
+
+        override fun generateTopByHeight(y: Int): MyStruct {
+            val config = StructGenConfig.byDirection(area,y,direction,HallwayCrossingTop)
+            return HallwayCrossingTop(config,length, door)
+        }
     }
     class StairwellBase(val direction:Direction2D,val pos:Point,val rand:RandomSource,depth:Int): Base(depth){
         val rev = rand.nextBool(0.5)
@@ -153,6 +183,11 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource):MyStruc
         override fun generateByHeight(y: Int): MyStruct {
             val config = StructGenConfig.byDirection(area,y,direction.revIf(rev),Stairwell)
             return Stairwell(config)
+        }
+
+        override fun generateTopByHeight(y: Int): MyStruct {
+            val config = StructGenConfig.byDirection(area,y,direction.revIf(rev),StairwellTop)
+            return StairwellTop(config)
         }
     }
     override fun StructureBuildScope.build(): List<MyStruct> {
@@ -179,6 +214,21 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource):MyStruc
         }
         val chosen = tries.filter { it.hasChild { it is StairwellBase } }
             .maxByOrNull { it.scoreSum + if(it.hasChild { it is RoomBase }) 1000 else 0 }
-        return chosen?.generateAllChildren(y) ?: listOf()
+            ?: return emptyList()
+        chosen.childAndSelf.forEach {
+            if(it is StairwellBase){
+                it.layerCount = rand from 3..6
+            }
+        }
+        while (chosen.childAndSelf.minOf { it.layerCount } == 0) {
+            chosen.childAndSelfWithParent.forEach { (it, parent) ->
+                if(it.layerCount != 0) return@forEach
+                it.layerCount = (it.doorConnected + parent).maxOf { it?.layerCount ?: 0 }
+                if(it.layerCount > 1) {
+                    if(rand.nextBool(0.2)) it.layerCount--
+                }
+            }
+        }
+        return chosen.generateAllChildren(y)
     }
 }

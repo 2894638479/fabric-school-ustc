@@ -1,8 +1,7 @@
 package org.schoolustc.structs
 
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.world.level.block.Blocks.SMOOTH_STONE
-import net.minecraft.world.level.block.Blocks.SMOOTH_STONE_SLAB
+import net.minecraft.world.level.block.Blocks.*
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.MyStructFixedSize
 import org.schoolustc.structureDsl.struct.MyStructFixedSizeInfo
@@ -23,11 +22,11 @@ class StairwellTop(config: StructGenConfig):MyStructFixedSize(Companion,config) 
 
     override fun StructBuildScopeWithConfig.build() {
         inRelativeView {
-            SMOOTH_STONE fill Area(xRange,0.range,zRange)
-            SMOOTH_STONE_SLAB fill Area(0.range,1.range,zRange)
-            SMOOTH_STONE_SLAB fill Area(xMax.range,1.range,zRange)
-            SMOOTH_STONE_SLAB fill Area(xRange.padding(1),1.range,0.range)
-            SMOOTH_STONE_SLAB fill Area(4..xMax,1.range,zMax.range)
+            SMOOTH_STONE fill Area(xRange.padding(1),0.range,zRange.padding(1))
+            RED_CONCRETE fill Area(xRange,0.range,zRange)
+            SMOOTH_STONE_SLAB fillWall Area(xRange,1.range,zRange)
+            AIR fill Area(1..3,1.range,0.range)
+            AIR fill Area(1..3,1.range,zMax.range)
         }
     }
 }

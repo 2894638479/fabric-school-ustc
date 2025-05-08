@@ -13,7 +13,7 @@ class ClassroomTop(config: StructGenConfig):MyStructFixedSize(Companion,config) 
         "classroom_top",
         Point(8,2,12)
     ){
-        override val defaultDirection = Direction2D.ZPlus
+        override val defaultDirection = Direction2D.XPlus
         override fun ClassroomTop.saveTag(tag: CompoundTag) {
             tag.write("C",config)
         }
@@ -25,17 +25,16 @@ class ClassroomTop(config: StructGenConfig):MyStructFixedSize(Companion,config) 
         val floor = SMOOTH_STONE
         val bound = SMOOTH_STONE_SLAB
         inRelativeView {
-            floor fill Area(0..<xSize ,0.range,0..<zSize)
+            floor fill Area(xRange.padding(1),0.range,zRange.padding(1))
+            RED_CONCRETE fillWall Area(xRange,0.range,zRange)
             light fill Point(2,0,2)
-            light fill Point(2,0, xSize - 3)
-            light fill Point(zSize - 3,0,2)
-            light fill Point(zSize - 3,0, xSize - 3)
+            light fill Point(2,0, zSize - 3)
+            light fill Point(xSize - 3,0,2)
+            light fill Point(xSize - 3,0, zSize - 3)
             light fill Area((xSize / 2).let{ it-1..it },0.range,(zSize / 2).let { it-1..it })
-            bound fill Point(1,1,zMax)
-            bound fill Area(0.range,1.range,zRange.padding(1))
-            bound fill Area(xMax.range,1.range,zRange.padding(1))
-            bound fill Area(0..<xSize,1.range,0.range)
-            bound fill Area(5..xMax,1.range,zMax.range)
+            bound fillWall Area(xRange,1.range,zRange)
+            AIR fill Area(xMax.range,1.range,2..4)
+            floor fill Area(xMax.range,0.range,2..4)
         }
     }
 }
