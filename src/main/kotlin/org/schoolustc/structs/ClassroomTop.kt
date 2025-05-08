@@ -1,6 +1,7 @@
 package org.schoolustc.structs
 
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks.*
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.MyStructFixedSize
@@ -8,7 +9,7 @@ import org.schoolustc.structureDsl.struct.MyStructFixedSizeInfo
 import org.schoolustc.structureDsl.struct.scope.StructBuildScopeWithConfig
 import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
-class ClassroomTop(config: StructGenConfig):MyStructFixedSize(Companion,config) {
+class ClassroomTop(config: StructGenConfig,val block:Block):MyStructFixedSize(Companion,config) {
     companion object : MyStructFixedSizeInfo<ClassroomTop>(
         "classroom_top",
         Point(8,2,12)
@@ -16,8 +17,12 @@ class ClassroomTop(config: StructGenConfig):MyStructFixedSize(Companion,config) 
         override val defaultDirection = Direction2D.XPlus
         override fun ClassroomTop.saveTag(tag: CompoundTag) {
             tag.write("C",config)
+            tag.write("b",block)
         }
-        override fun loadTag(tag: CompoundTag) = ClassroomTop(tag.read("C"))
+        override fun loadTag(tag: CompoundTag) = ClassroomTop(
+            tag.read("C"),
+            tag.read("b")
+        )
     }
 
     override fun StructBuildScopeWithConfig.build() {
@@ -26,7 +31,7 @@ class ClassroomTop(config: StructGenConfig):MyStructFixedSize(Companion,config) 
         val bound = SMOOTH_STONE_SLAB
         inRelativeView {
             floor fill Area(xRange.padding(1),0.range,zRange.padding(1))
-            RED_CONCRETE fillWall Area(xRange,0.range,zRange)
+            block fillWall Area(xRange,0.range,zRange)
             light fill Point(2,0,2)
             light fill Point(2,0, zSize - 3)
             light fill Point(xSize - 3,0,2)

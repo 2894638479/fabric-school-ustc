@@ -1,6 +1,7 @@
 package org.schoolustc.structs
 
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks.*
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.*
@@ -8,24 +9,28 @@ import org.schoolustc.structureDsl.struct.MyStructFixedSizeInfo
 import org.schoolustc.structureDsl.struct.scope.StructBuildScopeWithConfig
 import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
-class Classroom(config: StructGenConfig): MyStructFixedSize(Companion,config){
+class Classroom(config: StructGenConfig,val block:Block): MyStructFixedSize(Companion,config){
     companion object : MyStructFixedSizeInfo<Classroom>(
         "classroom",
         Point(8,5,12)
     ) {
         override val defaultDirection = Direction2D.XPlus
         override fun loadTag(tag: CompoundTag): Classroom {
-            return Classroom(tag.read("C"))
+            return Classroom(
+                tag.read("C"),
+                tag.read("b")
+            )
         }
         override fun Classroom.saveTag(tag: CompoundTag) {
             tag.write("C",config)
+            tag.write("b",block)
         }
     }
     override fun StructBuildScopeWithConfig.build() {
         val light = SEA_LANTERN
         val floor = SMOOTH_STONE
         inRelativeView {
-            RED_CONCRETE fillWall fixedArea
+            block fillWall fixedArea
 
             AIR fill Area(xMax.range,1..<ySize,2..4)
 

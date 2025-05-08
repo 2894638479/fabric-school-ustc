@@ -1,6 +1,7 @@
 package org.schoolustc.structs.listbuilder
 
 import net.minecraft.util.RandomSource
+import net.minecraft.world.level.block.Block
 import org.schoolustc.structs.*
 import org.schoolustc.structs.listbuilder.ClassroomBuilder.HallwayCrossingBase.Companion.hallwayCrossingBase
 import org.schoolustc.structureDsl.*
@@ -9,7 +10,12 @@ import org.schoolustc.structureDsl.struct.builder.MyStructListBuilder
 import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 import org.schoolustc.structureDsl.structure.StructureBuildScope
 
-class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource):MyStructListBuilder<MyStruct>() {
+class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource,val colors:Colors):MyStructListBuilder<MyStruct>() {
+    class Colors(
+        val classroomBlock:Block,
+        val stairwellBlock:Block,
+        val hallwayBlock:Block
+    )
     class Door(val direction:Direction2D,val pos:Point,val choices:(Direction2D,Point)-> Base){
         var connect:Base? = null
         fun choose() = choices(direction, pos)
@@ -79,7 +85,7 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource):MyStruc
         val scoreSum:Double get() = childAndSelf.sumOf { it.score }
         fun hasChild(predicate:(Base)->Boolean) = childAndSelf.firstOrNull { predicate(it) } != null
     }
-    class RoomBase(val direction:Direction2D,val pos:Point,val rand: RandomSource,depth:Int): Base(depth){
+    class RoomBase(val direction:Direction2D,val pos:Point,val rand: RandomSource,depth:Int,val colors:Colors): Base(depth){
         val rev = false//rand.nextBool(0.5)
         override val score get() = 15.0
         override val area = Area2D(pos.x.range,pos.z.range)
@@ -89,15 +95,15 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource):MyStruc
         override val doors = listOf<Door>()
         override fun generateByHeight(y: Int): MyStruct {
             val config = StructGenConfig.byDirection(area,y,direction.reverse,Classroom)
-            return Classroom(config)
+            return Classroom(config,colors.classroomBlock)
         }
 
         override fun generateTopByHeight(y: Int): MyStruct {
             val config = StructGenConfig.byDirection(area,y,direction.reverse,ClassroomTop)
-            return ClassroomTop(config)
+            return ClassroomTop(config,colors.classroomBlock)
         }
     }
-    class HallwayBase(val direction:Direction2D,val pos:Point,val rand:RandomSource,depth:Int): Base(depth){
+    class HallwayBase(val direction:Direction2D,val pos:Point,val rand:RandomSource,depth:Int,val colors: Colors): Base(depth){
         override val score get() = 2.0
         val length = rand from 1..5
         override val area = Area2D(pos.x.range,pos.z.range)
@@ -106,27 +112,27 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource):MyStruc
             .expand(direction.right,2)
         override val doors = run {
             val door1 = Door(direction, pos.offset(direction, length)) { direction,pos ->
-                (rand from mapOf(
+                rand.from(mapOf(
                     ::hallwayCrossingBase to 2,
                     ::RoomBase to 3,
                     ::StairwellBase to 1
-                ))(direction, pos, rand, depth + 1)
+                ))(direction, pos, rand, depth + 1,colors)
             }
             listOf(door1)
         }
         override fun generateByHeight(y: Int): MyStruct {
             val config = StructGenConfig.byDirection(area,y,direction,Hallway)
-            return Hallway(config,length)
+            return Hallway(config,length,colors.hallwayBlock)
         }
 
         override fun generateTopByHeight(y: Int): MyStruct {
             val config = StructGenConfig.byDirection(area,y,direction,HallwayTop)
-            return HallwayTop(config,length)
+            return HallwayTop(config,length,colors.hallwayBlock)
         }
     }
-    class HallwayCrossingBase(val direction:Direction2D,val pos:Point,val rand:RandomSource,val isBegin:Boolean,depth:Int): Base(depth){
+    class HallwayCrossingBase(val direction:Direction2D,val pos:Point,val rand:RandomSource,val isBegin:Boolean,depth:Int,val colors: Colors): Base(depth){
         companion object {
-            fun hallwayCrossingBase(direction:Direction2D,pos:Point,rand:RandomSource,depth: Int) = HallwayCrossingBase(direction,pos,rand,false,depth)
+            fun hallwayCrossingBase(direction:Direction2D,pos:Point,rand:RandomSource,depth: Int,colors: Colors) = HallwayCrossingBase(direction,pos,rand,false,depth,colors)
         }
         override val score get() = 4.0
         val length = rand from 8..15
@@ -150,17 +156,17 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource):MyStruc
                 )
             }
             val door1 = Door(direction, pos.offset(direction, length)) { direction, pos ->
-                endChoice()(direction, pos, rand, depth + 1)
+                endChoice()(direction, pos, rand, depth + 1,colors)
             }
             val door2 = Door(direction.left, pos.offset(direction, door).offset(direction.left, 3)) { direction, pos ->
-                midChoice()(direction, pos, rand, depth + 1)
+                midChoice()(direction, pos, rand, depth + 1,colors)
             }
             val door3 = Door(direction.right, pos.offset(direction, door).offset(direction.right, 3)) { direction, pos ->
-                midChoice()(direction, pos, rand, depth + 1)
+                midChoice()(direction, pos, rand, depth + 1,colors)
             }
             if(isBegin){
                 val door4 = Door(direction.reverse, pos.offset(direction.reverse)) { direction, pos ->
-                    endChoice()(direction, pos, rand, depth + 1)
+                    endChoice()(direction, pos, rand, depth + 1,colors)
                 }
                 listOf(door1,door2,door3,door4)
             } else listOf(door1,door2,door3)
@@ -168,15 +174,15 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource):MyStruc
 
         override fun generateByHeight(y: Int): MyStruct {
             val config = StructGenConfig.byDirection(area,y,direction,HallwayCrossing)
-            return HallwayCrossing(config,length, door)
+            return HallwayCrossing(config,length, door,colors.hallwayBlock)
         }
 
         override fun generateTopByHeight(y: Int): MyStruct {
             val config = StructGenConfig.byDirection(area,y,direction,HallwayCrossingTop)
-            return HallwayCrossingTop(config,length, door)
+            return HallwayCrossingTop(config,length, door,colors.hallwayBlock)
         }
     }
-    class StairwellBase(val direction:Direction2D,val pos:Point,val rand:RandomSource,depth:Int): Base(depth){
+    class StairwellBase(val direction:Direction2D,val pos:Point,val rand:RandomSource,depth:Int,val colors: Colors): Base(depth){
         val rev = rand.nextBool(0.5)
         override val score get() = 5.0
         override val area = Area2D(pos.x.range,pos.z.range)
@@ -190,19 +196,19 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource):MyStruc
                 rand.from(
                     ::HallwayBase to 1,
                     ::hallwayCrossingBase to 1
-                )(direction,pos,rand,depth + 1)
+                )(direction,pos,rand,depth + 1,colors)
             }
             listOf(door1)
         }
 
         override fun generateByHeight(y: Int): MyStruct {
             val config = StructGenConfig.byDirection(area,y,direction.revIf(rev),Stairwell)
-            return Stairwell(config)
+            return Stairwell(config,colors.stairwellBlock)
         }
 
         override fun generateTopByHeight(y: Int): MyStruct {
             val config = StructGenConfig.byDirection(area,y,direction.revIf(rev),StairwellTop)
-            return StairwellTop(config)
+            return StairwellTop(config,colors.stairwellBlock)
         }
     }
     override fun StructureBuildScope.build(): List<MyStruct> {
@@ -210,7 +216,7 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource):MyStruc
             fun randBegin():Base{
                 val beginDirection = rand from Direction2D.entries
                 val beginPos = rand from area.padding(5)
-                val begin = HallwayCrossingBase(beginDirection,beginPos.run { Point(first,y,second) },rand,true,0)
+                val begin = HallwayCrossingBase(beginDirection,beginPos.run { Point(first,y,second) },rand,true,0,colors)
                 if(begin.area !in area) return randBegin()
                 return begin
             }

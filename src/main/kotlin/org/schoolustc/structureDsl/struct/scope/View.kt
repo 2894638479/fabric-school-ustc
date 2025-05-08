@@ -129,7 +129,7 @@ abstract class View(val scope: StructBuildScope) {
             .get(fullId(name))
             .orElse(null)
     }
-    private fun putNbtStruct(name:String, startPos: Point, filterAir:Boolean,replace:Map<Block,Block>){
+    fun putNbtStruct(name:String, startPos: Point, filterAir:Boolean,replace:Map<Block,Block>){
         val struct = getNbtStruct(name) ?: return logger.warn("not found structure nbt $name")
         struct.palettes.forEach {
             it.blocks().forEach {

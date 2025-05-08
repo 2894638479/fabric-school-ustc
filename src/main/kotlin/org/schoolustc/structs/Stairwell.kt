@@ -1,6 +1,7 @@
 package org.schoolustc.structs
 
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks.*
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.MyStructFixedSize
@@ -8,7 +9,7 @@ import org.schoolustc.structureDsl.struct.MyStructFixedSizeInfo
 import org.schoolustc.structureDsl.struct.scope.StructBuildScopeWithConfig
 import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
-class Stairwell(config: StructGenConfig):MyStructFixedSize(Companion,config) {
+class Stairwell(config: StructGenConfig,val block: Block):MyStructFixedSize(Companion,config) {
     companion object : MyStructFixedSizeInfo<Stairwell>(
         "stairwell",
         Point(11,5,7)
@@ -16,13 +17,14 @@ class Stairwell(config: StructGenConfig):MyStructFixedSize(Companion,config) {
         override val defaultDirection = Direction2D.ZMin
         override fun Stairwell.saveTag(tag: CompoundTag) {
             tag.write("C",config)
+            tag.write("b",block)
         }
-        override fun loadTag(tag: CompoundTag) = Stairwell(tag.read("C"))
+        override fun loadTag(tag: CompoundTag) = Stairwell(tag.read("C"),tag.read("b"))
     }
 
     override fun StructBuildScopeWithConfig.build() {
         inRelativeView {
-            RED_CONCRETE fillWall fixedArea
+            block fillWall fixedArea
             AIR fill Area(7..9,1..4,0.range)
             AIR fill Area(7..9,1..4,zMax.range)
             val glassX = GLASS_PANE.state.connected(Direction2D.XPlus,Direction2D.XMin)
@@ -34,7 +36,7 @@ class Stairwell(config: StructGenConfig):MyStructFixedSize(Companion,config) {
             glassZ fill Area(0.range,glassY,2..4)
 
             "stairwell_inner" putA Point(1,0,1)
-            RED_CONCRETE fill Area(7..9,0.range,zRange.padding(1))
+            block fill Area(7..9,0.range,zRange.padding(1))
             SEA_LANTERN fill Point(8,0,3)
         }
     }
