@@ -29,7 +29,7 @@ class HallwayTop(config: StructGenConfig, val length:Int):MyStructWithConfig(Com
             SMOOTH_STONE fill Area(1..3,0.range,zRange)
             RED_CONCRETE fill Area(0.range,0.range,zRange)
             RED_CONCRETE fill Area(4.range,0.range,zRange)
-            for(i in 2..length-3 step 4){
+            for(i in 1..length-3 step 4){
                 light fill Point(2,0,i)
             }
             SMOOTH_STONE_SLAB fill Area(0.range,1.range,zRange)

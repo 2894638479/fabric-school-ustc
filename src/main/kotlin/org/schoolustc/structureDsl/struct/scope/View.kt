@@ -78,8 +78,8 @@ abstract class View(val scope: StructBuildScope) {
     }
     infix fun Block.fillUnder(points: Sequence<Point>) = {state} fillUnder points
 
-    infix fun String.put(startPos: Point) = putNbtStruct(this,startPos,true)
-    infix fun String.putA(startPos: Point) = putNbtStruct(this,startPos,false)
+    infix fun String.put(startPos: Point) = putNbtStruct(this,startPos,true, emptyMap())
+    infix fun String.putA(startPos: Point) = putNbtStruct(this,startPos,false, emptyMap())
 
     infix fun ResourceKey<ConfiguredFeature<*, *>>.plant(pos: Point):Boolean? {
         val feature = scope.world.level.registryAccess()
@@ -129,13 +129,15 @@ abstract class View(val scope: StructBuildScope) {
             .get(fullId(name))
             .orElse(null)
     }
-    private fun putNbtStruct(name:String, startPos: Point, filterAir:Boolean){
+    private fun putNbtStruct(name:String, startPos: Point, filterAir:Boolean,replace:Map<Block,Block>){
         val struct = getNbtStruct(name) ?: return logger.warn("not found structure nbt $name")
         struct.palettes.forEach {
             it.blocks().forEach {
                 if(!(filterAir && it.state.isAir)){
                     val finalPos = it.pos.run{Point(x,y,z)}.plus(startPos).final()
-                    if(finalPos != null) it.state.final() setTo finalPos
+                    val finalState = if(replace.isEmpty()) it.state.final()
+                    else replace.firstNotNullOfOrNull{(k,v) -> if(it.state.`is`(k)) v.state else null} ?: it.state.final()
+                    if(finalPos != null) finalState setTo finalPos
                 }
             }
         }

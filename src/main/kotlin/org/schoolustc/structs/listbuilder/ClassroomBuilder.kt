@@ -10,9 +10,19 @@ import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 import org.schoolustc.structureDsl.structure.StructureBuildScope
 
 class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource):MyStructListBuilder<MyStruct>() {
-    class Door(val direction:Direction2D,val pos:Point,val choices:(Direction2D,Point)-> Base?){
+    class Door(val direction:Direction2D,val pos:Point,val choices:(Direction2D,Point)-> Base){
         var connect:Base? = null
         fun choose() = choices(direction, pos)
+        fun balcony(y:Int):Balcony{
+            val area = Area2D(pos.x.range,pos.z.range).expand(direction,1).expand(direction.left,2).expand(direction.right,2)
+            val config = StructGenConfig.byDirection(area,y,direction,Balcony)
+            return Balcony(config)
+        }
+        fun balconyTop(y:Int):BalconyTop{
+            val area = Area2D(pos.x.range,pos.z.range).expand(direction,1).expand(direction.left,2).expand(direction.right,2)
+            val config = StructGenConfig.byDirection(area,y,direction,BalconyTop)
+            return BalconyTop(config)
+        }
     }
     abstract class Base(val depth:Int) {
         abstract val area:Area2D
@@ -55,7 +65,13 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource):MyStruc
         var layerCount = 0
         fun generateAllLayer(y:Int) = (0..<layerCount).map{ generateByHeight(y + 5*it) } + generateTopByHeight(y+5*layerCount)
         fun generateAllChildren(y:Int):List<MyStruct>{
-            return childAndSelf.map { it.generateAllLayer(y) }.flatten().toList()
+            val thisBase = generateAllLayer(y)
+            val childBase = doorConnected.map { it.generateAllChildren(y) }.flatten()
+            val balcony = doors.filter { it.connect == null }.map { door ->
+                val mid = (1..<layerCount).map { door.balcony(y+it*5) }
+                if(layerCount > 1) mid + door.balconyTop(y+layerCount*5) else mid
+            }.flatten()
+            return thisBase + childBase + balcony
         }
         fun overlapChild(area:Area2D):Boolean {
             return childAndSelf.firstOrNull { it.area overlap area } != null
@@ -139,15 +155,14 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource):MyStruc
             val door2 = Door(direction.left, pos.offset(direction, door).offset(direction.left, 3)) { direction, pos ->
                 midChoice()(direction, pos, rand, depth + 1)
             }
-            val door3 = Door(direction.right, pos.offset(direction, door).offset(direction.left, 3)) { direction, pos ->
+            val door3 = Door(direction.right, pos.offset(direction, door).offset(direction.right, 3)) { direction, pos ->
                 midChoice()(direction, pos, rand, depth + 1)
             }
             if(isBegin){
                 val door4 = Door(direction.reverse, pos.offset(direction.reverse)) { direction, pos ->
                     endChoice()(direction, pos, rand, depth + 1)
                 }
-                val door31 = Door(direction.right, pos.offset(direction, door).offset(direction.left, 3)) { _, _ -> null }
-                listOf(door1,door2,door31,door4)
+                listOf(door1,door2,door3,door4)
             } else listOf(door1,door2,door3)
         }
 

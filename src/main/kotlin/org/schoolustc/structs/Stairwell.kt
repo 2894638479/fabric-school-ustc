@@ -34,6 +34,8 @@ class Stairwell(config: StructGenConfig):MyStructFixedSize(Companion,config) {
             glassZ fill Area(0.range,glassY,2..4)
 
             "stairwell_inner" putA Point(1,0,1)
+            RED_CONCRETE fill Area(7..9,0.range,zRange.padding(1))
+            SEA_LANTERN fill Point(8,0,3)
         }
     }
 }
