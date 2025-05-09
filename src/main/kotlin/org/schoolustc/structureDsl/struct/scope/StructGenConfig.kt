@@ -32,28 +32,44 @@ class StructGenConfig(
                 blInt and 4 != 0
             )
         }
-        fun byDirection(area:Area2D,y:Int,direction:Direction2D,info: MyStructInfo<*>): StructGenConfig {
+        fun byDirection(area:Area2D,y:Int,direction:Direction2D,info: MyStructInfo<*>,mirror:Boolean = false): StructGenConfig {
             val revX:Boolean
             val revZ:Boolean
             val rotate:Boolean
             val d = info.defaultDirection
             when(direction){
-                d -> {
+                d -> if(mirror){
+                    revX = d.isZ
+                    revZ = d.isX
+                    rotate = false
+                } else {
                     revX = false
                     revZ = false
                     rotate = false
                 }
-                d.reverse -> {
+                d.reverse -> if(mirror){
+                    revX = d.isX
+                    revZ = d.isZ
+                    rotate = false
+                } else {
                     revX = true
                     revZ = true
                     rotate = false
                 }
-                d.left -> {
+                d.left -> if(mirror){
+                    revX = d.isX
+                    revZ = d.isX
+                    rotate = true
+                } else {
                     revX = true
                     revZ = false
                     rotate = true
                 }
-                d.right -> {
+                d.right -> if(mirror){
+                    revX = d.isZ
+                    revZ = d.isZ
+                    rotate = true
+                } else {
                     revX = false
                     revZ = true
                     rotate = true

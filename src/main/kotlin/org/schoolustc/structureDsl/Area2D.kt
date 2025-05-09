@@ -110,4 +110,5 @@ class Area2D(
         min(x1,other.x1)..max(x2,other.x2),
         min(z1,other.z1)..max(z2,other.z2)
     )
+    val longShortDiv get() = if(xl > zl) xl.toDouble() / zl.toDouble() else zl.toDouble() / xl.toDouble()
 }

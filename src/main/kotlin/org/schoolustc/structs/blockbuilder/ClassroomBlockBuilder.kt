@@ -22,7 +22,20 @@ class ClassroomBlockBuilder(para: BlockBuilderPara):BlockBuilder(para) {
             ClassroomBuilder.Colors(
                 LIGHT_BLUE_CONCRETE, BLUE_CONCRETE, WHITE_CONCRETE
             ) to 2,
+            ClassroomBuilder.Colors(
+                LIGHT_BLUE_CONCRETE, WHITE_CONCRETE, LIGHT_BLUE_CONCRETE
+            ) to 2,
+            ClassroomBuilder.Colors(
+                WHITE_CONCRETE, WHITE_CONCRETE, BLUE_CONCRETE
+            ) to 2,
+            ClassroomBuilder.Colors(
+                YELLOW_CONCRETE, WHITE_CONCRETE, YELLOW_CONCRETE
+            ) to 2,
+            ClassroomBuilder.Colors(
+                ORANGE_CONCRETE, YELLOW_CONCRETE, RED_CONCRETE
+            ) to 2,
         )
-        return ClassroomBuilder(para.area,para.area.avgY.roundToInt(),rand,rand from colorMap).build(this)
+        val classroom = ClassroomBuilder(para.area.padding(2),para.area.avgY.roundToInt(),rand,rand from colorMap).build(this)
+        return classroom + getLights() + getLeafWalls()
     }
 }

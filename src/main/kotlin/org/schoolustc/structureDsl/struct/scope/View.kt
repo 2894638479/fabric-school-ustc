@@ -37,7 +37,8 @@ abstract class View(val scope: StructBuildScope) {
             null
         }
     }
-    fun block(pos: Point) = scope.world.getBlockState(pos.final()?.blockPos ?: run{ return AIR.state } )
+    private fun blockFinalPos(finalPos:Point) = scope.world.getBlockState(finalPos.blockPos)
+    fun block(pos: Point) = blockFinalPos(pos.final() ?: run{ return AIR.state } )
 
     inline val Block.state get() = defaultBlockState()
 
@@ -55,6 +56,23 @@ abstract class View(val scope: StructBuildScope) {
     @JvmName("fill1")
     infix fun (()-> BlockState).fill(shape: Shape2D) { shape.forEach { if (it in bound) invoke() fill it } }
     infix fun (()-> Block).fill(shape: Shape2D) { shape.forEach { if (it in bound) invoke() fill it } }
+
+    fun fillIf(block:BlockState,pos:Point,predicate:(BlockState)->Boolean){
+        val finalPos = pos.final() ?: return
+        if(predicate(blockFinalPos(finalPos))){
+            block setTo finalPos
+        }
+    }
+    fun fillIf(block:BlockState,area:Area,predicate:(BlockState)->Boolean){
+        area.finalXZ().cut()?.forEach {
+            val finalPos = it.finalY()
+            if(predicate(blockFinalPos(finalPos))){
+                block setTo finalPos
+            }
+        }
+    }
+    fun fillIf(block:Block,pos:Point,predicate:(BlockState)->Boolean) = fillIf(block.state,pos,predicate)
+    fun fillIf(block:Block,area:Area,predicate:(BlockState)->Boolean) = fillIf(block.state,area,predicate)
 
     infix fun Block.fillWall(area:Area) = state fillWall area
     infix fun BlockState.fillWall(area: Area) = {this} fillWall area

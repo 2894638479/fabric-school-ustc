@@ -36,6 +36,7 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource,val colo
         abstract val score:Double
         abstract fun generateByHeight(y:Int):MyStruct
         abstract fun generateTopByHeight(y:Int):MyStruct
+        abstract fun generateBaseByHeight(y:Int):MyStruct
         protected fun Direction2D.revIf(boolean: Boolean) = if(boolean) reverse else this
         val doorConnected get() = doors.mapNotNull { it.connect }
         val childSequence = sequence {
@@ -69,7 +70,8 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource,val colo
             childSequenceWithParent.forEach { yield(it) }
         }
         var layerCount = 0
-        fun generateAllLayer(y:Int) = (0..<layerCount).map{ generateByHeight(y + 5*it) } + generateTopByHeight(y+5*layerCount)
+        fun generateAllLayer(y:Int) = (0..<layerCount).map{ generateByHeight(y + 5*it) } +
+                generateTopByHeight(y+5*layerCount) + generateBaseByHeight(y)
         fun generateAllChildren(y:Int):List<MyStruct>{
             val thisBase = generateAllLayer(y)
             val childBase = doorConnected.map { it.generateAllChildren(y) }.flatten()
@@ -86,22 +88,24 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource,val colo
         fun hasChild(predicate:(Base)->Boolean) = childAndSelf.firstOrNull { predicate(it) } != null
     }
     class RoomBase(val direction:Direction2D,val pos:Point,val rand: RandomSource,depth:Int,val colors:Colors): Base(depth){
-        val rev = false//rand.nextBool(0.5)
-        override val score get() = 15.0
+        val rev = rand.nextBool(0.5)
+        override val score get() = 30.0
         override val area = Area2D(pos.x.range,pos.z.range)
             .expand(direction,7)
             .expand(direction.left.revIf(rev),8)
             .expand(direction.right.revIf(rev),3)
         override val doors = listOf<Door>()
         override fun generateByHeight(y: Int): MyStruct {
-            val config = StructGenConfig.byDirection(area,y,direction.reverse,Classroom)
+            val config = StructGenConfig.byDirection(area,y,direction.reverse,Classroom,rev)
             return Classroom(config,colors.classroomBlock)
         }
 
         override fun generateTopByHeight(y: Int): MyStruct {
-            val config = StructGenConfig.byDirection(area,y,direction.reverse,ClassroomTop)
+            val config = StructGenConfig.byDirection(area,y,direction.reverse,ClassroomTop,rev)
             return ClassroomTop(config,colors.classroomBlock)
         }
+
+        override fun generateBaseByHeight(y: Int) = Base(area,y-1,colors.classroomBlock)
     }
     class HallwayBase(val direction:Direction2D,val pos:Point,val rand:RandomSource,depth:Int,val colors: Colors): Base(depth){
         override val score get() = 2.0
@@ -129,6 +133,7 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource,val colo
             val config = StructGenConfig.byDirection(area,y,direction,HallwayTop)
             return HallwayTop(config,length,colors.hallwayBlock)
         }
+        override fun generateBaseByHeight(y: Int) = Base(area,y-1,colors.hallwayBlock)
     }
     class HallwayCrossingBase(val direction:Direction2D,val pos:Point,val rand:RandomSource,val isBegin:Boolean,depth:Int,val colors: Colors): Base(depth){
         companion object {
@@ -181,6 +186,7 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource,val colo
             val config = StructGenConfig.byDirection(area,y,direction,HallwayCrossingTop)
             return HallwayCrossingTop(config,length, door,colors.hallwayBlock)
         }
+        override fun generateBaseByHeight(y: Int) = Base(area,y-1,colors.hallwayBlock)
     }
     class StairwellBase(val direction:Direction2D,val pos:Point,val rand:RandomSource,depth:Int,val colors: Colors): Base(depth){
         val rev = rand.nextBool(0.5)
@@ -210,6 +216,7 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource,val colo
             val config = StructGenConfig.byDirection(area,y,direction.revIf(rev),StairwellTop)
             return StairwellTop(config,colors.stairwellBlock)
         }
+        override fun generateBaseByHeight(y: Int) = Base(area,y-1,colors.stairwellBlock)
     }
     override fun StructureBuildScope.build(): List<MyStruct> {
         val tries = List(50){
@@ -224,7 +231,7 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource,val colo
             fun Base.calChildren(){
                 if(depth >= 6) return
                 doors.forEach {
-                    val chosen = it.choose() ?: return@forEach
+                    val chosen = it.choose()
                     if(chosen.area !in this@ClassroomBuilder.area) return@forEach
                     if(begin.overlapChild(chosen.area)) return@forEach
                     it.connect = chosen

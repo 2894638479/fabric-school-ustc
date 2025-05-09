@@ -34,6 +34,7 @@ class Hallway(config: StructGenConfig,val length:Int,val block: Block):MyStructW
             wall fill Area(0.range,0..4,zRange)
             wall fill Area(4.range,0..4,zRange)
             floor fill Area(1..3,0.range,zRange)
+            AIR fill Area(1..3,1..4,zRange)
             for(i in 1..length-3 step 4){
                 light fill Point(2,0,i)
             }
