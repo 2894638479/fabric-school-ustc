@@ -32,6 +32,7 @@ inline fun <reified T : Any> CompoundTag.write(key:String,t:T,) = when(T::class)
     Orientation2D::class -> putOrientation2D(key,t as Orientation2D)
     Tree.TreeType::class -> putTreeType(key,t as Tree.TreeType)
     Pt::class -> putPt(key,t as Pt)
+    Point::class -> putPoint(key,t as Point)
     else -> error("not supported type: ${T::class}")
 }
 
@@ -51,6 +52,7 @@ inline fun <reified T : Any> CompoundTag.read(key:String):T = when(T::class){
     Orientation2D::class -> getOrientation2D(key) as T
     Tree.TreeType::class -> getTreeType(key) as T
     Pt::class -> getPt(key) as T
+    Point::class -> getPoint(key) as T
     else -> error("not supported type: ${T::class}")
 }
 
@@ -95,4 +97,6 @@ fun CompoundTag.putTreeType(key:String,type:Tree.TreeType) = putInt(key,type.toI
 fun CompoundTag.getTreeType(key: String) = Tree.TreeType.fromInt(getInt(key))
 fun CompoundTag.putPt(key: String,pt: Pt) = putLongArray(key, longArrayOf(pt.x.toRawBits(),pt.z.toRawBits()))
 fun CompoundTag.getPt(key: String) = getLongArray(key).match { it.size == 2 }.let { Pt(Double.fromBits(it[0]),Double.fromBits(it[1])) }
+fun CompoundTag.putPoint(key:String,point:Point) = putIntArray(key, intArrayOf(point.x,point.y,point.z))
+fun CompoundTag.getPoint(key:String) = getIntArray(key).match { it.size == 3 }.run { Point(get(0),get(1),get(2)) }
 
