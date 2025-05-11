@@ -1,0 +1,11 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "school-ustc:block/card_machine_bottom",
+    "up": "school-ustc:block/card_machine_top",
+    "north": "school-ustc:block/card_machine_front",
+    "south": "school-ustc:block/card_machine_back",
+    "west": "school-ustc:block/card_machine_left",
+    "east": "school-ustc:block/card_machine_right"
+  }
+}

@@ -14,6 +14,10 @@ class CardMachineMenuScreen(
     companion object {
         val backPng = fullId("textures/gui/container/card_machine.png")
     }
+    override fun init() {
+        super.init()
+        titleLabelX = (imageWidth - font.width(title)) / 2
+    }
     override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
         renderBackground(guiGraphics)
         guiGraphics.blit(backPng,leftPos,topPos, 0, 0, imageWidth, imageHeight)
