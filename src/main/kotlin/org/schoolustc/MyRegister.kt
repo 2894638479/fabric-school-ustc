@@ -20,7 +20,7 @@ object MyRegister {
         val itemRegistered = Registry.register(BuiltInRegistries.ITEM, fullId(id),item)
         if (itemTab != null) {
             ItemGroupEvents.modifyEntriesEvent(itemTab).register(ItemGroupEvents.ModifyEntries {
-                it.addAfter(itemRegistered, itemRegistered)
+                it.addAfter(itemRegistered.defaultInstance, itemRegistered.defaultInstance)
             })
         }
         return itemRegistered
