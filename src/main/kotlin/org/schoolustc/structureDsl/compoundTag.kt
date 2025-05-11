@@ -5,7 +5,9 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.Blocks
 import org.schoolustc.calc.Pt
+import org.schoolustc.logger
 import org.schoolustc.structs.Tree
 import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
@@ -74,12 +76,13 @@ fun <T> CompoundTag.getResourceKey(key:String): ResourceKey<T> {
     return ResourceKey.create(registryKey, featureId)
 }
 fun CompoundTag.putBlock(key:String,block:Block) {
-    putString(key,block.descriptionId)
+    putString(key,BuiltInRegistries.BLOCK.getKey(block).toString())
 }
 fun CompoundTag.getBlock(key:String):Block{
     val str = getString(key)
     val location = ResourceLocation.tryParse(str) ?: error("unknown block id $str")
-    return BuiltInRegistries.BLOCK.get(location)
+    val block = BuiltInRegistries.BLOCK.get(location)
+    return block
 }
 fun CompoundTag.putArea2D(key:String,area: Area2D){
     putIntArray(key, intArrayOf(area.x1,area.x2,area.z1,area.z2))
