@@ -4,12 +4,15 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import org.schoolustc.calc.Pt
 import org.schoolustc.logger
 import org.schoolustc.structs.Tree
 import org.schoolustc.structureDsl.struct.scope.StructGenConfig
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 
 /*
@@ -19,7 +22,7 @@ BB
 O
 id
  */
-inline fun <reified T : Any> CompoundTag.write(key:String,t:T,) = when(T::class){
+inline fun <reified T : Any> CompoundTag.write(key:String,t:T) = when(T::class){
     Int::class -> putInt(key,t as Int)
     Byte::class -> putByte(key,t as Byte)
     Short::class -> putShort(key,t as Short)
@@ -27,6 +30,7 @@ inline fun <reified T : Any> CompoundTag.write(key:String,t:T,) = when(T::class)
     Float::class -> putFloat(key,t as Float)
     Double::class -> putDouble(key,t as Double)
     Boolean::class -> putBoolean(key,t as Boolean)
+    String::class -> putString(key,t as String)
     StructGenConfig::class -> putConfig(key,t as StructGenConfig)
     Block::class -> putBlock(key,t as Block)
     Area2D::class -> putArea2D(key,t as Area2D)
@@ -47,6 +51,7 @@ inline fun <reified T : Any> CompoundTag.read(key:String):T = when(T::class){
     Float::class -> getFloat(key) as T
     Double::class -> getDouble(key) as T
     Boolean::class -> getBoolean(key) as T
+    String::class -> getString(key) as T
     StructGenConfig::class -> getConfig(key) as T
     Block::class -> getBlock(key) as T
     Area2D::class -> getArea2D(key) as T
@@ -58,6 +63,10 @@ inline fun <reified T : Any> CompoundTag.read(key:String):T = when(T::class){
     else -> error("not supported type: ${T::class}")
 }
 
+inline fun <reified T:Any> member(name:String) = object : ReadWriteProperty<CompoundTag,T> {
+    override operator fun getValue(thisRef: CompoundTag, property: KProperty<*>):T = thisRef.read<T>(name)
+    override operator fun setValue(thisRef: CompoundTag, property: KProperty<*>, value:T) = thisRef.write<T>(name,value)
+}
 
 fun CompoundTag.putConfig(key:String,config: StructGenConfig) = putIntArray(key,config.toIntArray())
 fun CompoundTag.getConfig(key:String) = StructGenConfig.fromIntArray(getIntArray(key))

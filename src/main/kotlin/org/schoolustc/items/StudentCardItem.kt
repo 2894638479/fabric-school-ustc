@@ -6,19 +6,19 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
-import org.schoolustc.items.MoneyCardItem.Companion.money
 import org.schoolustc.items.MoneyCardItem.Companion.ownerName
+import org.schoolustc.structureDsl.member
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
+var Int.a by object :ReadWriteProperty<Any?,Int>{
+    override fun getValue(thisRef: Any?, property: KProperty<*>) = 0
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: Int) {}
+}
 class StudentCardItem(properties: Properties):Item(properties) {
     companion object {
-        const val GPA = "gpa"
-        const val SCORE = "score"
-        var CompoundTag.gpa
-            get() = getDouble(GPA)
-            set(value) = putDouble(GPA,value)
-        var CompoundTag.score
-            get() = getInt(SCORE)
-            set(value) = putInt(SCORE,value)
+        var CompoundTag.gpa by member<Double>("GPA")
+        var CompoundTag.score by member<Int>("score")
     }
     override fun appendHoverText(stack: ItemStack, level: Level?, list: MutableList<Component>, flag: TooltipFlag) {
         list += Component.literal("所有者：${stack.orCreateTag.ownerName}")
