@@ -6,21 +6,22 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
-import org.schoolustc.structureDsl.member
+import org.schoolustc.structureDsl.itemMember
+import org.schoolustc.structureDsl.tagMember
 
 
 class MoneyCardItem(properties: Properties):Item(properties) {
     companion object {
-        var CompoundTag.money by member<Int>("money")
-        var CompoundTag.ownerName by member<String>("owner_name")
-        var CompoundTag.ownerUUID by member<String>("owner_uuid")
+        var ItemStack.money by itemMember<Int>("money")
+        var ItemStack.ownerName by itemMember<String>("owner_name")
+        var ItemStack.ownerUUID by itemMember<String>("owner_uuid")
     }
     override fun appendHoverText(stack: ItemStack, level: Level?, list: MutableList<Component>, flag: TooltipFlag) {
-        list += Component.literal("所有者：${stack.orCreateTag.ownerName}")
-        list += Component.literal("余额：${stack.orCreateTag.money}")
+        list += Component.literal("所有者：${stack.ownerName}")
+        list += Component.literal("余额：${stack.money}")
     }
 
     override fun getDefaultInstance(): ItemStack {
-        return super.getDefaultInstance().apply { orCreateTag.money = 0 }
+        return super.getDefaultInstance().apply { money = 0 }
     }
 }

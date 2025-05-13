@@ -79,15 +79,15 @@ class CardMachineMenu(val containerId:Int,val inventory:Inventory,val access:Con
                 setMaterial(0,ItemStack.EMPTY)
                 setMaterial(1,ItemStack.EMPTY)
             }
-            resultSlot.set(moneyCard.copy().apply { orCreateTag.money += emerald.count*100 })
+            resultSlot.set(moneyCard.copy().apply { money += emerald.count*100 })
         }
         match(Items.EMERALD to STUDENT_CARD){ emerald, studentCard ->
             onTake = {
                 emerald.count--
             }
             resultSlot.set(MONEY_CARD.defaultInstance.apply {
-                orCreateTag.ownerName = studentCard.orCreateTag.ownerName
-                orCreateTag.ownerUUID = studentCard.orCreateTag.ownerUUID
+                ownerName = studentCard.ownerName
+                ownerUUID = studentCard.ownerUUID
             })
         }
         match(Items.EMERALD to Items.AIR){ emerald, air ->
@@ -95,8 +95,8 @@ class CardMachineMenu(val containerId:Int,val inventory:Inventory,val access:Con
                 emerald.count--
             }
             resultSlot.set(STUDENT_CARD.defaultInstance.apply {
-                orCreateTag.ownerName = inventory.player.name.string
-                orCreateTag.ownerUUID = inventory.player.stringUUID
+                ownerName = inventory.player.name.string
+                ownerUUID = inventory.player.stringUUID
             })
         }
     }

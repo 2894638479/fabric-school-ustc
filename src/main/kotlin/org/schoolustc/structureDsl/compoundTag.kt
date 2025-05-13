@@ -6,9 +6,7 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.Blocks
 import org.schoolustc.calc.Pt
-import org.schoolustc.logger
 import org.schoolustc.structs.Tree
 import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 import kotlin.properties.ReadWriteProperty
@@ -63,9 +61,13 @@ inline fun <reified T : Any> CompoundTag.read(key:String):T = when(T::class){
     else -> error("not supported type: ${T::class}")
 }
 
-inline fun <reified T:Any> member(name:String) = object : ReadWriteProperty<CompoundTag,T> {
+inline fun <reified T:Any> tagMember(name:String) = object : ReadWriteProperty<CompoundTag,T> {
     override operator fun getValue(thisRef: CompoundTag, property: KProperty<*>):T = thisRef.read<T>(name)
     override operator fun setValue(thisRef: CompoundTag, property: KProperty<*>, value:T) = thisRef.write<T>(name,value)
+}
+inline fun <reified T:Any> itemMember(name:String) = object : ReadWriteProperty<ItemStack,T> {
+    override operator fun getValue(thisRef: ItemStack, property: KProperty<*>):T = thisRef.orCreateTag.read<T>(name)
+    override operator fun setValue(thisRef: ItemStack, property: KProperty<*>, value:T) = thisRef.orCreateTag.write<T>(name,value)
 }
 
 fun CompoundTag.putConfig(key:String,config: StructGenConfig) = putIntArray(key,config.toIntArray())

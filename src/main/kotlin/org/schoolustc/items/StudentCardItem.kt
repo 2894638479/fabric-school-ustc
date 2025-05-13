@@ -7,7 +7,8 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import org.schoolustc.items.MoneyCardItem.Companion.ownerName
-import org.schoolustc.structureDsl.member
+import org.schoolustc.structureDsl.itemMember
+import org.schoolustc.structureDsl.tagMember
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -17,19 +18,17 @@ var Int.a by object :ReadWriteProperty<Any?,Int>{
 }
 class StudentCardItem(properties: Properties):Item(properties) {
     companion object {
-        var CompoundTag.gpa by member<Double>("GPA")
-        var CompoundTag.score by member<Int>("score")
+        var ItemStack.gpa by itemMember<Double>("GPA")
+        var ItemStack.score by itemMember<Int>("score")
     }
     override fun appendHoverText(stack: ItemStack, level: Level?, list: MutableList<Component>, flag: TooltipFlag) {
-        list += Component.literal("所有者：${stack.orCreateTag.ownerName}")
-        list += Component.literal("GPA：${stack.orCreateTag.gpa}")
-        list += Component.literal("学分：${stack.orCreateTag.score}")
+        list += Component.literal("所有者：${stack.ownerName}")
+        list += Component.literal("GPA：${stack.gpa}")
+        list += Component.literal("学分：${stack.score}")
     }
 
-    override fun getDefaultInstance(): ItemStack {
-        return super.getDefaultInstance().apply {
-            orCreateTag.gpa = 0.0
-            orCreateTag.score = 0
-        }
+    override fun getDefaultInstance() = super.getDefaultInstance().apply {
+        gpa = 0.0
+        score = 0
     }
 }
