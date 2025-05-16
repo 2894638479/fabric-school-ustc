@@ -40,7 +40,7 @@ val CARD_MACHINE_BLOCK = CARD_MACHINE_PAIR.first
 
 
 val QUESTION_ITEM = MyRegister.registerItem(
-    "question_item",
+    "question",
     QuestionItem(Item.Properties().stacksTo(1)),
     CreativeModeTabs.TOOLS_AND_UTILITIES
 )
