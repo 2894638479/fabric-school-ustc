@@ -8,6 +8,16 @@ import net.minecraft.world.level.block.state.BlockBehaviour
 import org.schoolustc.MyRegister
 import org.schoolustc.structureDsl.read
 
+
+
+fun registerItemAndBlock(){
+    STUDENT_CARD
+    MONEY_CARD
+    CARD_MACHINE_ITEM
+    CARD_MACHINE_BLOCK
+    QUESTION_ITEM
+}
+
 val STUDENT_CARD = MyRegister.registerItem(
     "student_card",
     StudentCardItem(Item.Properties().stacksTo(1)),
@@ -27,4 +37,11 @@ private val CARD_MACHINE_PAIR = MyRegister.registerBlockItem(
 )
 val CARD_MACHINE_ITEM = CARD_MACHINE_PAIR.second
 val CARD_MACHINE_BLOCK = CARD_MACHINE_PAIR.first
+
+
+val QUESTION_ITEM = MyRegister.registerItem(
+    "question_item",
+    QuestionItem(Item.Properties().stacksTo(1)),
+    CreativeModeTabs.TOOLS_AND_UTILITIES
+)
 

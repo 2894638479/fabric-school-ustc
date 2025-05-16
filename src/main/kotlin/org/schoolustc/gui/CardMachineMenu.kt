@@ -13,10 +13,12 @@ import net.minecraft.world.item.Items
 import org.schoolustc.items.CARD_MACHINE_BLOCK
 import org.schoolustc.items.MONEY_CARD
 import org.schoolustc.items.MoneyCardItem
+import org.schoolustc.items.MoneyCardItem.Companion.createDate
 import org.schoolustc.items.MoneyCardItem.Companion.money
 import org.schoolustc.items.MoneyCardItem.Companion.ownerName
 import org.schoolustc.items.MoneyCardItem.Companion.ownerUUID
 import org.schoolustc.items.STUDENT_CARD
+import java.time.ZonedDateTime
 
 class CardMachineMenu(val containerId:Int,val inventory:Inventory,val access:ContainerLevelAccess):AbstractContainerMenu(type,containerId) {
     companion object {
@@ -88,6 +90,7 @@ class CardMachineMenu(val containerId:Int,val inventory:Inventory,val access:Con
             resultSlot.set(MONEY_CARD.defaultInstance.apply {
                 ownerName = studentCard.ownerName
                 ownerUUID = studentCard.ownerUUID
+                createDate = ZonedDateTime.now()
             })
         }
         match(Items.EMERALD to Items.AIR){ emerald, air ->
@@ -97,6 +100,7 @@ class CardMachineMenu(val containerId:Int,val inventory:Inventory,val access:Con
             resultSlot.set(STUDENT_CARD.defaultInstance.apply {
                 ownerName = inventory.player.name.string
                 ownerUUID = inventory.player.stringUUID
+                createDate = ZonedDateTime.now()
             })
         }
     }

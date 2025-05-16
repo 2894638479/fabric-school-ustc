@@ -1,13 +1,12 @@
 package org.schoolustc.items
 
-import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import org.schoolustc.structureDsl.itemMember
-import org.schoolustc.structureDsl.tagMember
+import java.time.ZonedDateTime
 
 
 class MoneyCardItem(properties: Properties):Item(properties) {
@@ -15,6 +14,7 @@ class MoneyCardItem(properties: Properties):Item(properties) {
         var ItemStack.money by itemMember<Int>("money")
         var ItemStack.ownerName by itemMember<String>("owner_name")
         var ItemStack.ownerUUID by itemMember<String>("owner_uuid")
+        var ItemStack.createDate by itemMember<ZonedDateTime>("date")
     }
     override fun appendHoverText(stack: ItemStack, level: Level?, list: MutableList<Component>, flag: TooltipFlag) {
         list += Component.literal("所有者：${stack.ownerName}")
@@ -22,6 +22,9 @@ class MoneyCardItem(properties: Properties):Item(properties) {
     }
 
     override fun getDefaultInstance(): ItemStack {
-        return super.getDefaultInstance().apply { money = 0 }
+        return super.getDefaultInstance().apply {
+            money = 0
+            createDate = ZonedDateTime.now()
+        }
     }
 }

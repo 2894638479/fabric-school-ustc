@@ -1,12 +1,13 @@
 package org.schoolustc
 
 import net.fabricmc.api.ModInitializer
+import net.minecraft.core.registries.Registries
+import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import org.schoolustc.gui.CardMachineMenu
-import org.schoolustc.items.CARD_MACHINE_BLOCK
-import org.schoolustc.items.CARD_MACHINE_ITEM
-import org.schoolustc.items.MONEY_CARD
-import org.schoolustc.items.STUDENT_CARD
+import org.schoolustc.items.QuestionItem
+import org.schoolustc.items.registerItemAndBlock
+import org.schoolustc.questionbank.registerReloadListener
 import org.schoolustc.structs.*
 import org.schoolustc.structs.feature.BrownMushroomGrassFeature
 import org.schoolustc.structureDsl.struct.MyStructInfo
@@ -27,9 +28,8 @@ object SchoolUSTC : ModInitializer {
 		BrownMushroomGrassFeature.register()
 		CardMachineMenu.register()
 		structs.forEach { it.register() }
-		STUDENT_CARD
-		MONEY_CARD
-		CARD_MACHINE_ITEM
-		CARD_MACHINE_BLOCK
+		registerItemAndBlock()
+		QuestionItem.registerPacket()
+		registerReloadListener()
 	}
 }
