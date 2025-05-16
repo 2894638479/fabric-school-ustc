@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.Block
 import org.schoolustc.calc.Pt
+import org.schoolustc.logger
 import org.schoolustc.structs.Tree
 import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 import java.time.*
@@ -33,13 +34,13 @@ inline fun <reified T : Any> CompoundTag.write(key:String,t:T) = when(T::class){
     StructGenConfig::class -> putConfig(key,t as StructGenConfig)
     Block::class -> putBlock(key,t as Block)
     Area2D::class -> putArea2D(key,t as Area2D)
-    Direction2D::class -> putDirection2D(key,t as Direction2D)
     Orientation2D::class -> putOrientation2D(key,t as Orientation2D)
     Tree.TreeType::class -> putTreeType(key,t as Tree.TreeType)
     Pt::class -> putPt(key,t as Pt)
     Point::class -> putPoint(key,t as Point)
     ZonedDateTime::class -> putZonedDateTime(key,t as ZonedDateTime)
-    else -> error("not supported type: ${T::class}")
+    else -> if(T::class.java.isEnum) putEnum(key,t as Enum<*>)
+        else error("not supported type: ${T::class}")
 }
 
 
@@ -55,13 +56,13 @@ inline fun <reified T : Any> CompoundTag.read(key:String):T = when(T::class){
     StructGenConfig::class -> getConfig(key) as T
     Block::class -> getBlock(key) as T
     Area2D::class -> getArea2D(key) as T
-    Direction2D::class -> getDirection2D(key) as T
     Orientation2D::class -> getOrientation2D(key) as T
     Tree.TreeType::class -> getTreeType(key) as T
     Pt::class -> getPt(key) as T
     Point::class -> getPoint(key) as T
     ZonedDateTime::class -> getZonedDateTime(key) as T
-    else -> error("not supported type: ${T::class}")
+    else -> if(T::class.java.isEnum) getEnum<T>(key)
+        else error("not supported type: ${T::class}")
 }
 
 inline fun <reified T:Any> tagMember(name:String) = object : ReadWriteProperty<CompoundTag,T> {
@@ -106,8 +107,6 @@ fun CompoundTag.getArea2D(key:String):Area2D{
     arr.size.match(4)
     return Area2D(arr[0]..arr[1],arr[2]..arr[3])
 }
-fun CompoundTag.putDirection2D(key:String,direction:Direction2D) = putInt(key,direction.toInt())
-fun CompoundTag.getDirection2D(key:String) = Direction2D.fromInt(getInt(key))
 fun CompoundTag.putOrientation2D(key: String,orientation:Orientation2D) = putDouble(key,orientation.value)
 fun CompoundTag.getOrientation2D(key: String) = Orientation2D(getDouble(key))
 fun CompoundTag.putTreeType(key:String,type:Tree.TreeType) = putInt(key,type.toInt())
@@ -119,3 +118,14 @@ fun CompoundTag.getPoint(key:String) = getIntArray(key).match { it.size == 3 }.r
 fun CompoundTag.putZonedDateTime(key: String,time: ZonedDateTime) = putLong(key,time.toEpochSecond())
 fun CompoundTag.getZonedDateTime(key: String) = Instant.ofEpochSecond(getLong(key)).atZone(ZoneId.systemDefault())
 
+
+fun <T:Enum<*>> CompoundTag.putEnum(key:String,enum:T) = putInt(key,enum.ordinal)
+inline fun <reified T> CompoundTag.getEnum(key:String):T {
+    val constants = T::class.java.enumConstants ?: error("${T::class} is not enum")
+    val index = getInt(key)
+    if(index !in constants.indices) {
+        logger.warn("enum ${T::class} out of bound: int $index")
+        return constants[0]
+    }
+    return constants[index]
+}

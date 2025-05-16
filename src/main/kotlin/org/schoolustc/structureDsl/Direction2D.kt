@@ -69,12 +69,6 @@ enum class Direction2D {
         ZPlus -> SOUTH_WALL
         ZMin -> NORTH_WALL
     }
-    fun toInt() = when(this){
-        XPlus -> 0
-        XMin -> 1
-        ZPlus -> 2
-        ZMin -> 3
-    }
     fun toDirection() = when(this){
         XPlus -> org.schoolustc.structureDsl.Direction.XPlus
         XMin -> org.schoolustc.structureDsl.Direction.XMin
@@ -90,19 +84,6 @@ enum class Direction2D {
         }
     )
     companion object {
-        fun fromInt(int: Int) = when(int){
-            0 -> XPlus
-            1 -> XMin
-            2 -> ZPlus
-            3 -> ZMin
-            else -> error("unknown Direction2D int: $int")
-        }
-        fun fromBool(isX:Boolean,isPlus:Boolean):Direction2D{
-            var result = 0
-            if(!isX) result += 2
-            if(!isPlus) result += 1
-            return fromInt(result)
-        }
         fun fromMcDirection(direction: Direction) = when(direction){
             Direction.EAST -> XPlus
             Direction.WEST -> XMin

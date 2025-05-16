@@ -1,7 +1,5 @@
 package org.schoolustc.items
 
-import net.fabricmc.api.EnvType
-import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.locale.Language
 import net.minecraft.network.chat.Component
@@ -13,13 +11,13 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
-import org.schoolustc.items.QuestionItem.Companion.status
 import org.schoolustc.packet.OPEN_QUESTION_GUI
 import org.schoolustc.packet.QUESTION_CHOOSE
 import org.schoolustc.packet.packetBuf
 import org.schoolustc.structureDsl.itemMember
 
 class QuestionItem(properties: Properties): Item(properties) {
+    enum class Status{NO_ANSWER,CORRECT,WRONG}
     companion object {
         var ItemStack.subject by itemMember<String>("subject")
         var ItemStack.question by itemMember<String>("question")
@@ -28,11 +26,11 @@ class QuestionItem(properties: Properties): Item(properties) {
             get() = choicesStr.split('\n')
             set(value) { choicesStr = value.joinToString("\n") }
         var ItemStack.chosen by itemMember<Int>("chosen")
-        var ItemStack.status by itemMember<Int>("status")
+        var ItemStack.status by itemMember<Status>("status")
         val ItemStack.predicate get() = when(status){
-            1 -> 0.5f
-            2 -> 1f
-            else -> 0f
+            Status.NO_ANSWER -> 0f
+            Status.CORRECT -> 0.5f
+            Status.WRONG -> 1f
         }
         val ItemStack.subjectTranslated get() = subject.let {
             Language.getInstance().getOrDefault("question_bank.subject.$it",it)
@@ -54,9 +52,9 @@ class QuestionItem(properties: Properties): Item(properties) {
         list += Component.literal("科目：${stack.subjectTranslated}")
         list += Component.literal("选项数：${stack.choices.size}")
         list += Component.literal(when(stack.status){
-            1 -> "作答正确"
-            2 -> "作答错误"
-            else -> "未作答"
+            Status.NO_ANSWER -> "未作答"
+            Status.CORRECT -> "作答正确"
+            Status.WRONG -> "作答错误"
         })
     }
 
@@ -68,7 +66,7 @@ class QuestionItem(properties: Properties): Item(properties) {
             )
             chosen = -1
             subject = "physics"
-            status = 0
+            status = Status.NO_ANSWER
         }
     }
 
