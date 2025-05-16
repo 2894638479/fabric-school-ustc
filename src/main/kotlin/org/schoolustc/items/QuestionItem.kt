@@ -17,7 +17,7 @@ import org.schoolustc.packet.packetBuf
 import org.schoolustc.structureDsl.itemMember
 
 class QuestionItem(properties: Properties): Item(properties) {
-    enum class Status{NO_ANSWER,CORRECT,WRONG}
+    enum class Status{NOT_CHOSEN,CORRECT,WRONG,NOT_CHECKED}
     companion object {
         var ItemStack.subject by itemMember<String>("subject")
         var ItemStack.question by itemMember<String>("question")
@@ -28,9 +28,10 @@ class QuestionItem(properties: Properties): Item(properties) {
         var ItemStack.chosen by itemMember<Int>("chosen")
         var ItemStack.status by itemMember<Status>("status")
         val ItemStack.predicate get() = when(status){
-            Status.NO_ANSWER -> 0f
+            Status.NOT_CHOSEN -> 0f
             Status.CORRECT -> 0.5f
             Status.WRONG -> 1f
+            Status.NOT_CHECKED -> 0f
         }
         val ItemStack.subjectTranslated get() = subject.let {
             Language.getInstance().getOrDefault("question_bank.subject.$it",it)
@@ -52,9 +53,10 @@ class QuestionItem(properties: Properties): Item(properties) {
         list += Component.literal("科目：${stack.subjectTranslated}")
         list += Component.literal("选项数：${stack.choices.size}")
         list += Component.literal(when(stack.status){
-            Status.NO_ANSWER -> "未作答"
+            Status.NOT_CHOSEN -> "未作答"
             Status.CORRECT -> "作答正确"
             Status.WRONG -> "作答错误"
+            Status.NOT_CHECKED -> "未批改"
         })
     }
 
@@ -66,7 +68,7 @@ class QuestionItem(properties: Properties): Item(properties) {
             )
             chosen = -1
             subject = "physics"
-            status = Status.NO_ANSWER
+            status = Status.NOT_CHOSEN
         }
     }
 

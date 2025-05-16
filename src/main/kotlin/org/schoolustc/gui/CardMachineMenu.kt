@@ -12,7 +12,6 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import org.schoolustc.items.CARD_MACHINE_BLOCK
 import org.schoolustc.items.MONEY_CARD
-import org.schoolustc.items.MoneyCardItem
 import org.schoolustc.items.MoneyCardItem.Companion.createDate
 import org.schoolustc.items.MoneyCardItem.Companion.money
 import org.schoolustc.items.MoneyCardItem.Companion.ownerName
