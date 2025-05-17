@@ -1,0 +1,11 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "school-ustc:block/teaching_table_bottom",
+    "up": "school-ustc:block/teaching_table_top",
+    "north": "school-ustc:block/teaching_table_front",
+    "south": "school-ustc:block/teaching_table_back",
+    "west": "school-ustc:block/teaching_table_left",
+    "east": "school-ustc:block/teaching_table_right"
+  }
+}

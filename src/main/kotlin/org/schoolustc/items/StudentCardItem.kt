@@ -1,6 +1,5 @@
 package org.schoolustc.items
 
-import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
@@ -8,14 +7,8 @@ import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import org.schoolustc.items.MoneyCardItem.Companion.ownerName
 import org.schoolustc.structureDsl.itemMember
-import org.schoolustc.structureDsl.tagMember
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
-var Int.a by object :ReadWriteProperty<Any?,Int>{
-    override fun getValue(thisRef: Any?, property: KProperty<*>) = 0
-    override fun setValue(thisRef: Any?, property: KProperty<*>, value: Int) {}
-}
+
 class StudentCardItem(properties: Properties):Item(properties) {
     companion object {
         var ItemStack.gpa by itemMember<Double>("GPA")

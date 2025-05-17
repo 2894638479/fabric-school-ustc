@@ -27,6 +27,7 @@ class QuestionItem(properties: Properties): Item(properties) {
             set(value) { choicesStr = value.joinToString("\n") }
         var ItemStack.chosen by itemMember<Int>("chosen")
         var ItemStack.status by itemMember<Status>("status")
+        var ItemStack.difficulty by itemMember<Int>("difficulty")
         val ItemStack.predicate get() = when(status){
             Status.NOT_CHOSEN -> 0f
             Status.CORRECT -> 0.5f
@@ -53,6 +54,7 @@ class QuestionItem(properties: Properties): Item(properties) {
     override fun appendHoverText(stack: ItemStack, level: Level?, list: MutableList<Component>, flag: TooltipFlag) {
         list += Component.literal("科目：${stack.subjectTranslated}")
         list += Component.literal("选项数：${stack.choices.size}")
+        list += Component.literal("难度：${stack.difficulty}")
         list += Component.literal(when(stack.status){
             Status.NOT_CHOSEN -> "未作答"
             Status.CORRECT -> "作答正确"
@@ -68,8 +70,9 @@ class QuestionItem(properties: Properties): Item(properties) {
                 "aaa","bbb","ccc","ddd"
             )
             chosen = -1
-            subject = "physics"
+            subject = "null"
             status = Status.NOT_CHOSEN
+            difficulty = 0
         }
     }
 

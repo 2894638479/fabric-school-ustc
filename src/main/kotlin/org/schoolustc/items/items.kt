@@ -16,6 +16,8 @@ fun registerItemAndBlock(){
     CARD_MACHINE_ITEM
     CARD_MACHINE_BLOCK
     QUESTION_ITEM
+    TEACHING_TABLE_ITEM
+    TEACHING_TABLE_BLOCK
 }
 
 val STUDENT_CARD = MyRegister.registerItem(
@@ -37,6 +39,15 @@ private val CARD_MACHINE_PAIR = MyRegister.registerBlockItem(
 )
 val CARD_MACHINE_ITEM = CARD_MACHINE_PAIR.second
 val CARD_MACHINE_BLOCK = CARD_MACHINE_PAIR.first
+
+private val TEACHING_TABLE_PAIR = MyRegister.registerBlockItem(
+    "teaching_table",
+    TeachingTableBlock(BlockBehaviour.Properties.of()),
+    CreativeModeTabs.FUNCTIONAL_BLOCKS
+)
+val TEACHING_TABLE_ITEM = TEACHING_TABLE_PAIR.second
+val TEACHING_TABLE_BLOCK = TEACHING_TABLE_PAIR.first
+
 
 
 val QUESTION_ITEM = MyRegister.registerItem(

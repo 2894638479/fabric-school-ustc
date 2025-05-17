@@ -10,13 +10,17 @@ import net.minecraft.server.packs.resources.ResourceManager
 import org.schoolustc.fullId
 import org.schoolustc.logger
 
-var questionBanks by atomic(hashMapOf<String,QuestionBank>())
+var questionBankMap by atomic(hashMapOf<String,QuestionBank>())
     private set
-
+var questionBankList = listOf<QuestionBank>()
+    private set
+var questionBankClientList = listOf<QuestionBank.QuestionBankClient>()
 private fun setBanks(list:List<QuestionBank>){
     val hashMap = HashMap<String,QuestionBank>(list.size * 3 / 2 + 1)
     list.forEach { hashMap[it.subject] = it }
-    questionBanks = hashMap
+    questionBankList = list
+    questionBankClientList = list.map { it.toClient() }
+    questionBankMap = hashMap
 }
 
 fun registerReloadListener(){
