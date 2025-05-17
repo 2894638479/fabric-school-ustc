@@ -44,6 +44,7 @@ class QuestionItem(properties: Properties): Item(properties) {
                     val item = serverPlayer.getItemInHand(hand)
                     if(item.`is`(QUESTION_ITEM)){
                         item.chosen = chosen
+                        item.status = Status.NOT_CHECKED
                     }
                 }
             }
@@ -83,6 +84,7 @@ class QuestionItem(properties: Properties): Item(properties) {
                 player as ServerPlayer,
                 OPEN_QUESTION_GUI,
                 packetBuf().writeEnum(interactionHand).writeNbt(itemStack.orCreateTag)
+                    .writeByteArray(itemStack.subjectTranslated.encodeToByteArray())
             )
         }
         return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide())

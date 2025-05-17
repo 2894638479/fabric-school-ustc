@@ -4,5 +4,6 @@
   "item.school-ustc.question": "Question",
   "block.school-ustc.card_machine": "Card Machine",
   "container.card_making": "Card Making",
-  "text.question": "question"
+  "text.question": "Question",
+  "text.subject": "Subject"
 }
