@@ -52,7 +52,15 @@ class CardMachineMenu(val containerId:Int,val inventory:Inventory,val access:Con
         }
     }
     override fun quickMoveStack(player: Player, i: Int): ItemStack {
-        return ItemStack.EMPTY
+        val slot = slots[i]
+        val stack = slot.item
+        val copy = stack.copy()
+        if(i == 0) if(moveItemStackTo(stack,2,38,true)) onTake() else return ItemStack.EMPTY
+        if(i == 1 || i == 2) if(!moveItemStackTo(stack,2,38,true)) return ItemStack.EMPTY
+        if(i > 2) if(!moveItemStackTo(stack,1,3,false)) return ItemStack.EMPTY
+        slot.setChanged()
+        slotsChanged(slot.container)
+        return copy
     }
 
     fun match(slot:Pair<ItemStack,ItemStack>,item:Pair<Item,Item>,task:(ItemStack,ItemStack)->Unit) {
@@ -102,6 +110,7 @@ class CardMachineMenu(val containerId:Int,val inventory:Inventory,val access:Con
                 createDate = ZonedDateTime.now()
             })
         }
+        super.slotsChanged(container)
     }
     override fun stillValid(player: Player): Boolean {
         return stillValid(this.access, player, CARD_MACHINE_BLOCK)
