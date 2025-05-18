@@ -2,9 +2,10 @@
   "item.school-ustc.money_card": "Money Card",
   "item.school-ustc.student_card": "Student Card",
   "item.school-ustc.question": "Question",
+  "item.school-ustc.get_gpa_potion.effect.water": "Get GPA Potion",
   "block.school-ustc.card_machine": "Card Machine",
   "block.school-ustc.teaching_table": "Teaching Table",
   "block.school-ustc.grading_machine": "Grading Machine",
   "text.question": "Question",
-  "text.subject": "Subject"
+  "text.subject": "Subject",
 }

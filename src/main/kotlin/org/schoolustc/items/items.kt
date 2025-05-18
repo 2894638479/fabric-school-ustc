@@ -20,6 +20,7 @@ fun registerItemAndBlock(){
     TEACHING_TABLE_BLOCK
     GRADING_MACHINE_BLOCK
     GRADING_MACHINE_ITEM
+    GET_GPA_POTION_ITEM
 }
 
 val STUDENT_CARD = MyRegister.registerItem(
@@ -61,5 +62,10 @@ val QUESTION_ITEM = MyRegister.registerItem(
     "question",
     QuestionItem(Item.Properties().stacksTo(1)),
     CreativeModeTabs.TOOLS_AND_UTILITIES
+)
+val GET_GPA_POTION_ITEM = MyRegister.registerItem(
+    "get_gpa_potion",
+    GetGPAPotionItem(Item.Properties()),
+    CreativeModeTabs.COMBAT
 )
 
