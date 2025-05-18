@@ -1,7 +1,14 @@
 package org.schoolustc.gui
 
+import net.fabricmc.fabric.api.networking.v1.PacketSender
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.FriendlyByteBuf
+import net.minecraft.server.MinecraftServer
+import net.minecraft.server.level.ServerPlayer
+import net.minecraft.server.network.ServerGamePacketListenerImpl
+import net.minecraft.world.Container
 import net.minecraft.world.SimpleContainer
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
@@ -11,7 +18,19 @@ import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
+import org.schoolustc.items.QUESTION_ITEM
+import org.schoolustc.items.QuestionItem
+import org.schoolustc.items.QuestionItem.Companion.choices
+import org.schoolustc.items.QuestionItem.Companion.chosen
+import org.schoolustc.items.QuestionItem.Companion.difficulty
+import org.schoolustc.items.QuestionItem.Companion.question
+import org.schoolustc.items.QuestionItem.Companion.status
+import org.schoolustc.items.QuestionItem.Companion.subject
+import org.schoolustc.items.STUDENT_CARD
+import org.schoolustc.items.StudentCardItem.Companion.subjectInfo
 import org.schoolustc.items.TEACHING_TABLE_BLOCK
+import org.schoolustc.packet.TEACHING_TABLE_START_LEARN
+import org.schoolustc.questionbank.questionBankMap
 
 class TeachingTableMenu(
     val containerId:Int,
@@ -28,9 +47,38 @@ class TeachingTableMenu(
             )
         )
         fun register(){ type }
+        fun registerPacket(){
+            ServerPlayNetworking.registerGlobalReceiver(TEACHING_TABLE_START_LEARN){ minecraftServer, serverPlayer, serverGamePacketListenerImpl, friendlyByteBuf, packetSender ->
+                val id = friendlyByteBuf.readVarInt()
+                val subject = String(friendlyByteBuf.readByteArray())
+                minecraftServer.execute {
+                    if(id == serverPlayer.containerMenu.containerId){
+                        val menu = (serverPlayer.containerMenu as? TeachingTableMenu) ?: return@execute
+                        val item = menu.slots[0].item
+                        if(item.`is`(STUDENT_CARD)){
+                            item.subjectInfo = item.subjectInfo.startLearn(subject)
+                            val questionItems = questionBankMap[subject] ?: return@execute
+                            questionItems.questionList.forEach {
+                                val questionItem = ItemStack(QUESTION_ITEM).apply {
+                                    question = it.question
+                                    difficulty = it.difficulty
+                                    choices = it.choices
+                                    this.subject = subject
+                                    chosen = -1
+                                    status = QuestionItem.Status.NOT_CHOSEN
+                                }
+                                if(!serverPlayer.inventory.add(questionItem)){
+                                    serverPlayer.drop(questionItem,false)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    private val studentCardContainer = SimpleContainer(1)
+    val studentCardContainer = SimpleContainer(1)
     init {
         addSlot(Slot(studentCardContainer,0,25,35))
         for (j in 0..2) {
@@ -52,5 +100,10 @@ class TeachingTableMenu(
 
     override fun removed(player: Player) {
         clearContainer(player,studentCardContainer)
+    }
+
+    override fun slotsChanged(container: Container) {
+        super.slotsChanged(container)
+        sendAllDataToRemote()
     }
 }

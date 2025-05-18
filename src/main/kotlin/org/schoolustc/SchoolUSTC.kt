@@ -30,6 +30,7 @@ object SchoolUSTC : ModInitializer {
 		BrownMushroomGrassFeature.register()
 		CardMachineMenu.register()
 		TeachingTableMenu.register()
+		TeachingTableMenu.registerPacket()
 		structs.forEach { it.register() }
 		registerItemAndBlock()
 		QuestionItem.registerPacket()

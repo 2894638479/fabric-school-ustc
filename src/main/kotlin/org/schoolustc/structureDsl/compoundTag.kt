@@ -1,5 +1,6 @@
 package org.schoolustc.structureDsl
 
+import kotlinx.serialization.json.Json
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.resources.ResourceKey
@@ -7,6 +8,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.Block
 import org.schoolustc.calc.Pt
+import org.schoolustc.items.StudentCardItem
 import org.schoolustc.logger
 import org.schoolustc.structs.Tree
 import org.schoolustc.structureDsl.struct.scope.StructGenConfig
@@ -39,6 +41,7 @@ inline fun <reified T : Any> CompoundTag.write(key:String,t:T) = when(T::class){
     Pt::class -> putPt(key,t as Pt)
     Point::class -> putPoint(key,t as Point)
     ZonedDateTime::class -> putZonedDateTime(key,t as ZonedDateTime)
+    StudentCardItem.SubjectInfo::class -> putSerializable(key,t as StudentCardItem.SubjectInfo)
     else -> if(T::class.java.isEnum) putEnum(key,t as Enum<*>)
         else error("not supported type: ${T::class}")
 }
@@ -61,6 +64,7 @@ inline fun <reified T : Any> CompoundTag.read(key:String):T = when(T::class){
     Pt::class -> getPt(key) as T
     Point::class -> getPoint(key) as T
     ZonedDateTime::class -> getZonedDateTime(key) as T
+    StudentCardItem.SubjectInfo::class -> getSerializable(key) ?: StudentCardItem.SubjectInfo(listOf()) as T
     else -> if(T::class.java.isEnum) getEnum<T>(key)
         else error("not supported type: ${T::class}")
 }
@@ -128,4 +132,12 @@ inline fun <reified T> CompoundTag.getEnum(key:String):T {
         return constants[0]
     }
     return constants[index]
+}
+
+inline fun <reified T:Any> CompoundTag.putSerializable(key:String,t:T) = putString(key, Json.encodeToString(t))
+inline fun <reified T:Any> CompoundTag.getSerializable(key: String) = try {
+    Json.decodeFromString<T>(getString(key))
+} catch (_:Exception){
+    logger.warn("compound json decode error, json str:${getString(key)}")
+    null
 }

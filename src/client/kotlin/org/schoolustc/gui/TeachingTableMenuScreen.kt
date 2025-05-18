@@ -1,14 +1,25 @@
 package org.schoolustc.gui
 
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.gui.screens.inventory.StonecutterScreen
 import net.minecraft.locale.Language
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.FormattedText
+import net.minecraft.util.FormattedCharSequence
 import net.minecraft.world.entity.player.Inventory
+import net.minecraft.world.inventory.AbstractContainerMenu
+import net.minecraft.world.inventory.ContainerListener
+import net.minecraft.world.item.ItemStack
 import org.schoolustc.fullId
+import org.schoolustc.items.STUDENT_CARD
+import org.schoolustc.items.StudentCardItem
+import org.schoolustc.items.StudentCardItem.Companion.subjectInfo
+import org.schoolustc.packet.TEACHING_TABLE_START_LEARN
 import org.schoolustc.packet.cachedQuestionBank
+import org.schoolustc.packet.packetBuf
 import org.schoolustc.questionbank.QuestionBank
 
 class TeachingTableMenuScreen(
@@ -33,10 +44,57 @@ class TeachingTableMenuScreen(
     private var subjectButtons:List<Button> = listOf()
         set(value) { field.forEach { removeWidget(it) };field = value;field.forEach { addRenderableWidget(it) } }
     private fun subjectString(name:String) = Language.getInstance().getOrDefault("question_bank.subject.$name",name)
+    private var infoStr:List<FormattedCharSequence> = listOf()
+    private var subjectInfoItem:StudentCardItem.SubjectInfo.SubjectInfoItem? = null
+    private fun updateSubjectInfoItem(){
+        fun ret() = run {
+            infoStr = listOf()
+            subjectInfoItem = null
+        }
+        val info = subjectInfo ?: return ret()
+        val subject = curBank?.subject ?: return ret()
+        val infoItem = info[subject]
+        val stageStr = when(infoItem.stage){
+            StudentCardItem.SubjectLearnStage.NONE -> "未学习"
+            StudentCardItem.SubjectLearnStage.LEARNING -> "学习中"
+            StudentCardItem.SubjectLearnStage.FINISHED -> "已结课"
+        }
+        var str = "科目：${subjectString(subject)}\n" +
+                "状态：$stageStr"
+        if(infoItem.stage != StudentCardItem.SubjectLearnStage.NONE){
+            str += "\n学分：${infoItem.score}\n" +
+                    "成绩：${infoItem.grade}\n" +
+                    "已做题数：${infoItem.questions}"
+        }
+        infoStr = font.split(FormattedText.of(str),110)
+        subjectInfoItem = infoItem
+    }
+    private var learnButton:Button? = null
+    private fun updateLearnButton(){
+        learnButton?.let { removeWidget(it) }
+        val item = subjectInfoItem ?: return
+        when(item.stage){
+            StudentCardItem.SubjectLearnStage.NONE -> Button.builder(Component.literal("学习")){ startLearn(item.name) }
+            StudentCardItem.SubjectLearnStage.LEARNING -> if(item.score + 0.00001 > 1)
+                Button.builder(Component.literal("结课")){  } else null
+            StudentCardItem.SubjectLearnStage.FINISHED -> null
+        }?.let {
+            val button = it.bounds(leftPos + 10,topPos + 55,30 + 16,15).build()
+            learnButton = button
+            addRenderableWidget(button)
+        }
+    }
+    private var subjectInfo:StudentCardItem.SubjectInfo? = null
+        set(value) {
+            field = value
+            updateSubjectInfoItem()
+            updateLearnButton()
+        }
     private var curBank:QuestionBank.QuestionBankClient? = null
         set(value) {
             field = value
-
+            updateSubjectInfoItem()
+            updateLearnButton()
         }
     private var curPage = 0
         set(value) {
@@ -69,8 +127,18 @@ class TeachingTableMenuScreen(
         leftButton = Button.builder(Component.literal("<")){curPage--}.bounds(minX + 8,topPos + 144,30,16).build()
         rightButton = Button.builder(Component.literal(">")){curPage++}.bounds(minX + 78,topPos + 144,30,16).build()
         curPage = curPage
+
+        menu.studentCardContainer.addListener{
+            val itemStack = it.getItem(0)
+            subjectInfo = if(itemStack.`is`(STUDENT_CARD)) {
+                itemStack.subjectInfo
+            } else null
+        }
     }
     private fun GuiGraphics.renderText(text:String,x:Int,y:Int) = drawString(font,text,x,y,0,false)
+    private fun GuiGraphics.renderText(text: List<FormattedCharSequence>,x:Int,y:Int) = text.forEachIndexed { i, text ->
+        drawString(font, text, x, y + i * font.lineHeight, 0, false)
+    }
     override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
         renderBackground(guiGraphics)
         guiGraphics.blit(backPng1,minX,topPos, 0, 0, pngWidth1, pngHeight)
@@ -94,5 +162,12 @@ class TeachingTableMenuScreen(
         val width = font.width(text)
         guiGraphics.renderText(text,minX + 58 - width/2,topPos + 150)
         renderTooltip(guiGraphics, mouseX, mouseY)
+        guiGraphics.renderText(infoStr,leftPos + 50,topPos + 25)
+    }
+    private fun startLearn(subjectName:String){
+        val info = subjectInfo ?: return
+        subjectInfo = info.startLearn(subjectName)
+        ClientPlayNetworking.send(TEACHING_TABLE_START_LEARN, packetBuf()
+            .writeVarInt(menu.containerId).writeByteArray(subjectName.encodeToByteArray()))
     }
 }
