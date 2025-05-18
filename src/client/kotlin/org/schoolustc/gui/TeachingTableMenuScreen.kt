@@ -13,6 +13,7 @@ import org.schoolustc.fullId
 import org.schoolustc.items.STUDENT_CARD
 import org.schoolustc.items.StudentCardItem
 import org.schoolustc.items.StudentCardItem.Companion.subjectInfo
+import org.schoolustc.packet.TEACHING_TABLE_FINISH_LEARN
 import org.schoolustc.packet.TEACHING_TABLE_START_LEARN
 import org.schoolustc.packet.cachedQuestionBank
 import org.schoolustc.packet.packetBuf
@@ -58,9 +59,12 @@ class TeachingTableMenuScreen(
         var str = "科目：${subjectString(subject)}\n" +
                 "状态：$stageStr"
         if(infoItem.stage != StudentCardItem.SubjectLearnStage.NONE){
-            str += "\n学分：${infoItem.score}\n" +
-                    "成绩：${infoItem.grade}\n" +
+            str += "\n学分：${String.format("%.3f",infoItem.score)}\n" +
+                    "成绩：${String.format("%.3f",infoItem.grade)}\n" +
                     "已做题数：${infoItem.questions}"
+        }
+        if(infoItem.stage == StudentCardItem.SubjectLearnStage.FINISHED){
+            str += "\nGPA：${String.format("%.3f",infoItem.gpa)}"
         }
         infoStr = font.split(FormattedText.of(str),110)
         subjectInfoItem = infoItem
@@ -72,7 +76,7 @@ class TeachingTableMenuScreen(
         when(item.stage){
             StudentCardItem.SubjectLearnStage.NONE -> Button.builder(Component.literal("学习")){ startLearn(item.name) }
             StudentCardItem.SubjectLearnStage.LEARNING -> if(item.score + 0.00001 > 1)
-                Button.builder(Component.literal("结课")){  } else null
+                Button.builder(Component.literal("结课")){ finishLearn(item.name) } else null
             StudentCardItem.SubjectLearnStage.FINISHED -> null
         }?.let {
             val button = it.bounds(leftPos + 10,topPos + 55,30 + 16,15).build()
@@ -164,6 +168,12 @@ class TeachingTableMenuScreen(
         val info = subjectInfo ?: return
         subjectInfo = info.startLearn(subjectName)
         ClientPlayNetworking.send(TEACHING_TABLE_START_LEARN, packetBuf()
+            .writeVarInt(menu.containerId).writeByteArray(subjectName.encodeToByteArray()))
+    }
+    private fun finishLearn(subjectName: String){
+        val info = subjectInfo ?: return
+        subjectInfo = info.startLearn(subjectName)
+        ClientPlayNetworking.send(TEACHING_TABLE_FINISH_LEARN, packetBuf()
             .writeVarInt(menu.containerId).writeByteArray(subjectName.encodeToByteArray()))
     }
 }

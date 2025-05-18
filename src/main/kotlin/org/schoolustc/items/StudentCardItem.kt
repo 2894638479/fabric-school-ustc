@@ -45,6 +45,14 @@ class StudentCardItem(properties: Properties):Item(properties) {
                 )
             }
             val gpa get() = gpaMap.firstOrNull { grade + 0.0001 > it.first }?.second ?: 0.0
+            fun grade(score:Double,correct:Boolean):SubjectInfoItem{
+                if(score == 0.0) return this
+                val total = this.score * grade + if(correct) score * 100 else 0.0
+                val totalScore = score + this.score
+                val finalGrade = total / totalScore
+                return SubjectInfoItem(name, totalScore, finalGrade, questions + 1, stage)
+            }
+            fun finishLearn() = SubjectInfoItem(name, score, grade, questions, SubjectLearnStage.FINISHED)
         }
         val score:Double get() = subjects.sumOf { it.score }
         val gpa:Double? get() = if(score == 0.0) null else subjects.sumOf { it.gpa * it.score } / score
@@ -64,14 +72,31 @@ class StudentCardItem(properties: Properties):Item(properties) {
                 }
             )
         }
+        fun finishLearn(name: String):SubjectInfo{
+            return SubjectInfo(
+                subjects.map {
+                    if(it.name == name) it.finishLearn() else it
+                }
+            )
+        }
         operator fun get(subjectName:String) = subjects.firstOrNull{ it.name == subjectName } ?: SubjectInfoItem(subjectName)
+        fun grading(name:String,difficulty:Int,correct:Boolean):SubjectInfo{
+            val item = subjects.firstOrNull { it.name == name }
+            val score = getScoreFromDifficulty(difficulty)
+            return if(item == null) SubjectInfo(subjects + SubjectInfoItem(name).grade(score, correct))
+            else SubjectInfo(subjects.map {
+                if(it == item) it.grade(score, correct)
+                else it
+            })
+        }
+        fun getScoreFromDifficulty(difficulty: Int) = difficulty.toDouble() / 20
     }
     override fun appendHoverText(stack: ItemStack, level: Level?, list: MutableList<Component>, flag: TooltipFlag) {
         list += Component.literal("所有者：${stack.ownerName}")
         val subjectInfo = stack.subjectInfo
-        list += Component.literal("学分：${subjectInfo.score}")
-        list += Component.literal("GPA：${subjectInfo.gpa}")
-        list += Component.literal("平均成绩：${subjectInfo.grade}")
+        list += Component.literal("学分：${String.format("%.3f",subjectInfo.score)}")
+        list += Component.literal("GPA：${String.format("%.3f",subjectInfo.gpa)}")
+        list += Component.literal("平均成绩：${String.format("%.3f",subjectInfo.grade)}")
         list += Component.literal("已学科目：${subjectInfo.subjectCount}")
     }
 

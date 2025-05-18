@@ -1,8 +1,13 @@
 package org.schoolustc.gui
 
+import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.FriendlyByteBuf
+import net.minecraft.server.MinecraftServer
+import net.minecraft.server.level.ServerPlayer
+import net.minecraft.server.network.ServerGamePacketListenerImpl
 import net.minecraft.world.Container
 import net.minecraft.world.SimpleContainer
 import net.minecraft.world.entity.player.Inventory
@@ -24,6 +29,7 @@ import org.schoolustc.items.QuestionItem.Companion.subject
 import org.schoolustc.items.STUDENT_CARD
 import org.schoolustc.items.StudentCardItem.Companion.subjectInfo
 import org.schoolustc.items.TEACHING_TABLE_BLOCK
+import org.schoolustc.packet.TEACHING_TABLE_FINISH_LEARN
 import org.schoolustc.packet.TEACHING_TABLE_START_LEARN
 import org.schoolustc.questionbank.questionBankMap
 
@@ -47,7 +53,7 @@ class TeachingTableMenu(
                 val id = friendlyByteBuf.readVarInt()
                 val subject = String(friendlyByteBuf.readByteArray())
                 minecraftServer.execute {
-                    if(id == serverPlayer.containerMenu.containerId){
+                    if(id == serverPlayer.containerMenu?.containerId){
                         val menu = (serverPlayer.containerMenu as? TeachingTableMenu) ?: return@execute
                         val item = menu.slots[0].item
                         if(item.`is`(STUDENT_CARD)){
@@ -66,6 +72,19 @@ class TeachingTableMenu(
                                     serverPlayer.drop(questionItem,false)
                                 }
                             }
+                        }
+                    }
+                }
+            }
+            ServerPlayNetworking.registerGlobalReceiver(TEACHING_TABLE_FINISH_LEARN){ minecraftServer: MinecraftServer, serverPlayer: ServerPlayer, serverGamePacketListenerImpl: ServerGamePacketListenerImpl, friendlyByteBuf: FriendlyByteBuf, packetSender: PacketSender ->
+                val id = friendlyByteBuf.readVarInt()
+                val subject = String(friendlyByteBuf.readByteArray())
+                minecraftServer.execute {
+                    if(id == serverPlayer.containerMenu?.containerId) {
+                        val menu = (serverPlayer.containerMenu as? TeachingTableMenu) ?: return@execute
+                        val item = menu.slots[0].item
+                        if(item.`is`(STUDENT_CARD)){
+                            item.subjectInfo = item.subjectInfo.finishLearn(subject)
                         }
                     }
                 }

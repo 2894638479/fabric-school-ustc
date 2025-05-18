@@ -7,10 +7,10 @@ class QuestionBank(
     val subject:String,
     val questionList:List<Question>,
 ) {
-    val questionMap = HashMap<String,Question>(questionList.size * 3 / 2 + 1)
-    init {
-        questionList.forEach { this.questionMap[it.question] = it }
-    }
+//    val questionMap = HashMap<String,Question>(questionList.size * 3 / 2 + 1)
+//    init {
+//        questionList.forEach { this.questionMap[it.question] = it }
+//    }
 
     @Serializable
     data class Question(
@@ -24,10 +24,10 @@ class QuestionBank(
         val subject: String,
         val questionList: List<QuestionClient>
     ){
-        @Transient val questionMap = HashMap<String,QuestionClient>(questionList.size * 3 / 2 + 1)
-        init {
-            questionList.forEach { this.questionMap[it.question] = it }
-        }
+//        @Transient val questionMap = HashMap<String,QuestionClient>(questionList.size * 3 / 2 + 1)
+//        init {
+//            questionList.forEach { this.questionMap[it.question] = it }
+//        }
         @Serializable
         data class QuestionClient(
             val question:String,

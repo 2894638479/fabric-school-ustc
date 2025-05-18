@@ -34,6 +34,7 @@ object SchoolUSTC : ModInitializer {
 		TeachingTableMenu.register()
 		TeachingTableMenu.registerPacket()
 		GradingMachineMenu.register()
+		GradingMachineMenu.registerPacket()
 		structs.forEach { it.register() }
 		registerItemAndBlock()
 		QuestionItem.registerPacket()
