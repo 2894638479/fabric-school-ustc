@@ -55,8 +55,8 @@ class CardMachineMenu(val containerId:Int,val inventory:Inventory,val access:Con
         val slot = slots[i]
         val stack = slot.item
         val copy = stack.copy()
-        if(i == 0) if(moveItemStackTo(stack,2,38,true)) onTake() else return ItemStack.EMPTY
-        if(i == 1 || i == 2) if(!moveItemStackTo(stack,2,38,true)) return ItemStack.EMPTY
+        if(i == 0) if(moveItemStackTo(stack,3,39,true)) onTake() else return ItemStack.EMPTY
+        if(i == 1 || i == 2) if(!moveItemStackTo(stack,3,39,true)) return ItemStack.EMPTY
         if(i > 2) if(!moveItemStackTo(stack,1,3,false)) return ItemStack.EMPTY
         slot.setChanged()
         slotsChanged(slot.container)
@@ -117,6 +117,7 @@ class CardMachineMenu(val containerId:Int,val inventory:Inventory,val access:Con
     }
 
     override fun removed(player: Player) {
+        super.removed(player)
         clearContainer(player,materialContainer)
     }
 }

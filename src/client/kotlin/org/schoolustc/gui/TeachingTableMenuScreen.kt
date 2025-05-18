@@ -4,15 +4,11 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
-import net.minecraft.client.gui.screens.inventory.StonecutterScreen
 import net.minecraft.locale.Language
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.FormattedText
 import net.minecraft.util.FormattedCharSequence
 import net.minecraft.world.entity.player.Inventory
-import net.minecraft.world.inventory.AbstractContainerMenu
-import net.minecraft.world.inventory.ContainerListener
-import net.minecraft.world.item.ItemStack
 import org.schoolustc.fullId
 import org.schoolustc.items.STUDENT_CARD
 import org.schoolustc.items.StudentCardItem
@@ -123,7 +119,7 @@ class TeachingTableMenuScreen(
         super.init()
         leftPos = (width - fullPngWidth) / 2 + pngWidth1
         topPos = (height - pngHeight) / 2
-        titleLabelX = pngWidth1 + (pngWidth2 - font.width(title)) / 2
+        titleLabelX = (pngWidth2 - font.width(title)) / 2
         leftButton = Button.builder(Component.literal("<")){curPage--}.bounds(minX + 8,topPos + 144,30,16).build()
         rightButton = Button.builder(Component.literal(">")){curPage++}.bounds(minX + 78,topPos + 144,30,16).build()
         curPage = curPage
@@ -162,7 +158,7 @@ class TeachingTableMenuScreen(
         val width = font.width(text)
         guiGraphics.renderText(text,minX + 58 - width/2,topPos + 150)
         renderTooltip(guiGraphics, mouseX, mouseY)
-        guiGraphics.renderText(infoStr,leftPos + 50,topPos + 25)
+        guiGraphics.renderText(infoStr,leftPos + 64,topPos + 25)
     }
     private fun startLearn(subjectName:String){
         val info = subjectInfo ?: return

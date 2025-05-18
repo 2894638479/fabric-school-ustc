@@ -1,13 +1,8 @@
 package org.schoolustc.gui
 
-import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.network.FriendlyByteBuf
-import net.minecraft.server.MinecraftServer
-import net.minecraft.server.level.ServerPlayer
-import net.minecraft.server.network.ServerGamePacketListenerImpl
 import net.minecraft.world.Container
 import net.minecraft.world.SimpleContainer
 import net.minecraft.world.entity.player.Inventory
@@ -95,10 +90,23 @@ class TeachingTableMenu(
     }
 
     override fun quickMoveStack(player: Player, i: Int): ItemStack {
-        return ItemStack.EMPTY
+        val slot = slots[i]
+        val stack = slot.item
+        val copy = stack.copy()
+        if(i == 0) {
+            if (!moveItemStackTo(stack, 1, 37, true)) return ItemStack.EMPTY
+        }
+        if(i in 1..<37) {
+            if (!stack.`is`(STUDENT_CARD)) return ItemStack.EMPTY
+            if (!moveItemStackTo(stack, 0, 1, false)) return ItemStack.EMPTY
+        }
+        slot.setChanged()
+        slotsChanged(slot.container)
+        return copy
     }
 
     override fun removed(player: Player) {
+        super.removed(player)
         clearContainer(player,studentCardContainer)
     }
 

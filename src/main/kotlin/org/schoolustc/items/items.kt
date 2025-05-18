@@ -18,6 +18,8 @@ fun registerItemAndBlock(){
     QUESTION_ITEM
     TEACHING_TABLE_ITEM
     TEACHING_TABLE_BLOCK
+    GRADING_MACHINE_BLOCK
+    GRADING_MACHINE_ITEM
 }
 
 val STUDENT_CARD = MyRegister.registerItem(
@@ -48,8 +50,13 @@ private val TEACHING_TABLE_PAIR = MyRegister.registerBlockItem(
 val TEACHING_TABLE_ITEM = TEACHING_TABLE_PAIR.second
 val TEACHING_TABLE_BLOCK = TEACHING_TABLE_PAIR.first
 
-
-
+private val GRADING_MACHINE_PAIR = MyRegister.registerBlockItem(
+    "grading_machine",
+    GradingMachineBlock(BlockBehaviour.Properties.of()),
+    CreativeModeTabs.FUNCTIONAL_BLOCKS
+)
+val GRADING_MACHINE_BLOCK = GRADING_MACHINE_PAIR.first
+val GRADING_MACHINE_ITEM = GRADING_MACHINE_PAIR.second
 val QUESTION_ITEM = MyRegister.registerItem(
     "question",
     QuestionItem(Item.Properties().stacksTo(1)),

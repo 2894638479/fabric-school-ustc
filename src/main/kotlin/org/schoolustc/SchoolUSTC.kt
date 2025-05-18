@@ -5,7 +5,9 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import org.schoolustc.gui.CardMachineMenu
+import org.schoolustc.gui.GradingMachineMenu
 import org.schoolustc.gui.TeachingTableMenu
+import org.schoolustc.items.GradingMachineBlock
 import org.schoolustc.items.QuestionItem
 import org.schoolustc.items.TeachingTableBlock
 import org.schoolustc.items.registerItemAndBlock
@@ -31,6 +33,7 @@ object SchoolUSTC : ModInitializer {
 		CardMachineMenu.register()
 		TeachingTableMenu.register()
 		TeachingTableMenu.registerPacket()
+		GradingMachineMenu.register()
 		structs.forEach { it.register() }
 		registerItemAndBlock()
 		QuestionItem.registerPacket()
