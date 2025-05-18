@@ -9,6 +9,7 @@ import net.minecraft.world.flag.FeatureFlags
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.inventory.MenuType
+import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import org.schoolustc.items.TEACHING_TABLE_BLOCK
 
@@ -30,8 +31,19 @@ class TeachingTableMenu(
     }
 
     private val studentCardContainer = SimpleContainer(1)
+    init {
+        addSlot(Slot(studentCardContainer,0,25,35))
+        for (j in 0..2) {
+            for (k in 0..8) {
+                this.addSlot(Slot(inventory, k + j * 9 + 9, 8 + k * 18, 84 + j * 18))
+            }
+        }
+        for (j in 0..8) {
+            this.addSlot(Slot(inventory, j, 8 + j * 18, 142))
+        }
+    }
     override fun stillValid(player: Player): Boolean {
-        return stillValid(this.access, player, TEACHING_TABLE_BLOCK)
+        return stillValid(access, player, TEACHING_TABLE_BLOCK)
     }
 
     override fun quickMoveStack(player: Player, i: Int): ItemStack {

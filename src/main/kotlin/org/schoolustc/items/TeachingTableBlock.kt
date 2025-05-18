@@ -40,8 +40,7 @@ class TeachingTableBlock(prop:Properties):HorizontalDirectionalBlock(prop) {
             ServerPlayNetworking.send(
                 serverPlayer,
                 SYNC_CONTAINER_QUESTION_BANK,
-                packetBuf().writeVarInt(id.asInt)
-                    .writeByteArray(Json.encodeToString(questionBankClientList).encodeToByteArray())
+                packetBuf().writeByteArray(Json.encodeToString(questionBankClientList).encodeToByteArray())
             )
         }
         return InteractionResult.CONSUME

@@ -9,7 +9,6 @@ var cachedQuestionBank:List<QuestionBank.QuestionBankClient> by atomic(listOf())
 
 fun registerQuestionBankPacket(){
     ClientPlayNetworking.registerGlobalReceiver(SYNC_CONTAINER_QUESTION_BANK){ minecraft, clientPacketListener, friendlyByteBuf, packetSender ->
-        val id = friendlyByteBuf.readVarInt()
         val json = friendlyByteBuf.readByteArray()
         val banks = Json.decodeFromString<List<QuestionBank.QuestionBankClient>>(String(json))
         cachedQuestionBank = banks
