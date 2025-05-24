@@ -38,7 +38,12 @@ val MONEY_CARD = MyRegister.registerItem(
 
 val CARD_MACHINE_PAIR = MyRegister.registerBlockItem(
     "card_machine",
-    CardMachineBlock(BlockBehaviour.Properties.of()),
+    CardMachineBlock(
+        BlockBehaviour.Properties.of()
+            .strength(5.0F, 6.0F)
+            .sound(SoundType.METAL)
+            .requiresCorrectToolForDrops()
+    ),
     CreativeModeTabs.FUNCTIONAL_BLOCKS
 )
 val CARD_MACHINE_ITEM = CARD_MACHINE_PAIR.second
@@ -48,9 +53,9 @@ private val TEACHING_TABLE_PAIR = MyRegister.registerBlockItem(
     "teaching_table",
     TeachingTableBlock(
         BlockBehaviour.Properties.of()
-            .requiresCorrectToolForDrops()
             .strength(5.0F, 6.0F)
             .sound(SoundType.METAL)
+            .requiresCorrectToolForDrops()
     ),
     CreativeModeTabs.FUNCTIONAL_BLOCKS
 )
@@ -61,9 +66,9 @@ private val GRADING_MACHINE_PAIR = MyRegister.registerBlockItem(
     "grading_machine",
     GradingMachineBlock(
         BlockBehaviour.Properties.of()
-            .requiresCorrectToolForDrops()
             .strength(5.0F, 6.0F)
             .sound(SoundType.METAL)
+            .requiresCorrectToolForDrops()
     ),
     CreativeModeTabs.FUNCTIONAL_BLOCKS
 )
@@ -88,7 +93,7 @@ private val SCHOOL_FENCE_GATE_PAIR = MyRegister.registerBlockItem(
             .forceSolidOn()
             .instrument(NoteBlockInstrument.BASS)
             .strength(2.0f, 3.0f)
-            .ignitedByLava(),
+            .requiresCorrectToolForDrops(),
     ),
     CreativeModeTabs.BUILDING_BLOCKS
 )
