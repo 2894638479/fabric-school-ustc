@@ -144,7 +144,7 @@ class Park(val seed:Long,val area:Area2D):MyStruct(Companion,area.toArea(maxRang
                     AIR fill area.toArea(y..y+3)
                     DIRT_PATH fill area.toArea(y.range)
                     Direction2D.entries.forEach{
-                        if(rand.nextBool(0.5f)){
+                        rand.withChance(0.5) {
                             val stairPos = pos.offset(it.toDirection(),2).offsetY(1)
                             OAK_STAIRS.stairState(it) fill stairPos
                         }

@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "school-ustc:card_machine",
+    "school-ustc:teaching_table",
+    "school-ustc:grading_machine",
+    "school-ustc:school_fence_gate"
+  ]
+}

@@ -28,7 +28,7 @@ fun registerReloadListener(){
         override fun getFabricId() = fullId("question_bank_loader")
         override fun onResourceManagerReload(manager: ResourceManager) {
             val questionLists = mutableMapOf<String,List<QuestionBank.Question>>()
-            manager.listResourceStacks("question_bank"){
+            manager.listResourceStacks("question_banks"){
                 val path = it.path
                 path.count { it == '/' } == 2 && path.endsWith(".json")
             }.forEach { (location, list) ->

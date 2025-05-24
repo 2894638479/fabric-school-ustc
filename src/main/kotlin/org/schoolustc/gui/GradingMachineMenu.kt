@@ -63,7 +63,7 @@ class GradingMachineMenu(
         addSlot(Slot(studentCardContainer,0,25,35))
         for (j in 0..2){
             for(k in 0..2){
-                addSlot(Slot(questionContainer,k + j * 3,98 + k * 18,17 + j * 18))
+                addSlot(Slot(questionContainer,k + j * 3,98 + k * 18,16 + j * 18))
             }
         }
         for (j in 0..2) {

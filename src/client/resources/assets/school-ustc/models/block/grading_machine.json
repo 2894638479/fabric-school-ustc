@@ -6,6 +6,7 @@
     "north": "school-ustc:block/grading_machine",
     "south": "school-ustc:block/grading_machine",
     "west": "school-ustc:block/grading_machine",
-    "east": "school-ustc:block/grading_machine"
+    "east": "school-ustc:block/grading_machine",
+    "particle": "school-ustc:block/grading_machine"
   }
 }

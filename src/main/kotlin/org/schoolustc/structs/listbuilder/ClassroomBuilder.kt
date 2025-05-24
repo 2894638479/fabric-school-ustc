@@ -253,7 +253,7 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource,val colo
                 if(it.layerCount != 0) return@forEach
                 it.layerCount = (it.doorConnected + parent).maxOf { it?.layerCount ?: 0 }
                 if(it.layerCount > 1) {
-                    if(rand.nextBool(0.2)) it.layerCount--
+                    rand.withChance(0.2) { it.layerCount-- }
                 }
             }
         }

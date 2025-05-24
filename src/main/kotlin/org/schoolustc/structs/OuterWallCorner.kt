@@ -17,7 +17,7 @@ class OuterWallCorner(config: StructGenConfig): MyStructFixedSize(Companion,conf
     override fun StructBuildScopeWithConfig.build() {
         inSurfView {
             STONE_BRICKS fill Area(0..0, 0..3, 0..0)
-            val lantern = if (rand.nextBool(0.9f)) LANTERN else SOUL_LANTERN
+            val lantern = rand.withChance(0.9) { LANTERN } ?: SOUL_LANTERN
             lantern fill Point(0, 4, 0)
         }
     }

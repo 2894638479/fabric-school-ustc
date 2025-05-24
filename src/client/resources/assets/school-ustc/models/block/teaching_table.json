@@ -6,6 +6,7 @@
     "north": "school-ustc:block/teaching_table_front",
     "south": "school-ustc:block/teaching_table_back",
     "west": "school-ustc:block/teaching_table_left",
-    "east": "school-ustc:block/teaching_table_right"
+    "east": "school-ustc:block/teaching_table_right",
+    "particle": "school-ustc:block/teaching_table_front"
   }
 }

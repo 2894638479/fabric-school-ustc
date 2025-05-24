@@ -18,7 +18,6 @@ import org.schoolustc.items.QuestionItem.Companion.choices
 import org.schoolustc.items.QuestionItem.Companion.chosen
 import org.schoolustc.items.QuestionItem.Companion.question
 import org.schoolustc.items.QuestionItem.Companion.status
-import org.schoolustc.items.QuestionItem.Companion.subject
 import org.schoolustc.packet.OPEN_QUESTION_GUI
 import org.schoolustc.packet.QUESTION_CHOOSE
 import org.schoolustc.packet.packetBuf
@@ -101,8 +100,7 @@ class QuestionScreen(
         drawString(font, text, x, y + i * fontHeight, 0, false)
     }
     private fun GuiGraphics.renderText(text:String,x:Int,y:Int) = drawString(font,text,x,y,0,false)
-    val subjectString = "${Language.getInstance().getOrDefault("text.subject")}:" +
-            Language.getInstance().getOrDefault("question_bank.subject.${item.subject}",item.subject)
+    val subjectString = "${Language.getInstance().getOrDefault("text.subject")}:" + subjectStr
     override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
         renderBackground(guiGraphics)
         guiGraphics.blit(backPng,leftPos,topPos, 0, 0, backWidth,backHeight)

@@ -7,6 +7,7 @@ import org.schoolustc.structureDsl.from
 import org.schoolustc.structureDsl.nextBool
 import org.schoolustc.structureDsl.struct.MyStruct
 import org.schoolustc.structureDsl.structure.StructureBuildScope
+import org.schoolustc.structureDsl.withChance
 import kotlin.math.roundToInt
 
 class ClassroomBlockBuilder(para: BlockBuilderPara):BlockBuilder(para) {
@@ -38,7 +39,9 @@ class ClassroomBlockBuilder(para: BlockBuilderPara):BlockBuilder(para) {
             ) to 2,
         )
         val classroom = ClassroomBuilder(para.area.padding(2),para.area.avgY.roundToInt(),rand,rand from colorMap).build(this)
-        val ore = if(rand.nextBool(0.3)) listOf(HugeGoldOre(area.middle { x, z -> y(x,z) - 30 })) else listOf()
+        val ore = rand.withChance(0.3) {
+            listOf(HugeGoldOre(area.middle { x, z -> y(x, z) - 30 }))
+        } ?: listOf()
         return classroom + getLights() + getLeafWalls() + ore
     }
 }

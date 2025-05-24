@@ -122,10 +122,12 @@ abstract class View(val scope: StructBuildScope) {
         addItem:(Int)-> ItemStack
     ){
         val finalPos = pos.final() ?: return
-        Blocks.CHEST.state.setValue(ChestBlock.FACING,facing.final().toMcDirection()) setTo finalPos
+        CHEST.state.setValue(ChestBlock.FACING,facing.final().toMcDirection()) setTo finalPos
         val entity = scope.world.getBlockEntity(finalPos.blockPos) as ChestBlockEntity
         for(i in 0..<entity.containerSize){
-            if(scope.rand.nextBool(chance)) addItem(i).let { entity.setItem(i,it) }
+            scope.rand.withChance(chance) {
+                addItem(i).let { entity.setItem(i, it) }
+            }
         }
     }
     private fun Area.cut(): Area?{

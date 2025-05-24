@@ -7,10 +7,6 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 import org.schoolustc.fullId
-import org.schoolustc.items.QUESTION_ITEM
-import org.schoolustc.items.QuestionItem
-import org.schoolustc.items.QuestionItem.Companion.status
-import org.schoolustc.items.STUDENT_CARD
 import org.schoolustc.packet.GRADING_MACHINE_GRADING
 import org.schoolustc.packet.packetBuf
 

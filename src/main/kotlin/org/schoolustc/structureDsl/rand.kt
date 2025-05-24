@@ -14,7 +14,13 @@ fun RandomSource.nextInt(range:IntProgression):Int{
 }
 
 fun RandomSource.nextBool(trueChance:Float) = nextFloat() < trueChance
-fun RandomSource.nextBool(trueChance:Double) = nextFloat() < trueChance
+fun RandomSource.nextBool(trueChance:Double) = nextDouble() < trueChance
+inline fun <T> RandomSource.withChance(chance:Float,block:()->T):T?{
+    return if (nextBool(chance)) block() else null
+}
+inline fun <T> RandomSource.withChance(chance:Double,block:()->T):T?{
+    return if (nextBool(chance)) block() else null
+}
 
 infix fun <T> RandomSource.from(collection: Collection<T>):T{
     if(collection.isEmpty()) error("empty collection")

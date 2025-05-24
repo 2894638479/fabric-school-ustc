@@ -6,6 +6,7 @@
     "north": "school-ustc:block/card_machine_front",
     "south": "school-ustc:block/card_machine_back",
     "west": "school-ustc:block/card_machine_left",
-    "east": "school-ustc:block/card_machine_right"
+    "east": "school-ustc:block/card_machine_right",
+    "particle": "school-ustc:block/card_machine_front"
   }
 }
