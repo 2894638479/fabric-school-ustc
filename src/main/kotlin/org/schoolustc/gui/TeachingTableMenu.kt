@@ -1,7 +1,9 @@
 package org.schoolustc.gui
 
+import kotlinx.serialization.json.Json
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.FriendlyByteBuf
@@ -12,10 +14,8 @@ import net.minecraft.world.Container
 import net.minecraft.world.SimpleContainer
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.flag.FeatureFlags
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ContainerLevelAccess
-import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import org.schoolustc.items.QUESTION_ITEM
@@ -31,21 +31,22 @@ import org.schoolustc.items.StudentCardItem.Companion.subjectInfo
 import org.schoolustc.items.TEACHING_TABLE_BLOCK
 import org.schoolustc.packet.TEACHING_TABLE_FINISH_LEARN
 import org.schoolustc.packet.TEACHING_TABLE_START_LEARN
+import org.schoolustc.questionbank.QuestionBank
 import org.schoolustc.questionbank.questionBankMap
+
 
 class TeachingTableMenu(
     val containerId:Int,
     val inventory: Inventory,
-    val access: ContainerLevelAccess
+    val clientQuestionBank:List<QuestionBank.QuestionBankClient>
 ): AbstractContainerMenu(type,containerId) {
     companion object {
         val type = Registry.register(
             BuiltInRegistries.MENU,
             "teaching_table",
-            MenuType(
-                {id,inv -> TeachingTableMenu(id,inv,ContainerLevelAccess.NULL)},
-                FeatureFlags.VANILLA_SET
-            )
+            ExtendedScreenHandlerType{ i: Int, inventory: Inventory, friendlyByteBuf: FriendlyByteBuf ->
+                TeachingTableMenu(i,inventory,Json.decodeFromString(String(friendlyByteBuf.readByteArray())))
+            }
         )
         fun register(){ type }
         fun registerPacket(){
@@ -105,7 +106,7 @@ class TeachingTableMenu(
         }
     }
     override fun stillValid(player: Player): Boolean {
-        return stillValid(access, player, TEACHING_TABLE_BLOCK)
+        return player.inventory.stillValid(player)
     }
 
     override fun quickMoveStack(player: Player, i: Int): ItemStack {

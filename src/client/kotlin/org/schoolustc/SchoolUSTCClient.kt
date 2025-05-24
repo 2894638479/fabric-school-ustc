@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.item.ItemProperties
 import org.schoolustc.gui.*
 import org.schoolustc.items.QUESTION_ITEM
 import org.schoolustc.items.QuestionItem.Companion.predicate
-import org.schoolustc.packet.registerQuestionBankPacket
 
 
 object SchoolUSTCClient : ClientModInitializer {
@@ -15,7 +14,6 @@ object SchoolUSTCClient : ClientModInitializer {
 		MenuScreens.register(TeachingTableMenu.type,::TeachingTableMenuScreen)
 		MenuScreens.register(GradingMachineMenu.type,::GradingMachineMenuScreen)
 		QuestionScreen.registerPacket()
-		registerQuestionBankPacket()
 		ItemProperties.register(QUESTION_ITEM, fullId("status")) { stack, _, _, _ -> stack.predicate }
 	}
 }

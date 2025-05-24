@@ -15,7 +15,6 @@ import org.schoolustc.items.StudentCardItem
 import org.schoolustc.items.StudentCardItem.Companion.subjectInfo
 import org.schoolustc.packet.TEACHING_TABLE_FINISH_LEARN
 import org.schoolustc.packet.TEACHING_TABLE_START_LEARN
-import org.schoolustc.packet.cachedQuestionBank
 import org.schoolustc.packet.packetBuf
 import org.schoolustc.questionbank.QuestionBank
 
@@ -146,17 +145,12 @@ class TeachingTableMenuScreen(
         guiGraphics.renderText(Language.getInstance().getOrDefault("text.subject"),minX + 8,topPos + 6)
     }
 
-    var banks = listOf<QuestionBank.QuestionBankClient>()
-
-    fun updateBanks(){
-        if(cachedQuestionBank != banks){
-            banks = cachedQuestionBank
-            pages = banks.chunked(6)
-            curPage = curPage
-        }
+    val banks = menu.clientQuestionBank
+    init {
+        pages = banks.chunked(6)
+        curPage = curPage
     }
     override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-        updateBanks()
         super.render(guiGraphics, mouseX,mouseY, partialTick)
         val text = "${curPage + 1}/${pages.size}"
         val width = font.width(text)
