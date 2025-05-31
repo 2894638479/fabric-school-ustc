@@ -1,6 +1,8 @@
 package org.schoolustc
 
+import net.minecraft.core.Holder
 import net.minecraft.util.RandomSource
+import net.minecraft.world.level.biome.Biome
 import net.minecraft.world.level.levelgen.Heightmap
 import net.minecraft.world.level.levelgen.LegacyRandomSource
 import org.schoolustc.structs.listbuilder.ScaffoldBuilder
@@ -39,8 +41,16 @@ class School(settings:StructureSettings): MyStructure(Companion,settings) {
     override fun GenerationContext.findPoint():Point? {
         val point = Point(chunkPos.middleBlockX, 100, chunkPos.middleBlockZ)
         val area = point.randArea
-        val biome = biomeSource.getNoiseBiome(point.x shr 2, 0, point.z shr 2, randomState.sampler())
-        if(!validBiome.test(biome)) return null
+        fun testBiome(x:Int,z:Int):Boolean{
+            val biome = biomeSource.getNoiseBiome(x shr 2, 0, z shr 2, randomState.sampler())
+            return validBiome.test(biome)
+        }
+        if(
+            !(testBiome(area.x1,area.z1) &&
+            testBiome(area.x1,area.z2) &&
+            testBiome(area.x2,area.z1) &&
+            testBiome(area.x2,area.z2))
+        ){ return null }
 
         fun y(x:Int,z:Int):Int = chunkGenerator.getBaseHeight(x,z,
             Heightmap.Types.WORLD_SURFACE_WG, heightAccessor(), randomState())
@@ -57,9 +67,7 @@ class School(settings:StructureSettings): MyStructure(Companion,settings) {
         val list = sequence.toList()
         val minY = list.minOf { it.y }
         val maxY = list.maxOf { it.y }
-        logger.info("$maxY $minY")
         val result = point.takeIf { maxY - minY < 30 }
-        logger.info(result.toString())
         return result
     }
 }

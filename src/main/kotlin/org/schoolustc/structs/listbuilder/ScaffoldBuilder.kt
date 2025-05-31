@@ -19,7 +19,7 @@ import kotlin.math.roundToInt
 
 class ScaffoldBuilder(
     val area:Area2D,
-    val minBlockSize:Int = 17
+    val minBlockSize:Int = 18
 ): MyStructListBuilder<MyStruct>() {
     override fun StructureBuildScope.build() = mutableListOf<MyStruct>().also { list ->
         fun MyStructListBuilder<*>.addToList(){
@@ -114,25 +114,29 @@ class ScaffoldBuilder(
                 roadBuilders.firstOrNull { road ->road.type == Splitter && area.nextTo(road.area) == it } != null
             }
             val para = BlockBuilderPara(area,nextWalls,nextSplitter,this)
+            fun buildings() = blockBuilders.count { it is BuildingBlock } + 1
+            fun parks() = blockBuilders.count { it is ParkBlock } + 1
+            fun whitePavilions() = blockBuilders.count { it is WhitePavilionBlock } + 1
+            fun classrooms() = blockBuilders.count { it is ClassroomBlockBuilder } + 1
             val blockBuilder = if(area.longShortDiv >= 2){
                 { ParkBlock(para) }
-            } else if(area.xl < 19 && area.zl < 19) {
+            } else if(area.xl < 19 || area.zl < 19) {
                 rand from mapOf(
-                    { BuildingBlock(para) } to 2,
-                    { ParkBlock(para) } to 1,
-                    { WhitePavilionBlock(para) } to 1
+                    { BuildingBlock(para) } to 2.0 / buildings(),
+                    { ParkBlock(para) } to 1.0 / parks(),
+                    { WhitePavilionBlock(para) } to 1.0 / whitePavilions()
                 )
             } else if(area.xl < 25 && area.xl < 25) {
                 rand from mapOf(
-                    { ParkBlock(para) } to 1,
-                    { ClassroomBlockBuilder(para) } to 2,
-                    { BuildingBlock(para) } to 1,
-                    { WhitePavilionBlock(para) } to 0.5
+                    { ParkBlock(para) } to 1.0 / parks(),
+                    { ClassroomBlockBuilder(para) } to 4.0 / classrooms(),
+                    { BuildingBlock(para) } to 1.0 / buildings(),
+                    { WhitePavilionBlock(para) } to 0.5 / whitePavilions()
                 )
             } else {
                 rand from mapOf(
-                    { ParkBlock(para) } to 1,
-                    { ClassroomBlockBuilder(para) } to 2
+                    { ParkBlock(para) } to 1.0 / parks(),
+                    { ClassroomBlockBuilder(para) } to 2.0 / classrooms()
                 )
             }
             blockBuilders += blockBuilder()

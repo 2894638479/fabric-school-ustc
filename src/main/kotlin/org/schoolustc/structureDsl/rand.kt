@@ -1,6 +1,7 @@
 package org.schoolustc.structureDsl
 
 import net.minecraft.util.RandomSource
+import org.schoolustc.logger
 
 fun RandomSource.nextInt(range:IntProgression):Int{
     val count = range.count()
@@ -47,6 +48,7 @@ infix fun <T,V:Number> RandomSource.from(map:Map<T,V>):T{
         f += weight.toDouble()
         if(r < f) return block
     }
+    logger.warn("rand from map may be wrong")
     return map.keys.last()
 }
 fun <T,V:Number> RandomSource.from(vararg pairs:Pair<T,V>) = from(pairs.toMap())
