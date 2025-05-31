@@ -22,6 +22,11 @@ fun registerItemAndBlock(){
     GET_GPA_POTION_ITEM
     SCHOOL_FENCE_GATE_BLOCK
     SCHOOL_FENCE_GATE_ITEM
+    FOOD_MACHINE_ITEM
+    FOOD_MACHINE_BLOCK
+    FoodMachineBlockEntity.register()
+    DRINK_MACHINE_BLOCK
+    DRINK_MACHINE_ITEM
 }
 
 val STUDENT_CARD = MyRegister.registerItem(
@@ -89,7 +94,6 @@ private val SCHOOL_FENCE_GATE_PAIR = MyRegister.registerBlockItem(
     "school_fence_gate",
     SchoolFenceGate(
         BlockBehaviour.Properties.of()
-            .mapColor(Blocks.OAK_PLANKS.defaultMapColor())
             .forceSolidOn()
             .instrument(NoteBlockInstrument.BASS)
             .strength(2.0f, 3.0f)
@@ -99,4 +103,29 @@ private val SCHOOL_FENCE_GATE_PAIR = MyRegister.registerBlockItem(
 )
 val SCHOOL_FENCE_GATE_BLOCK = SCHOOL_FENCE_GATE_PAIR.first
 val SCHOOL_FENCE_GATE_ITEM = SCHOOL_FENCE_GATE_PAIR.second
+
+private val FOOD_MACHINE_PAIR = MyRegister.registerBlockItem(
+    "food_machine",
+    FoodMachineBlock(
+        BlockBehaviour.Properties.of()
+            .strength(5.0F, 6.0F)
+            .sound(SoundType.METAL)
+            .requiresCorrectToolForDrops()
+    ),
+    CreativeModeTabs.FUNCTIONAL_BLOCKS
+)
+val FOOD_MACHINE_BLOCK = FOOD_MACHINE_PAIR.first
+val FOOD_MACHINE_ITEM = FOOD_MACHINE_PAIR.second
+private val DRINK_MACHINE_PAIR = MyRegister.registerBlockItem(
+    "drink_machine",
+    DrinkMachineBlock(
+        BlockBehaviour.Properties.of()
+            .strength(5.0F, 6.0F)
+            .sound(SoundType.METAL)
+            .requiresCorrectToolForDrops()
+    ),
+    CreativeModeTabs.FUNCTIONAL_BLOCKS
+)
+val DRINK_MACHINE_BLOCK = DRINK_MACHINE_PAIR.first
+val DRINK_MACHINE_ITEM = DRINK_MACHINE_PAIR.second
 

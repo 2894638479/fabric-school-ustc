@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.item.ItemProperties
 import org.schoolustc.gui.*
 import org.schoolustc.items.QUESTION_ITEM
 import org.schoolustc.items.QuestionItem.Companion.predicate
+import org.schoolustc.renderer.FoodMachineBlockEntityRenderer
 
 
 object SchoolUSTCClient : ClientModInitializer {
@@ -15,5 +16,6 @@ object SchoolUSTCClient : ClientModInitializer {
 		MenuScreens.register(GradingMachineMenu.type,::GradingMachineMenuScreen)
 		QuestionScreen.registerPacket()
 		ItemProperties.register(QUESTION_ITEM, fullId("status")) { stack, _, _, _ -> stack.predicate }
+		FoodMachineBlockEntityRenderer.register()
 	}
 }

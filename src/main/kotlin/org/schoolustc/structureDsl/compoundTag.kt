@@ -5,6 +5,7 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.Block
 import org.schoolustc.calc.Pt
@@ -35,6 +36,7 @@ inline fun <reified T : Any> CompoundTag.write(key:String,t:T) = when(T::class){
     String::class -> putString(key,t as String)
     StructGenConfig::class -> putConfig(key,t as StructGenConfig)
     Block::class -> putBlock(key,t as Block)
+    Item::class -> putItem(key,t as Item)
     Area2D::class -> putArea2D(key,t as Area2D)
     Orientation2D::class -> putOrientation2D(key,t as Orientation2D)
     Tree.TreeType::class -> putTreeType(key,t as Tree.TreeType)
@@ -58,6 +60,7 @@ inline fun <reified T : Any> CompoundTag.read(key:String):T = when(T::class){
     String::class -> getString(key) as T
     StructGenConfig::class -> getConfig(key) as T
     Block::class -> getBlock(key) as T
+    Item::class -> getItem(key) as T
     Area2D::class -> getArea2D(key) as T
     Orientation2D::class -> getOrientation2D(key) as T
     Tree.TreeType::class -> getTreeType(key) as T
@@ -102,6 +105,14 @@ fun CompoundTag.getBlock(key:String):Block{
     val location = ResourceLocation.tryParse(str) ?: error("unknown block id $str")
     val block = BuiltInRegistries.BLOCK.get(location)
     return block
+}
+fun CompoundTag.putItem(key:String,item:Item) {
+    putString(key,BuiltInRegistries.ITEM.getKey(item).toString())
+}
+fun CompoundTag.getItem(key:String):Item {
+    val str = getString(key)
+    val location = ResourceLocation.tryParse(str) ?: error("unknown item id $str")
+    return BuiltInRegistries.ITEM.get(location)
 }
 fun CompoundTag.putArea2D(key:String,area: Area2D){
     putIntArray(key, intArrayOf(area.x1,area.x2,area.z1,area.z2))

@@ -6,6 +6,8 @@
   "block.school-ustc.card_machine": "Card Machine",
   "block.school-ustc.teaching_table": "Teaching Table",
   "block.school-ustc.grading_machine": "Grading Machine",
+  "block.school-ustc.food_machine": "Food Machine",
+  "block.school-ustc.drink_machine": "Beverage Machine",
   "text.question": "Question",
   "text.subject": "Subject"
 }

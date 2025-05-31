@@ -3,7 +3,7 @@
   "textures": {
     "down": "school-ustc:block/grading_machine",
     "up": "school-ustc:block/grading_machine",
-    "north": "school-ustc:block/grading_machine",
+    "north": "school-ustc:block/grading_machine_front",
     "south": "school-ustc:block/grading_machine",
     "west": "school-ustc:block/grading_machine",
     "east": "school-ustc:block/grading_machine",

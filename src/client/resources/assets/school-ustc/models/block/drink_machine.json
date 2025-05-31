@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "school-ustc:block/drink_machine_bottom",
+    "up": "school-ustc:block/drink_machine_bottom",
+    "north": "school-ustc:block/drink_machine_front",
+    "south": "school-ustc:block/drink_machine_bottom",
+    "west": "school-ustc:block/drink_machine_bottom",
+    "east": "school-ustc:block/drink_machine_bottom",
+    "particle": "school-ustc:block/drink_machine_front"
+  }
+}
