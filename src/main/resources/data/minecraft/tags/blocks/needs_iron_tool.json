@@ -3,6 +3,8 @@
   "values": [
     "school-ustc:card_machine",
     "school-ustc:teaching_table",
-    "school-ustc:grading_machine"
+    "school-ustc:grading_machine",
+    "school-ustc:food_machine",
+    "school-ustc:drink_machine"
   ]
 }
