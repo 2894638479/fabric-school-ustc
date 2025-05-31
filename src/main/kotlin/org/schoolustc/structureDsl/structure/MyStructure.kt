@@ -8,7 +8,7 @@ import java.util.*
 abstract class MyStructure(
     val info : MyStructureInfo<*>,
     val settings:StructureSettings
-) : Structure(settings,) {
+) : Structure(settings) {
     abstract fun StructureBuildScope.build(pos:Point)
     abstract fun GenerationContext.findPoint():Point?
     final override fun type(): StructureType<*> = info.type
