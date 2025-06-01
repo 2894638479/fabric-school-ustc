@@ -14,6 +14,7 @@ import org.schoolustc.structureDsl.struct.MyStruct
 import org.schoolustc.structureDsl.struct.builder.MyStructBuilder
 import org.schoolustc.structureDsl.struct.builder.MyStructListBuilder
 import org.schoolustc.structureDsl.structure.StructureBuildScope
+import java.lang.StrictMath.pow
 import kotlin.math.log2
 import kotlin.math.roundToInt
 
@@ -36,7 +37,7 @@ class ScaffoldBuilder(
             fun sideWidth(d:Direction2D) = side(d)?.width ?: 0
         }
         val blockList = mutableListOf(Block(innerArea){null})
-        val splitTime = (log2(innerArea.size.toFloat())).toInt().match { it > 0 }
+        val splitTime = (innerArea.size.toFloat() / 1500).toInt().match { it > 0 }
         var gatePos:Pair<Direction2D,Int>? = null
 
         val roadBuilders = mutableListOf<RoadBuilder<*,*>>()
@@ -47,7 +48,7 @@ class ScaffoldBuilder(
                 Direction2D.entries.map { direction -> direction to it }
             }.filter { (direction,block)-> direction.run {
                 block.area.width - block.sideWidth(left) - block.sideWidth(right) >= fullWidth + 2 * minBlockSize
-            } }.ifEmpty { return null }
+            } }.ifEmpty { return null }.associateWith { it.second.area.size / 1000.0 * pow(it.second.area.width(it.first) / 100.0,3.0) }
             val (direction, block) = rand from choices
             blockList.remove(block)
             val area = block.area
@@ -70,13 +71,13 @@ class ScaffoldBuilder(
         fun <T:MyStructFixedWidth> addRoad(type:MyStructFixedWidthInfo<T>) = addRoad<T,MyStructFixedWidth>(type,null)
 
 
-        val streetMark = rand.nextInt(splitTime / 4..splitTime / 2).match { it > 0 }
+        val streetMark = rand.nextInt(splitTime / 3..splitTime / 2).match { it > 0 }
         val roadMark = rand.nextInt(splitTime * 3 / 4..splitTime)
         for(i in 0..<splitTime){
             if(i < streetMark) addRoad(Street,rand from mapOf(
                 null to 4,
-                TreeSide to 5,
-                CherrySide to 5,
+                TreeSide to 3,
+                CherrySide to 7,
             )) ?: break
             else if(i < roadMark) addRoad(Road) ?: break
             else addRoad(Splitter) ?: break
@@ -114,11 +115,11 @@ class ScaffoldBuilder(
                 roadBuilders.firstOrNull { road ->road.type == Splitter && area.nextTo(road.area) == it } != null
             }
             val para = BlockBuilderPara(area,nextWalls,nextSplitter,this)
-            fun buildings() = blockBuilders.count { it is BuildingBlock } + 1
-            fun parks() = blockBuilders.count { it is ParkBlock } + 1
-            fun whitePavilions() = blockBuilders.count { it is WhitePavilionBlock } + 1
-            fun classrooms() = blockBuilders.count { it is ClassroomBlockBuilder } + 1
-            val blockBuilder = if(area.longShortDiv >= 2){
+            fun buildings() = blockBuilders.count { it is BuildingBlock } + 0.1
+            fun parks() = blockBuilders.count { it is ParkBlock } + 0.1
+            fun whitePavilions() = blockBuilders.count { it is WhitePavilionBlock } + 0.1
+            fun classrooms() = blockBuilders.count { it is ClassroomBlockBuilder } + 0.1
+            val blockBuilder = if(area.longShortDiv >= 3){
                 { ParkBlock(para) }
             } else if(area.xl < 19 || area.zl < 19) {
                 rand from mapOf(
@@ -128,7 +129,7 @@ class ScaffoldBuilder(
                 )
             } else if(area.xl < 25 && area.xl < 25) {
                 rand from mapOf(
-                    { ParkBlock(para) } to 1.0 / parks(),
+                    { ParkBlock(para) } to 2.5 / parks(),
                     { ClassroomBlockBuilder(para) } to 4.0 / classrooms(),
                     { BuildingBlock(para) } to 1.0 / buildings(),
                     { WhitePavilionBlock(para) } to 0.5 / whitePavilions()
@@ -136,7 +137,7 @@ class ScaffoldBuilder(
             } else {
                 rand from mapOf(
                     { ParkBlock(para) } to 1.0 / parks(),
-                    { ClassroomBlockBuilder(para) } to 2.0 / classrooms()
+                    { ClassroomBlockBuilder(para) } to 1.0 / classrooms()
                 )
             }
             blockBuilders += blockBuilder()

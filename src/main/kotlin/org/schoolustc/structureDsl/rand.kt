@@ -45,10 +45,10 @@ infix fun <T,V:Number> RandomSource.from(map:Map<T,V>):T{
     val r = nextFloat() * sum
     var f = 0.0
     for((block,weight) in map){
-        f += weight.toDouble()
+        f += weight.toDouble().match { it >= 0 }
         if(r < f) return block
     }
-    logger.warn("rand from map may be wrong")
+    logger.warn("rand from map may be wrong:${map.values.joinToString(";")}")
     return map.keys.last()
 }
 fun <T,V:Number> RandomSource.from(vararg pairs:Pair<T,V>) = from(pairs.toMap())
