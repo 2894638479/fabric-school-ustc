@@ -98,7 +98,7 @@ class Area2D(
     }
     fun length(orientation: Orientation2D) = width(orientation.left(90.0))
     operator fun contains(point:Point) = point.x in x && point.z in z
-    fun toArea(y:IntRange) = Area(x,y,z)
+    fun toArea(y:IntRange = maxRange) = Area(x,y,z)
     fun applyConfig(config: StructGenConfig):Area2D {
         val xAdd = if(config.revX) -x.last..-x.first else x
         val zAdd = if(config.revZ) -z.last..-z.first else z
@@ -109,6 +109,10 @@ class Area2D(
     operator fun plus(other:Area2D) = Area2D(
         min(x1,other.x1)..max(x2,other.x2),
         min(z1,other.z1)..max(z2,other.z2)
+    )
+    operator fun times(other: Area2D) = Area2D(
+        max(x1,other.x1)..min(x2,other.x2),
+        max(z1,other.z1)..min(z2,other.z2)
     )
     val longShortDiv get() = if(xl > zl) xl.toDouble() / zl.toDouble() else zl.toDouble() / xl.toDouble()
 }

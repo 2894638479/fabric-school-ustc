@@ -4,18 +4,21 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.*
-import net.minecraft.world.level.block.Blocks.*
+import net.minecraft.world.level.block.Blocks.AIR
+import net.minecraft.world.level.block.Blocks.CHEST
 import net.minecraft.world.level.block.entity.ChestBlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.*
 import net.minecraft.world.level.levelgen.Heightmap
+import net.minecraft.world.level.levelgen.LegacyRandomSource
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature
+import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate
 import org.schoolustc.fullId
-import org.schoolustc.interfaces.palettes
 import org.schoolustc.logger
 import org.schoolustc.structureDsl.*
-import org.schoolustc.structureDsl.Direction2D.Companion.fromMcDirection
 
 abstract class View(val scope: StructBuildScope) {
     private val bound = scope.boundingBox.run { Area2D(minX()..maxX(), minZ()..maxZ()) }
@@ -25,6 +28,13 @@ abstract class View(val scope: StructBuildScope) {
     protected abstract fun Direction2D.final(): Direction2D
     protected abstract fun Area2D.final(): Area2D
     protected abstract val mirror:Boolean
+    private val mirrorValue get() = if(mirror) Mirror.LEFT_RIGHT else Mirror.NONE
+    private val rotateValue get() = when(Direction2D.XPlus.final()){
+        Direction2D.XPlus -> Rotation.NONE
+        Direction2D.ZPlus -> Rotation.CLOCKWISE_90
+        Direction2D.ZMin -> Rotation.COUNTERCLOCKWISE_90
+        Direction2D.XMin -> Rotation.CLOCKWISE_180
+    }
     private fun Area.finalXZ() = toArea2D().final().toArea(y)
     private infix fun BlockState.setTo(finalPos: Point) = scope.world.setBlock(finalPos.blockPos,this,3)
     protected fun surfHeight(finalX:Int,finalZ: Int) = scope.world.getHeight(Heightmap.Types.WORLD_SURFACE_WG,finalX,finalZ) - 1
@@ -94,8 +104,8 @@ abstract class View(val scope: StructBuildScope) {
     }
     infix fun Block.fillUnder(points: Sequence<Point>) = {state} fillUnder points
 
-    infix fun String.put(startPos: Point) = putNbtStruct(this,startPos,true, emptyMap())
-    infix fun String.putA(startPos: Point) = putNbtStruct(this,startPos,false, emptyMap())
+    infix fun String.put(startPos: Point) = putNbtStruct(this,startPos, listOf(BlockIgnoreProcessor.AIR))
+    infix fun String.putA(startPos: Point) = putNbtStruct(this,startPos, listOf())
 
     infix fun ResourceKey<ConfiguredFeature<*, *>>.plant(pos: Point):Boolean? {
         val feature = scope.world.level.registryAccess()
@@ -147,27 +157,19 @@ abstract class View(val scope: StructBuildScope) {
             .get(fullId(name))
             .orElse(null)
     }
-    fun putNbtStruct(name:String, startPos: Point, filterAir:Boolean,replace:Map<Block,Block>){
+    fun putNbtStruct(name:String, startPos: Point,processor:List<StructureProcessor>){
         val struct = getNbtStruct(name) ?: return logger.warn("not found structure nbt $name")
-        struct.palettes.forEach {
-            it.blocks().forEach {
-                if(!(filterAir && it.state.isAir)){
-                    val finalPos = it.pos.run{Point(x,y,z)}.plus(startPos).final()
-                    val finalState = if(replace.isEmpty()) it.state.final()
-                    else replace.firstNotNullOfOrNull{(k,v) -> if(it.state.`is`(k)) v.state else null} ?: it.state.final()
-                    if(finalPos != null) finalState setTo finalPos
-                }
-            }
-        }
+        val settings = StructurePlaceSettings()
+            .setIgnoreEntities(true)
+            .setMirror(mirrorValue)
+            .setRotation(rotateValue)
+            .setBoundingBox(bound.toArea().toBoundingBox())
+            .apply { processor.forEach { addProcessor(it) } }
+        val pos = startPos.finalXZ().finalY().blockPos
+        struct.placeInWorld(scope.world,pos,pos,settings,LegacyRandomSource(scope.rand.nextLong()),2)
     }
     private fun BlockState.final() = convertDirection()
-    private fun BlockState.convertDirection() = mirror(if(mirror) Mirror.LEFT_RIGHT else Mirror.NONE)
-        .rotate(when(Direction2D.XPlus.final()){
-            Direction2D.XPlus -> Rotation.NONE
-            Direction2D.ZPlus -> Rotation.CLOCKWISE_90
-            Direction2D.ZMin -> Rotation.COUNTERCLOCKWISE_90
-            Direction2D.XMin -> Rotation.CLOCKWISE_180
-        })
+    private fun BlockState.convertDirection() = mirror(mirrorValue).rotate(rotateValue)
     fun BlockState.connected(vararg direction: Direction2D): BlockState {
         var result = this
         for (d in direction){

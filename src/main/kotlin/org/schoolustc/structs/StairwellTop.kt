@@ -3,6 +3,12 @@ package org.schoolustc.structs
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks.*
+import net.minecraft.world.level.levelgen.structure.templatesystem.AlwaysTrueTest
+import net.minecraft.world.level.levelgen.structure.templatesystem.BlockMatchTest
+import net.minecraft.world.level.levelgen.structure.templatesystem.ProcessorRule
+import net.minecraft.world.level.levelgen.structure.templatesystem.RuleProcessor
+import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.MyStructFixedSize
 import org.schoolustc.structureDsl.struct.MyStructFixedSizeInfo
@@ -24,9 +30,9 @@ class StairwellTop(config: StructGenConfig,val block: Block):MyStructFixedSize(C
 
     override fun StructBuildScopeWithConfig.build() {
         inRelativeView {
-            putNbtStruct("stairwell_top",Point(0,0,0),false, mapOf(
-                RED_CONCRETE to block
-            ))
+            putNbtStruct("stairwell_top",Point(0,0,0),listOf(RuleProcessor(listOf(ProcessorRule(
+                BlockMatchTest(RED_CONCRETE),AlwaysTrueTest.INSTANCE,block.state
+            )))))
         }
     }
 }

@@ -9,7 +9,7 @@ import org.schoolustc.structureDsl.struct.MyStructFixedSizeInfo
 import org.schoolustc.structureDsl.struct.scope.StructBuildScopeWithConfig
 import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 
-class Classroom(config: StructGenConfig,val block:Block): MyStructFixedSize(Companion,config){
+class Classroom(config: StructGenConfig,val block:Block,val type: Type): MyStructFixedSize(Companion,config){
     companion object : MyStructFixedSizeInfo<Classroom>(
         "classroom",
         Point(8,5,12)
@@ -18,13 +18,21 @@ class Classroom(config: StructGenConfig,val block:Block): MyStructFixedSize(Comp
         override fun loadTag(tag: CompoundTag): Classroom {
             return Classroom(
                 tag.read("C"),
-                tag.read("b")
+                tag.read("b"),
+                tag.read("t")
             )
         }
         override fun Classroom.saveTag(tag: CompoundTag) {
             tag.write("C",config)
             tag.write("b",block)
+            tag.write("t",type)
         }
+    }
+    enum class Type(val string: String){
+        TEACHING("teaching"),
+        FOOD("food"),
+        EMPTY("empty");
+        val id get() = "classroom_inner_$string"
     }
     override fun StructBuildScopeWithConfig.build() {
         val light = SEA_LANTERN
@@ -49,6 +57,7 @@ class Classroom(config: StructGenConfig,val block:Block): MyStructFixedSize(Comp
             light fill Point(xSize - 3,0,2)
             light fill Point(xSize - 3,0,zSize - 3)
             light fill Area((xSize/2).let{it-1..it},0.range,(zSize/2).let { it-1..it })
+            if(type != Type.EMPTY) type.id putA Point(1,1,1)
         }
     }
 }

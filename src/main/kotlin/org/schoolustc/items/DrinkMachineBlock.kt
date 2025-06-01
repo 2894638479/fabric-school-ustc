@@ -14,6 +14,7 @@ import net.minecraft.world.item.alchemy.Potions
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.HorizontalDirectionalBlock
 import net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
@@ -24,7 +25,7 @@ import org.schoolustc.structureDsl.from
 import org.schoolustc.structureDsl.withChance
 
 
-class DrinkMachineBlock(prop:Properties):Block(prop) {
+class DrinkMachineBlock(prop:Properties):HorizontalDirectionalBlock(prop) {
     override fun getStateForPlacement(context: BlockPlaceContext): BlockState {
         return defaultBlockState().setValue(FACING, context.horizontalDirection.opposite)
     }

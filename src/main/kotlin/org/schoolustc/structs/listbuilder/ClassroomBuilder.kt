@@ -11,6 +11,15 @@ import org.schoolustc.structureDsl.struct.scope.StructGenConfig
 import org.schoolustc.structureDsl.structure.StructureBuildScope
 
 class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource,val colors:Colors):MyStructListBuilder<MyStruct>() {
+    companion object{
+        val classroomTypeMap = mapOf(
+            Classroom.Type.FOOD to 1,
+            Classroom.Type.TEACHING to 1,
+            Classroom.Type.EMPTY to 1,
+        )
+    }
+
+
     class Colors(
         val classroomBlock:Block,
         val stairwellBlock:Block,
@@ -99,7 +108,7 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource,val colo
         override val doors = listOf<Door>()
         override fun generateByHeight(y: Int): MyStruct {
             val config = StructGenConfig.byDirection(area,y,direction.reverse,Classroom,rev)
-            return Classroom(config,colors.classroomBlock)
+            return Classroom(config,colors.classroomBlock,rand from classroomTypeMap)
         }
 
         override fun generateTopByHeight(y: Int): MyStruct {

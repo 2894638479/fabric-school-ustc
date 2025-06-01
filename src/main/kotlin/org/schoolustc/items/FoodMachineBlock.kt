@@ -9,14 +9,14 @@ import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.EntityBlock
-import net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING
+import net.minecraft.world.level.block.HorizontalDirectionalBlock
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.Vec3
 import org.schoolustc.items.MoneyCardItem.Companion.money
 
-class FoodMachineBlock(prop:Properties):EntityBlock,Block(prop) {
+class FoodMachineBlock(prop:Properties):EntityBlock,HorizontalDirectionalBlock(prop) {
     override fun newBlockEntity(blockPos: BlockPos, blockState: BlockState) =
         FoodMachineBlockEntity(blockPos, blockState)
     override fun getStateForPlacement(context: BlockPlaceContext): BlockState {
