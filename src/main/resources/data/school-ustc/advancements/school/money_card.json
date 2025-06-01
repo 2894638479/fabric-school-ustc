@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "item": "school-ustc:money_card"
+    },
+    "title": {
+      "translate": "advancement.school.money_card.title"
+    },
+    "description": {
+      "translate": "advancement.school.money_card.desc"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "school-ustc:school/start",
+  "criteria": {
+    "has_card": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["school-ustc:money_card"]
+          }
+        ]
+      }
+    }
+  }
+}

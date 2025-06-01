@@ -74,7 +74,7 @@ class TeachingTableMenuScreen(
         val item = subjectInfoItem ?: return
         when(item.stage){
             StudentCardItem.SubjectLearnStage.NONE -> Button.builder(Component.literal("学习")){ startLearn(item.name) }
-            StudentCardItem.SubjectLearnStage.LEARNING -> if(item.score + 0.00001 > 1)
+            StudentCardItem.SubjectLearnStage.LEARNING -> if(item.score + 0.00001 > 2)
                 Button.builder(Component.literal("结课")){ finishLearn(item.name) } else null
             StudentCardItem.SubjectLearnStage.FINISHED -> null
         }?.let {

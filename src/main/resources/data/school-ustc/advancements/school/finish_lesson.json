@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "item": "school-ustc:teaching_table"
+    },
+    "title": {
+      "translate": "advancement.school.finish_lesson.title"
+    },
+    "description": {
+      "translate": "advancement.school.finish_lesson.desc"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "school-ustc:school/start",
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

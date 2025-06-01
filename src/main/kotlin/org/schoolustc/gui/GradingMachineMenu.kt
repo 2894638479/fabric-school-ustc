@@ -29,6 +29,7 @@ import org.schoolustc.items.STUDENT_CARD
 import org.schoolustc.items.StudentCardItem.Companion.subjectInfo
 import org.schoolustc.packet.GRADING_MACHINE_GRADING
 import org.schoolustc.questionbank.questionBankMap
+import org.schoolustc.trigger
 
 class GradingMachineMenu(
     val containerId:Int,
@@ -134,5 +135,8 @@ class GradingMachineMenu(
             }
         }
         studentCard.subjectInfo = info
+        if(info.score + 0.00001 > 160){
+            (inventory.player as? ServerPlayer)?.trigger("school/graduate")
+        }
     }
 }

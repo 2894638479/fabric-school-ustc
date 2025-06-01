@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "item": "school-ustc:food_machine"
+    },
+    "title": {
+      "translate": "advancement.school.buy_food.title"
+    },
+    "description": {
+      "translate": "advancement.school.buy_food.desc"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "school-ustc:school/money_card",
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

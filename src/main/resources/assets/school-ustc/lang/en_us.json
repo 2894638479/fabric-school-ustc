@@ -1,5 +1,5 @@
 {
-  "item.school-ustc.money_card": "Money Card",
+  "item.school-ustc.money_card": "Meal Card",
   "item.school-ustc.student_card": "Student Card",
   "item.school-ustc.question": "Question",
   "item.school-ustc.get_gpa_potion.effect.water": "Get GPA Potion",
@@ -9,5 +9,25 @@
   "block.school-ustc.food_machine": "Food Machine",
   "block.school-ustc.drink_machine": "Beverage Machine",
   "text.question": "Question",
-  "text.subject": "Subject"
+  "text.subject": "Subject",
+  "advancement.school.root.title": "School",
+  "advancement.school.root.desc": "School Life!",
+  "advancement.school.start.title": "New Start!",
+  "advancement.school.start.desc": "Get a student card",
+  "advancement.school.finish_lesson.title": "Finish a Lesson",
+  "advancement.school.finish_lesson.desc": "Get at least 2 score on a subject and finish it on teaching table",
+  "advancement.school.graduate.title": "Graduate!",
+  "advancement.school.graduate.desc": "Get more than 160 score on one student card",
+  "advancement.school.money_card.title": "Meal Card",
+  "advancement.school.money_card.desc": "Get a money card",
+  "advancement.school.buy_drink.title": "Buy Drink",
+  "advancement.school.buy_drink.desc": "Buy a potion from beverage machine",
+  "advancement.school.buy_drink_failed.title": "Buy a Drink, But Failed",
+  "advancement.school.buy_drink_failed.desc": "Encounter beverage machine failure",
+  "advancement.school.buy_food.title": "Buy Food",
+  "advancement.school.buy_food.desc": "Buy food from food machine (may not be food)",
+  "advancement.school.get_gpa.title": "What's Your GPA!",
+  "advancement.school.get_gpa.desc": "Throw Get GPA Potion on Player and Knows His GPA",
+  "advancement.school.fence_protect.title": "Security System",
+  "advancement.school.fence_protect.desc": "Without a meal card, blocked by the gate"
 }

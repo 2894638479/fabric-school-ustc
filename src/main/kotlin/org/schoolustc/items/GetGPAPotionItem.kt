@@ -16,6 +16,7 @@ import net.minecraft.world.phys.HitResult
 import org.schoolustc.items.MoneyCardItem.Companion.ownerName
 import org.schoolustc.items.MoneyCardItem.Companion.ownerUUID
 import org.schoolustc.items.StudentCardItem.Companion.subjectInfo
+import org.schoolustc.trigger
 
 class GetGPAPotionItem(prop:Properties) : PotionItem(prop) {
     override fun use(
@@ -28,14 +29,15 @@ class GetGPAPotionItem(prop:Properties) : PotionItem(prop) {
             val thrownPotion = object: ThrownPotion(level, player){
                 override fun onHitEntity(entityHitResult: EntityHitResult) {
                     if(!level.isClientSide) {
-                        val player = (entityHitResult.entity as? ServerPlayer) ?: return
-                        player.inventory.items.firstOrNull {
-                            it.`is`(STUDENT_CARD) && it.ownerUUID == player.stringUUID
+                        val playerHit = (entityHitResult.entity as? ServerPlayer) ?: return
+                        playerHit.inventory.items.firstOrNull {
+                            it.`is`(STUDENT_CARD) && it.ownerUUID == playerHit.stringUUID
                         }?.let {
                             val item = Items.PAPER.defaultInstance.apply {
                                 setHoverName(Component.literal("GPA of ${it.ownerName}: ${String.format("%.3f",it.subjectInfo.gpa)}"))
                             }
-                            player.drop(item,true,false)
+                            playerHit.drop(item,true,false)
+                            (player as? ServerPlayer)?.trigger("school/get_gpa")
                         }
                         this.discard()
                     }

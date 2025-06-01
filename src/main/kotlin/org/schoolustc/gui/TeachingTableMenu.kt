@@ -33,6 +33,7 @@ import org.schoolustc.packet.TEACHING_TABLE_FINISH_LEARN
 import org.schoolustc.packet.TEACHING_TABLE_START_LEARN
 import org.schoolustc.questionbank.QuestionBank
 import org.schoolustc.questionbank.questionBankMap
+import org.schoolustc.trigger
 
 
 class TeachingTableMenu(
@@ -85,7 +86,9 @@ class TeachingTableMenu(
                         val menu = (serverPlayer.containerMenu as? TeachingTableMenu) ?: return@execute
                         val item = menu.slots[0].item
                         if(item.`is`(STUDENT_CARD)){
-                            item.subjectInfo = item.subjectInfo.finishLearn(subject)
+                            item.subjectInfo = item.subjectInfo.finishLearn(subject){
+                                serverPlayer.trigger("school/finish_lesson")
+                            }
                         }
                     }
                 }

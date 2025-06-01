@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "item": "school-ustc:student_card"
+    },
+    "title": {
+      "translate": "advancement.school.start.title"
+    },
+    "description": {
+      "translate": "advancement.school.start.desc"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "school-ustc:school/root",
+  "criteria": {
+    "has_card": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["school-ustc:student_card"]
+          }
+        ]
+      }
+    }
+  }
+}

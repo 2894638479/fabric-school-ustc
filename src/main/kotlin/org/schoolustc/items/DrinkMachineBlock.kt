@@ -1,6 +1,7 @@
 package org.schoolustc.items
 
 import net.minecraft.core.BlockPos
+import net.minecraft.server.level.ServerPlayer
 import net.minecraft.util.RandomSource
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
@@ -23,6 +24,7 @@ import net.minecraft.world.phys.Vec3
 import org.schoolustc.items.MoneyCardItem.Companion.money
 import org.schoolustc.structureDsl.from
 import org.schoolustc.structureDsl.withChance
+import org.schoolustc.trigger
 
 
 class DrinkMachineBlock(prop:Properties):HorizontalDirectionalBlock(prop) {
@@ -84,7 +86,8 @@ class DrinkMachineBlock(prop:Properties):HorizontalDirectionalBlock(prop) {
                 setDeltaMovement(direction.scale(0.5))
             }
             level.addFreshEntity(entity)
-        }
+            (player as? ServerPlayer)?.trigger("school/buy_drink")
+        } ?: (player as? ServerPlayer)?.trigger("school/buy_drink_failed")
         return InteractionResult.SUCCESS
     }
 }

@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "item": "school-ustc:student_card"
+    },
+    "title": {
+      "translate": "advancement.school.graduate.title"
+    },
+    "description": {
+      "translate": "advancement.school.graduate.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "school-ustc:school/finish_lesson",
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

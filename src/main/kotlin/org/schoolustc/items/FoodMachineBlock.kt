@@ -1,6 +1,7 @@
 package org.schoolustc.items
 
 import net.minecraft.core.BlockPos
+import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.item.ItemEntity
@@ -15,6 +16,7 @@ import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.Vec3
 import org.schoolustc.items.MoneyCardItem.Companion.money
+import org.schoolustc.trigger
 
 class FoodMachineBlock(prop:Properties):EntityBlock,HorizontalDirectionalBlock(prop) {
     override fun newBlockEntity(blockPos: BlockPos, blockState: BlockState) =
@@ -58,6 +60,7 @@ class FoodMachineBlock(prop:Properties):EntityBlock,HorizontalDirectionalBlock(p
             setDeltaMovement(direction.scale(0.5))
         }
         level.addFreshEntity(itemEntity)
+        (player as? ServerPlayer)?.trigger("school/buy_food")
         return InteractionResult.SUCCESS
     }
 }

@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "item": "school-ustc:card_machine"
+    },
+    "title": {
+      "translate": "advancement.school.root.title"
+    },
+    "description": {
+      "translate": "advancement.school.root.desc"
+    },
+    "background": "minecraft:textures/block/stone.png",
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

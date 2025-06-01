@@ -72,10 +72,13 @@ class StudentCardItem(properties: Properties):Item(properties) {
                 }
             )
         }
-        fun finishLearn(name: String):SubjectInfo{
+        fun finishLearn(name: String,onFinish:()->Unit):SubjectInfo{
             return SubjectInfo(
                 subjects.map {
-                    if(it.name == name) it.finishLearn() else it
+                    if(it.name == name && it.score + 0.00001 > 2) {
+                        onFinish()
+                        it.finishLearn()
+                    } else it
                 }
             )
         }
