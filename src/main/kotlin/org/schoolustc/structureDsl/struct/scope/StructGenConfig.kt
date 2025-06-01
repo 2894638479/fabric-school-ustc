@@ -12,6 +12,7 @@ class StructGenConfig(
     val revZ: Boolean,
     val rotate: Boolean
 ){
+    val mirror = revX xor revZ xor rotate
     constructor(pos: Point):this(pos,false,false,false)
     fun toIntArray():IntArray{
         var blInt = 0

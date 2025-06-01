@@ -21,6 +21,7 @@ class StructBuildScopeWithConfig(
         override fun Point.finalY() = Point(x,y + config.pos.y, z)
         override fun Direction2D.final() = applyConfig(config)
         override fun Area2D.final() = applyConfig(config)
+        override val mirror = config.mirror
     }
     class SurfView(scope: StructBuildScopeWithConfig): View(scope){
         val config = scope.config
@@ -28,6 +29,7 @@ class StructBuildScopeWithConfig(
         override fun Point.finalY() = Point(x,y + surfHeight(x,z),z)
         override fun Direction2D.final() = applyConfig(config)
         override fun Area2D.final() = applyConfig(config)
+        override val mirror = config.mirror
     }
     inline fun inRelativeView(task: RelativeView.()->Unit) = RelativeView(this).task()
     inline fun inSurfView(task: SurfView.()->Unit) = SurfView(this).task()

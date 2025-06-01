@@ -3,11 +3,8 @@ package org.schoolustc.structureDsl.struct.scope
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.*
 import net.minecraft.world.level.block.Blocks.*
-import net.minecraft.world.level.block.ChestBlock
-import net.minecraft.world.level.block.StairBlock
 import net.minecraft.world.level.block.entity.ChestBlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.*
@@ -27,6 +24,7 @@ abstract class View(val scope: StructBuildScope) {
     private fun Point.final() = finalXZ().run { if(this in bound) finalY() else null }
     protected abstract fun Direction2D.final(): Direction2D
     protected abstract fun Area2D.final(): Area2D
+    protected abstract val mirror:Boolean
     private fun Area.finalXZ() = toArea2D().final().toArea(y)
     private infix fun BlockState.setTo(finalPos: Point) = scope.world.setBlock(finalPos.blockPos,this,3)
     protected fun surfHeight(finalX:Int,finalZ: Int) = scope.world.getHeight(Heightmap.Types.WORLD_SURFACE_WG,finalX,finalZ) - 1
@@ -163,37 +161,13 @@ abstract class View(val scope: StructBuildScope) {
         }
     }
     private fun BlockState.final() = convertDirection()
-    private fun BlockState.convertDirectionBoolean(): BlockState {
-        if(!hasProperty(Direction2D.ZPlus.toMcProperty())) return this
-        var state = this
-        Direction2D.entries.forEach{ dir ->
-            state = state.setValue(dir.final().toMcProperty(),getValue(dir.toMcProperty()))
-        }
-        return state
-    }
-    private fun BlockState.convertDirectionProperty(property: DirectionProperty):BlockState{
-        if(!hasProperty(property)) return this
-        return setValue(property,(fromMcDirection(getValue(property)) ?: return this).final().toMcDirection())
-    }
-    private fun BlockState.convertStoneWallDirection():BlockState {
-        var finalState = this
-        Direction2D.entries.forEach { dir ->
-            val prop = dir.toMcWallProperty()
-            if(hasProperty(prop)){
-                val value = getValue(prop)
-                val prop1 = dir.final().toMcWallProperty()
-                if(finalState.hasProperty(prop1))
-                finalState = finalState.setValue(prop1,value)
-            }
-        }
-        OAK_STAIRS
-        return finalState
-    }
-    private fun BlockState.convertDirection() = this
-        .convertDirectionProperty(BlockStateProperties.FACING)
-        .convertDirectionProperty(BlockStateProperties.HORIZONTAL_FACING)
-        .convertStoneWallDirection()
-        .convertDirectionBoolean()
+    private fun BlockState.convertDirection() = mirror(if(mirror) Mirror.LEFT_RIGHT else Mirror.NONE)
+        .rotate(when(Direction2D.XPlus.final()){
+            Direction2D.XPlus -> Rotation.NONE
+            Direction2D.ZPlus -> Rotation.CLOCKWISE_90
+            Direction2D.ZMin -> Rotation.COUNTERCLOCKWISE_90
+            Direction2D.XMin -> Rotation.CLOCKWISE_180
+        })
     fun BlockState.connected(vararg direction: Direction2D): BlockState {
         var result = this
         for (d in direction){
@@ -208,7 +182,6 @@ abstract class View(val scope: StructBuildScope) {
         }
         return result
     }
-
     fun Block.stairState(facing: Direction2D, shape: StairsShape = StairsShape.STRAIGHT, half: Half = Half.BOTTOM) =
         state
             .setValue(StairBlock.FACING,facing.final().toMcDirection())

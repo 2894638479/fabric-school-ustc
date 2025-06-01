@@ -18,12 +18,14 @@ open class StructBuildScope(
         override fun Point.finalY() = this
         override fun Direction2D.final() = this
         override fun Area2D.final() = this
+        override val mirror get() = false
     }
     class RawSurfView(scope: StructBuildScope): View(scope){
         override fun Point.finalXZ() = this
         override fun Point.finalY() = Point(x,y + surfHeight(x,z),z)
         override fun Direction2D.final() = this
         override fun Area2D.final() = this
+        override val mirror get() = false
     }
 
     inline fun inRawView(task: RawView.()->Unit) = RawView(this).task()
