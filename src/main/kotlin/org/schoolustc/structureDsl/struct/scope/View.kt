@@ -182,6 +182,8 @@ abstract class View(val scope: StructBuildScope) {
         }
         return result
     }
+    fun BlockState.setHorizontalDirection(direction2D: Direction2D) =
+        setValue(HorizontalDirectionalBlock.FACING,direction2D.final().toMcDirection())
     fun Block.stairState(facing: Direction2D, shape: StairsShape = StairsShape.STRAIGHT, half: Half = Half.BOTTOM) =
         state
             .setValue(StairBlock.FACING,facing.final().toMcDirection())
