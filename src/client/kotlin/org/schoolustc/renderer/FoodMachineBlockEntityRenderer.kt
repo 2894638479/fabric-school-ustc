@@ -9,6 +9,8 @@ import net.minecraft.client.renderer.LevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
+import net.minecraft.client.renderer.entity.ItemFrameRenderer
+import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.level.block.HorizontalDirectionalBlock
 import org.joml.AxisAngle4f
@@ -49,12 +51,13 @@ class FoodMachineBlockEntityRenderer(context: BlockEntityRendererProvider.Contex
             withStack {
                 poseStack.translate(-0.15, 0.15, 0.505)
                 val scale = 0.5f
-                poseStack.scale(scale, scale, 0.01f)
+                poseStack.scale(scale, scale, scale)
+                poseStack.mulPose(Axis.YP.rotationDegrees(180F))
                 Minecraft.getInstance().itemRenderer.renderStatic(
                     entity.item.defaultInstance,
                     ItemDisplayContext.FIXED,
                     lightLevel,
-                    combinedOverlay,
+                    OverlayTexture.NO_OVERLAY,
                     poseStack,
                     bufferSource,
                     entity.level,
@@ -65,42 +68,42 @@ class FoodMachineBlockEntityRenderer(context: BlockEntityRendererProvider.Contex
             withStack {
                 poseStack.translate(-0.15, -0.3, 0.505)
                 val scale = 0.3f
-                poseStack.scale(scale, scale, 0.01f)
+                poseStack.scale(scale, scale, scale)
+                poseStack.mulPose(Axis.YP.rotationDegrees(180F))
                 Minecraft.getInstance().itemRenderer.renderStatic(
                     MONEY_CARD.defaultInstance,
                     ItemDisplayContext.FIXED,
                     lightLevel,
-                    combinedOverlay,
+                    OverlayTexture.NO_OVERLAY,
                     poseStack,
                     bufferSource,
                     entity.level,
                     0
                 )
             }
-        }
-        withStack {
-            val str = entity.cost.toString()
-            val font = Minecraft.getInstance().font
-            val width = font.width(str)
-            val height = font.lineHeight
-            poseStack.translate(0.5, 0.5, 0.5)
-            poseStack.mulPose(Quaternionf(AxisAngle4f(Math.toRadians(facing.toYRot().toDouble()).toFloat(), 0f, -1f, 0f)))
-            poseStack.translate(0.0,-0.33,0.505)
-            val scale = -0.03f
-            poseStack.scale(scale, scale, scale)
-            poseStack.mulPose(Axis.YP.rotationDegrees(180F))
-            font.drawInBatch(
-                str,
-                0f,
-                -height/2f,
-                0xA0FFFFFFu.toInt(),
-                false,
-                poseStack.last().pose(),
-                bufferSource,
-                Font.DisplayMode.NORMAL,
-                0,
-                lightLevel
-            )
+
+            withStack {
+                val str = entity.cost.toString()
+                val font = Minecraft.getInstance().font
+                val width = font.width(str)
+                val height = font.lineHeight
+                poseStack.translate(0.0,-0.33,0.505)
+                val scale = -0.03f
+                poseStack.scale(scale, scale, scale)
+                poseStack.mulPose(Axis.YP.rotationDegrees(180F))
+                font.drawInBatch(
+                    str,
+                    0f,
+                    -height/2f,
+                    0xA0FFFFFFu.toInt(),
+                    false,
+                    poseStack.last().pose(),
+                    bufferSource,
+                    Font.DisplayMode.NORMAL,
+                    0,
+                    lightLevel
+                )
+            }
         }
     }
 }
