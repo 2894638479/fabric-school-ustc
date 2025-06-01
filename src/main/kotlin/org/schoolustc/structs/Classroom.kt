@@ -3,6 +3,9 @@ package org.schoolustc.structs
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks.*
+import net.minecraft.world.level.levelgen.structure.templatesystem.ProcessorRule
+import net.minecraft.world.level.levelgen.structure.templatesystem.RuleProcessor
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor
 import org.schoolustc.structureDsl.*
 import org.schoolustc.structureDsl.struct.*
 import org.schoolustc.structureDsl.struct.MyStructFixedSizeInfo
@@ -31,6 +34,9 @@ class Classroom(config: StructGenConfig,val block:Block,val type: Type): MyStruc
     enum class Type(val string: String){
         TEACHING("teaching"),
         FOOD("food"),
+        BOOK("book"),
+        LAB("lab"),
+        BED("bed"),
         EMPTY("empty");
         val id get() = "classroom_inner_$string"
     }
