@@ -19,9 +19,9 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource,val colo
     class Door(val direction:Direction2D,val pos:Point,val choices:(Direction2D,Point)-> Base){
         var connect:Base? = null
         fun choose() = choices(direction, pos)
+        fun balconyArea() = Area2D(pos.x.range,pos.z.range).expand(direction,1).expand(direction.left,2).expand(direction.right,2)
         fun balcony(y:Int):Balcony{
-            val area = Area2D(pos.x.range,pos.z.range).expand(direction,1).expand(direction.left,2).expand(direction.right,2)
-            val config = StructGenConfig.byDirection(area,y,direction,Balcony)
+            val config = StructGenConfig.byDirection(balconyArea(),y,direction,Balcony)
             return Balcony(config)
         }
         fun balconyTop(y:Int):BalconyTop{
@@ -72,10 +72,12 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource,val colo
         var layerCount = 0
         fun generateAllLayer(y:Int) = (0..<layerCount).map{ generateByHeight(y + 5*it) } +
                 generateTopByHeight(y+5*layerCount) + generateBaseByHeight(y)
-        fun generateAllChildren(y:Int):List<MyStruct>{
+        fun generateAllChildren(y:Int,overlapPredicate:(Area2D)->Boolean):List<MyStruct>{
             val thisBase = generateAllLayer(y)
-            val childBase = doorConnected.map { it.generateAllChildren(y) }.flatten()
-            val balcony = doors.filter { it.connect == null }.map { door ->
+            val childBase = doorConnected.map { it.generateAllChildren(y,overlapPredicate) }.flatten()
+            val balcony = doors.filter { it.connect == null }.filter {
+                !overlapPredicate(it.balconyArea())
+            }.map { door ->
                 val mid = (1..<layerCount).map { door.balcony(y+it*5) }
                 if(layerCount > 1) mid + door.balconyTop(y+layerCount*5) else mid
             }.flatten()
@@ -257,6 +259,6 @@ class ClassroomBuilder(val area: Area2D,val y:Int,val rand:RandomSource,val colo
                 }
             }
         }
-        return chosen.generateAllChildren(y)
+        return chosen.generateAllChildren(y) { chosen.overlapChild(it) }
     }
 }
