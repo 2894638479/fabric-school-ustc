@@ -1,7 +1,6 @@
-package org.schoolustc.questionbank
+package org.schoolustc.datapack
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 
 class QuestionBank(
     val subject:String,

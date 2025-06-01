@@ -1,17 +1,13 @@
 package org.schoolustc
 
 import net.fabricmc.api.ModInitializer
-import net.minecraft.core.registries.Registries
-import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import org.schoolustc.gui.CardMachineMenu
 import org.schoolustc.gui.GradingMachineMenu
 import org.schoolustc.gui.TeachingTableMenu
-import org.schoolustc.items.GradingMachineBlock
 import org.schoolustc.items.QuestionItem
-import org.schoolustc.items.TeachingTableBlock
 import org.schoolustc.items.registerItemAndBlock
-import org.schoolustc.questionbank.registerReloadListener
+import org.schoolustc.datapack.registerReloadListener
 import org.schoolustc.structs.*
 import org.schoolustc.structs.feature.BrownMushroomGrassFeature
 import org.schoolustc.structureDsl.struct.MyStructInfo

@@ -15,7 +15,6 @@ import net.minecraft.world.SimpleContainer
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
-import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import org.schoolustc.items.QUESTION_ITEM
@@ -28,11 +27,10 @@ import org.schoolustc.items.QuestionItem.Companion.status
 import org.schoolustc.items.QuestionItem.Companion.subject
 import org.schoolustc.items.STUDENT_CARD
 import org.schoolustc.items.StudentCardItem.Companion.subjectInfo
-import org.schoolustc.items.TEACHING_TABLE_BLOCK
 import org.schoolustc.packet.TEACHING_TABLE_FINISH_LEARN
 import org.schoolustc.packet.TEACHING_TABLE_START_LEARN
-import org.schoolustc.questionbank.QuestionBank
-import org.schoolustc.questionbank.questionBankMap
+import org.schoolustc.datapack.QuestionBank
+import org.schoolustc.datapack.questionBankMap
 import org.schoolustc.trigger
 
 

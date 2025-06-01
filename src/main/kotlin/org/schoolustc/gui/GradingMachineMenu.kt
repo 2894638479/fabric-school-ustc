@@ -28,7 +28,7 @@ import org.schoolustc.items.QuestionItem.Companion.subject
 import org.schoolustc.items.STUDENT_CARD
 import org.schoolustc.items.StudentCardItem.Companion.subjectInfo
 import org.schoolustc.packet.GRADING_MACHINE_GRADING
-import org.schoolustc.questionbank.questionBankMap
+import org.schoolustc.datapack.questionBankMap
 import org.schoolustc.trigger
 
 class GradingMachineMenu(

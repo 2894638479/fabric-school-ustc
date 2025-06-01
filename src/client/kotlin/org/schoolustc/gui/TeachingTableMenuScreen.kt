@@ -16,7 +16,7 @@ import org.schoolustc.items.StudentCardItem.Companion.subjectInfo
 import org.schoolustc.packet.TEACHING_TABLE_FINISH_LEARN
 import org.schoolustc.packet.TEACHING_TABLE_START_LEARN
 import org.schoolustc.packet.packetBuf
-import org.schoolustc.questionbank.QuestionBank
+import org.schoolustc.datapack.QuestionBank
 
 class TeachingTableMenuScreen(
     menu:TeachingTableMenu,
@@ -89,7 +89,7 @@ class TeachingTableMenuScreen(
             updateSubjectInfoItem()
             updateLearnButton()
         }
-    private var curBank:QuestionBank.QuestionBankClient? = null
+    private var curBank: QuestionBank.QuestionBankClient? = null
         set(value) {
             field = value
             updateSubjectInfoItem()
