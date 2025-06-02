@@ -53,7 +53,7 @@ class DrinkMachineBlock(prop:Properties):HorizontalDirectionalBlock(prop) {
         private val Potion.stack get() = PotionUtils.setPotion(ItemStack(Items.POTION), this)
         private val Potion.splashStack get() = PotionUtils.setPotion(ItemStack(Items.SPLASH_POTION), this)
         private val Potion.lingeringStack get() = PotionUtils.setPotion(ItemStack(Items.LINGERING_POTION), this)
-        private fun RandomSource.randDrinkMachineItem():ItemStack?{
+        fun RandomSource.randDrinkMachineItem():ItemStack?{
             return withChance(0.9){ from(potionMap) }?.run { from(
                 {stack} to 3,
                 {splashStack} to 1,

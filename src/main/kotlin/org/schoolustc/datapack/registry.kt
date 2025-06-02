@@ -17,6 +17,7 @@ var questionBankList = listOf<QuestionBank>()
 var questionBankClientList = listOf<QuestionBank.QuestionBankClient>()
 
 var knowledgeBankList = listOf<KnowledgeBank>()
+    private set
 
 private fun setBanks(list:List<QuestionBank>){
     val hashMap = HashMap<String, QuestionBank>(list.size * 3 / 2 + 1)

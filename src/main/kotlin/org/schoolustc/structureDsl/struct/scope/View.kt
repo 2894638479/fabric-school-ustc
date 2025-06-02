@@ -1,24 +1,29 @@
 package org.schoolustc.structureDsl.struct.scope
 
+import com.mojang.serialization.Codec
+import net.minecraft.core.BlockPos
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.LevelReader
 import net.minecraft.world.level.block.*
 import net.minecraft.world.level.block.Blocks.AIR
 import net.minecraft.world.level.block.Blocks.CHEST
+import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.entity.ChestBlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.*
 import net.minecraft.world.level.levelgen.Heightmap
 import net.minecraft.world.level.levelgen.LegacyRandomSource
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature
-import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate
+import net.minecraft.world.level.levelgen.structure.templatesystem.*
 import org.schoolustc.fullId
 import org.schoolustc.logger
 import org.schoolustc.structureDsl.*
+
 
 abstract class View(val scope: StructBuildScope) {
     private val bound = scope.boundingBox.run { Area2D(minX()..maxX(), minZ()..maxZ()) }
@@ -156,6 +161,44 @@ abstract class View(val scope: StructBuildScope) {
             .structureManager
             .get(fullId(name))
             .orElse(null)
+    }
+    class Treatment<T:BlockEntity>(
+        val type:BlockEntityType<T>,
+        val func:(T)->Unit
+    ){
+        operator fun <V> invoke(entity:V){
+            (entity as? T)?.let(func)
+        }
+    }
+    fun putNbtStruct(name:String, startPos: Point,processor:List<StructureProcessor>,afterTreatment:List<Treatment<*>>){
+        val treatmentBlockPos = afterTreatment.map { mutableListOf<BlockPos>() }
+        class CountProcessor : StructureProcessor() {
+            override fun getType() = StructureProcessorType { Codec.unit(CountProcessor()) }
+            override fun processBlock(
+                levelReader: LevelReader,
+                blockPos: BlockPos,
+                blockPos2: BlockPos,
+                structureBlockInfo: StructureTemplate.StructureBlockInfo,
+                structureBlockInfo2: StructureTemplate.StructureBlockInfo,
+                structurePlaceSettings: StructurePlaceSettings
+            ): StructureTemplate.StructureBlockInfo {
+                val id = structureBlockInfo2.nbt?.getString("id") ?: return structureBlockInfo2
+                val type = BuiltInRegistries.BLOCK_ENTITY_TYPE.get(ResourceLocation(id)) ?: return structureBlockInfo2
+                val index = afterTreatment.indexOfFirst { it.type == type }.also { if(it == -1) return structureBlockInfo2 }
+                treatmentBlockPos[index] += structureBlockInfo2.pos
+                return structureBlockInfo2
+            }
+        }
+        putNbtStruct(name, startPos, processor + CountProcessor())
+        treatmentBlockPos.forEachIndexed { i, it ->
+            it.forEach {
+                if(scope.boundingBox.isInside(it)) {
+                    scope.world.getBlockEntity(it)?.let { entity ->
+                        afterTreatment[i](entity)
+                    }
+                }
+            }
+        }
     }
     fun putNbtStruct(name:String, startPos: Point,processor:List<StructureProcessor>){
         val struct = getNbtStruct(name) ?: return logger.warn("not found structure nbt $name")
