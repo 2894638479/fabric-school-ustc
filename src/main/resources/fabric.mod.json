@@ -3,9 +3,9 @@
 	"id": "school-ustc",
 	"version": "${version}",
 	"name": "School USTC",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "科大校园风格建筑与玩法",
 	"authors": [
-		"Me!"
+		"2894638479"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
