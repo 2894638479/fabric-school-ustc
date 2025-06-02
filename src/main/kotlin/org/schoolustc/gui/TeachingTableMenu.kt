@@ -32,6 +32,7 @@ import org.schoolustc.packet.TEACHING_TABLE_START_LEARN
 import org.schoolustc.datapack.QuestionBank
 import org.schoolustc.datapack.questionBankMap
 import org.schoolustc.trigger
+import kotlin.random.Random
 
 
 class TeachingTableMenu(
@@ -59,7 +60,11 @@ class TeachingTableMenu(
                         if(item.`is`(STUDENT_CARD)){
                             item.subjectInfo = item.subjectInfo.startLearn(subject)
                             val questionItems = questionBankMap[subject] ?: return@execute
-                            questionItems.questionList.forEach {
+                            val list = questionItems.questionList.run {
+                                if(size <= 10) this
+                                else sortedBy { minecraftServer.overworld().random.nextInt() }.subList(0,10)
+                            }
+                            list.forEach {
                                 val questionItem = ItemStack(QUESTION_ITEM).apply {
                                     question = it.question
                                     difficulty = it.difficulty
